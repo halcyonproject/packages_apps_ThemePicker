@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.ComposeView
 import com.android.customization.picker.mode.shared.util.DarkModeLifecycleUtil
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
-import com.android.wallpaper.customization.ui.compose.ColorFloatingSheet
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_ICONS
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.COLORS
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.COLOR_CONTRAST
@@ -237,7 +236,7 @@ constructor(
             put(
                 COLORS,
                 if (isColorPickerUpdateEnabled && isColorPickerComposeEnabled) {
-                        ComposeView(context).apply { setContent { ColorFloatingSheet() } }
+                        ComposeView(context)
                     } else {
                         inflateFloatingSheet(COLORS, bottomSheetContainer, layoutInflater)
                     }
