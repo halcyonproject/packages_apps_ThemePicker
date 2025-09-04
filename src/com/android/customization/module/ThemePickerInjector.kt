@@ -16,7 +16,6 @@
 package com.android.customization.module
 
 import android.app.Activity
-import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
@@ -28,8 +27,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
-import com.android.customization.model.color.ThemedWallpaperColorResources
-import com.android.customization.model.color.WallpaperColorResources
 import com.android.customization.model.grid.GridOptionsManager
 import com.android.customization.model.mode.DarkModeSnapshotRestorer
 import com.android.customization.model.theme.OverlayManagerCompat
@@ -151,7 +148,6 @@ constructor(
     private var notificationSettingsInteractor: NotificationSettingsInteractor? = null
     private var notificationSectionViewModelFactory: NotificationSectionViewModel.Factory? = null
     private var colorPickerViewModelFactory: ColorPickerViewModel.Factory? = null
-    private var colorCustomizationManager: ColorCustomizationManager? = null
     private var darkModeSnapshotRestorer: DarkModeSnapshotRestorer? = null
     private var themedIconSnapshotRestorer: ThemedIconSnapshotRestorer? = null
     private var themedIconInteractor: ThemedIconInteractor? = null
@@ -323,13 +319,6 @@ constructor(
                 }
     }
 
-    override fun getWallpaperColorResources(
-        wallpaperColors: WallpaperColors,
-        context: Context,
-    ): WallpaperColorResources {
-        return ThemedWallpaperColorResources(wallpaperColors, secureSettingsRepository.get())
-    }
-
     override fun getColorPickerViewModelFactory(context: Context): ColorPickerViewModel.Factory {
         return colorPickerViewModelFactory
             ?: ColorPickerViewModel.Factory(
@@ -338,13 +327,6 @@ constructor(
                     getUserEventLogger(),
                 )
                 .also { colorPickerViewModelFactory = it }
-    }
-
-    private fun getColorCustomizationManager(context: Context): ColorCustomizationManager {
-        return colorCustomizationManager
-            ?: ColorCustomizationManager.getInstance(context, OverlayManagerCompat(context)).also {
-                colorCustomizationManager = it
-            }
     }
 
     fun getDarkModeSnapshotRestorer(context: Context): DarkModeSnapshotRestorer {
