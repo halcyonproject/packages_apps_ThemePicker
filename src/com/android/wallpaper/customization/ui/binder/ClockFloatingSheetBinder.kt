@@ -286,8 +286,8 @@ object ClockFloatingSheetBinder {
                                 clockStyleContentHeight = clockStyleListContainer.height,
                                 axisPresetSliderHeight = axisPresetSliderContainer.height,
                             )
-                        clockStyleContent.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
+                    clockStyleContent.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             }
         )
@@ -322,8 +322,8 @@ object ClockFloatingSheetBinder {
                             _clockFloatingSheetHeights.value.copy(
                                 clockSizeContentHeight = clockSizeContent.height
                             )
-                        clockSizeContent.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     }
+                    clockSizeContent.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             }
         )
@@ -546,7 +546,10 @@ object ClockFloatingSheetBinder {
                         axisPresetSlider.valueTo = axisPresetsSliderViewModel.valueTo
                         axisPresetSlider.stepSize = axisPresetsSliderViewModel.stepSize
                         axisPresetSlider.clearOnSliderTouchListeners()
-                        updateAccessibilityStateDescription(axisPresetSlider, axisPresetSlider.context)
+                        updateAccessibilityStateDescription(
+                            axisPresetSlider,
+                            axisPresetSlider.context,
+                        )
                         axisPresetSlider.addOnSliderTouchListener(
                             object : OnSliderTouchListener {
                                 override fun onStartTrackingTouch(slider: Slider) {}
