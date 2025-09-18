@@ -75,6 +75,7 @@ class ClockRegistryProvider(
 
     private fun createPluginManager(context: Context): PluginManager {
         val pluginConfig = PluginManager.Config()
+        val pluginPrefs = PluginPrefs(context)
 
         val instanceFactory =
             PluginInstance.Factory(
@@ -111,13 +112,14 @@ class ClockRegistryProvider(
                 pluginEnabler,
                 pluginConfig,
                 instanceFactory,
+                pluginPrefs,
             )
         return PluginManagerImpl(
             context,
             pluginActionManager,
             UncaughtExceptionPreHandlerManager_Factory.create().get(),
             pluginEnabler,
-            PluginPrefs(context),
+            pluginPrefs,
             pluginConfig,
         )
     }
