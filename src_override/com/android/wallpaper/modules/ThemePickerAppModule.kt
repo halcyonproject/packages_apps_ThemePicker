@@ -85,6 +85,8 @@ import com.android.wallpaper.picker.preview.ui.binder.ApplyWallpaperOptionsProvi
 import com.android.wallpaper.picker.preview.ui.binder.DefaultApplyWallpaperOptionsProvider
 import com.android.wallpaper.picker.preview.ui.util.DefaultImageEffectDialogUtil
 import com.android.wallpaper.picker.preview.ui.util.ImageEffectDialogUtil
+import com.android.wallpaper.picker.wallpapers.data.repository.DefaultRotationInitializerFactory
+import com.android.wallpaper.picker.wallpapers.data.repository.RotationInitializerFactory
 import com.android.wallpaper.settings.data.repository.SecureSettingsRepositoryImpl
 import com.android.wallpaper.settings.data.repository.SystemSettingsRepositoryImpl
 import com.android.wallpaper.util.converter.DefaultWallpaperModelFactory
@@ -172,6 +174,12 @@ abstract class ThemePickerAppModule {
     abstract fun bindExtendedEffectsHelper(
         impl: DefaultExtendedEffectsHelper
     ): ExtendedEffectsHelper
+
+    @Binds
+    @Singleton
+    abstract fun bindRotationInitializerFactory(
+        impl: DefaultRotationInitializerFactory
+    ): RotationInitializerFactory
 
     @Binds
     @Singleton
