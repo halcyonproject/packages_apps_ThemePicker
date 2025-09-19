@@ -155,14 +155,16 @@ constructor(
                                 )
                         )
                     }
-                    add(
-                        COLORS to
-                            layoutInflater.inflate(
-                                R.layout.customization_option_entry_colors,
-                                optionContainer,
-                                false,
-                            )
-                    )
+                    if (customizationOptionsData.isColorCustomizationAvailable) {
+                        add(
+                            COLORS to
+                                layoutInflater.inflate(
+                                    R.layout.customization_option_entry_colors,
+                                    optionContainer,
+                                    false,
+                                )
+                        )
+                    }
                     add(
                         COLOR_CONTRAST to
                             layoutInflater.inflate(

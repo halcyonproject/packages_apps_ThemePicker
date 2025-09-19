@@ -244,12 +244,14 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             }
         }
 
-        val optionColors: View =
-            homeScreenCustomizationOptionEntries
-                .first { it.first == ThemePickerHomeCustomizationOption.COLORS }
-                .second
-        val optionColorsIcon: ColorOptionIconView2 =
-            optionColors.requireViewById(R.id.option_entry_icon)
+        val optionColors: View? =
+            if (customizationOptionsData.isColorCustomizationAvailable) {
+                homeScreenCustomizationOptionEntries
+                    .first { it.first == ThemePickerHomeCustomizationOption.COLORS }
+                    .second
+            } else null
+        val optionColorsIcon: ColorOptionIconView2? =
+            optionColors?.requireViewById(R.id.option_entry_icon)
 
         val optionAppIcons: View? =
             if (customizationOptionsData.isIconCustomizationAvailable) {
@@ -347,9 +349,11 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     }
                 }
 
-                launch {
-                    optionsViewModel.onCustomizeColorsClicked.collect {
-                        optionColors.setOnClickListener { _ -> it?.invoke() }
+                if (customizationOptionsData.isColorCustomizationAvailable) {
+                    launch {
+                        optionsViewModel.onCustomizeColorsClicked.collect {
+                            optionColors?.setOnClickListener { _ -> it?.invoke() }
+                        }
                     }
                 }
 
@@ -458,21 +462,27 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     }
                 }
 
-                launch {
-                    var binding: ColorOptionIconBinder2.Binding? = null
-                    optionsViewModel.colorPickerViewModel2.selectedColorOption.collect { colorOption
-                        ->
-                        (colorOption as? ColorOptionImpl)?.let {
-                            binding?.destroy()
-                            binding =
-                                ColorOptionIconBinder2.bind(
-                                    view = optionColorsIcon,
-                                    viewModel =
-                                        ColorOptionIconViewModel.fromColorOption(colorOption),
-                                    colorUpdateViewModel = colorUpdateViewModel,
-                                    shouldAnimateColor = isOnMainScreen,
-                                    lifecycleOwner = lifecycleOwner,
-                                )
+                if (customizationOptionsData.isColorCustomizationAvailable) {
+                    launch {
+                        var binding: ColorOptionIconBinder2.Binding? = null
+                        optionsViewModel.colorPickerViewModel2.selectedColorOption.collect {
+                            colorOption ->
+                            (colorOption as? ColorOptionImpl)?.let {
+                                optionColorsIcon?.let {
+                                    binding?.destroy()
+                                    binding =
+                                        ColorOptionIconBinder2.bind(
+                                            view = optionColorsIcon,
+                                            viewModel =
+                                                ColorOptionIconViewModel.fromColorOption(
+                                                    colorOption
+                                                ),
+                                            colorUpdateViewModel = colorUpdateViewModel,
+                                            shouldAnimateColor = isOnMainScreen,
+                                            lifecycleOwner = lifecycleOwner,
+                                        )
+                                }
+                            }
                         }
                     }
                 }
