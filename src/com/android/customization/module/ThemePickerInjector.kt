@@ -53,15 +53,12 @@ import com.android.customization.picker.notifications.ui.viewmodel.NotificationS
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordanceSnapshotRestorer
 import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel
-import com.android.customization.picker.settings.ui.viewmodel.ColorContrastSectionViewModel
 import com.android.systemui.shared.clocks.ClockRegistry
 import com.android.systemui.shared.notifications.data.repository.NotificationSettingsRepository
 import com.android.systemui.shared.notifications.domain.interactor.NotificationSettingsInteractor
 import com.android.systemui.shared.settings.data.repository.SecureSettingsRepository
 import com.android.systemui.shared.settings.data.repository.SystemSettingsRepository
 import com.android.wallpaper.config.BaseFlags
-import com.android.wallpaper.module.CustomizationSections
-import com.android.wallpaper.module.FragmentFactory
 import com.android.wallpaper.module.NetworkStatusNotifier
 import com.android.wallpaper.module.PackageStatusNotifier
 import com.android.wallpaper.module.PartnerProvider
@@ -93,7 +90,6 @@ constructor(
     @MainDispatcher private val mainScope: CoroutineScope,
     @BackgroundDispatcher private val bgScope: CoroutineScope,
     @BackgroundDispatcher private val bgDispatcher: CoroutineDispatcher,
-    private val colorContrastSectionViewModelFactory: Lazy<ColorContrastSectionViewModel.Factory>,
     private val keyguardQuickAffordancePickerInteractor:
         Lazy<KeyguardQuickAffordancePickerInteractor>,
     private val keyguardQuickAffordanceSnapshotRestorer:
@@ -137,11 +133,9 @@ constructor(
         wallpaperRefresher,
     ),
     CustomizationInjector {
-    private var customizationSections: CustomizationSections? = null
     private var keyguardQuickAffordancePickerViewModelFactory:
         KeyguardQuickAffordancePickerViewModel.Factory? =
         null
-    private var fragmentFactory: FragmentFactory? = null
     private var notificationsSnapshotRestorer: NotificationsSnapshotRestorer? = null
     private var clockCarouselViewModelFactory: ClockCarouselViewModel.Factory? = null
     private var clockViewFactory: ClockViewFactory? = null
@@ -155,32 +149,6 @@ constructor(
     private var gridInteractor: GridInteractor? = null
     private var gridSnapshotRestorer: GridSnapshotRestorer? = null
     private var gridScreenViewModelFactory: GridScreenViewModel.Factory? = null
-
-    override fun getCustomizationSections(activity: ComponentActivity): CustomizationSections {
-        val appContext = activity.applicationContext
-        val clockViewFactory = getClockViewFactory(activity)
-        val resources = activity.resources
-        return customizationSections
-            ?: DefaultCustomizationSections(
-                    getColorPickerViewModelFactory(appContext),
-                    getKeyguardQuickAffordancePickerViewModelFactory(appContext),
-                    colorContrastSectionViewModelFactory.get(),
-                    getNotificationSectionViewModelFactory(appContext),
-                    getFlags(),
-                    getClockCarouselViewModelFactory(
-                        interactor = clockPickerInteractor.get(),
-                        clockViewFactory = clockViewFactory,
-                        resources = resources,
-                    ),
-                    clockViewFactory,
-                    getThemedIconSnapshotRestorer(appContext),
-                    getThemedIconInteractor(),
-                    getGridInteractor(appContext),
-                    colorPickerInteractor.get(),
-                    getUserEventLogger(),
-                )
-                .also { customizationSections = it }
-    }
 
     override fun getDeepLinkRedirectIntent(context: Context, uri: Uri): Intent {
         val intent = Intent()
@@ -197,10 +165,6 @@ constructor(
     @Synchronized
     override fun getUserEventLogger(): ThemesUserEventLogger {
         return themesUserEventLogger.get()
-    }
-
-    override fun getFragmentFactory(): FragmentFactory? {
-        return fragmentFactory ?: ThemePickerFragmentFactory().also { fragmentFactory }
     }
 
     override fun getSnapshotRestorers(context: Context): Map<Int, SnapshotRestorer> {
