@@ -53,12 +53,10 @@ class ClockRegistryProvider(
             coroutineScope,
             mainDispatcher,
             backgroundDispatcher,
-            isEnabled = flags.isCustomClocksEnabled(context),
             handleAllUsers = false,
             DefaultClockProvider(
                 layoutInflater = LayoutInflater.from(context),
                 resources = context.resources,
-                isClockReactiveVariantsEnabled = flags.isClockReactiveVariantsEnabled(),
                 vibrator = null,
             ),
             keepAllLoaded = true,
