@@ -18,7 +18,6 @@ package com.android.customization.picker.clock.ui.view
 import android.app.Activity
 import android.app.WallpaperColors
 import android.app.WallpaperManager
-import android.graphics.Rect
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
@@ -26,6 +25,7 @@ import androidx.annotation.ColorInt
 import androidx.lifecycle.LifecycleOwner
 import com.android.systemui.customization.clocks.R as clocksR
 import com.android.systemui.customization.clocks.utils.ContextUtils.getSafeStatusBarHeight
+import com.android.systemui.plugins.keyguard.VRect
 import com.android.systemui.plugins.keyguard.data.model.WeatherData
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockAxisStyle
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockController
@@ -221,12 +221,12 @@ constructor(
      * proper region corresponding to lock screen in picker and for onTargetRegionChanged to scale
      * and position the clock view
      */
-    private fun getLargeClockRegion(): Rect {
+    private fun getLargeClockRegion(): VRect {
         val largeClockTopMargin =
             resources.getDimensionPixelSize(clocksR.dimen.keyguard_large_clock_top_margin)
         val targetHeight = resources.getDimensionPixelSize(clocksR.dimen.large_clock_text_size) * 2
         val top = (screenSize.y / 2 - targetHeight / 2 + largeClockTopMargin / 2)
-        return Rect(0, top, screenSize.x, (top + targetHeight))
+        return VRect(0, top, screenSize.x, (top + targetHeight))
     }
 
     /**
@@ -234,9 +234,9 @@ constructor(
      * proper region corresponding to lock screen in picker and for onTargetRegionChanged to scale
      * and position the clock view
      */
-    private fun getSmallClockRegion(): Rect {
+    private fun getSmallClockRegion(): VRect {
         val topMargin = getSmallClockTopMargin()
         val targetHeight = resources.getDimensionPixelSize(clocksR.dimen.small_clock_height)
-        return Rect(getSmallClockStartPadding(), topMargin, screenSize.x, topMargin + targetHeight)
+        return VRect(getSmallClockStartPadding(), topMargin, screenSize.x, topMargin + targetHeight)
     }
 }
