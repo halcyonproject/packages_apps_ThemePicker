@@ -119,7 +119,7 @@ constructor(
         }
 
     /** The list of all color options mapped by their color type */
-    private val allColorOptions:
+    val allColorOptions:
         Flow<Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>> =
         interactor.colorOptions.map { colorOptions ->
             colorOptions
