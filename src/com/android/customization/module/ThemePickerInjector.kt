@@ -28,30 +28,22 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
 import com.android.customization.model.grid.GridOptionsManager
-import com.android.customization.model.mode.DarkModeSnapshotRestorer
 import com.android.customization.model.theme.OverlayManagerCompat
-import com.android.customization.model.themedicon.ThemedIconSwitchProvider
 import com.android.customization.model.themedicon.data.repository.ThemeIconRepository
 import com.android.customization.model.themedicon.domain.interactor.ThemedIconInteractor
-import com.android.customization.model.themedicon.domain.interactor.ThemedIconSnapshotRestorer
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
-import com.android.customization.picker.clock.domain.interactor.ClockPickerSnapshotRestorer
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
 import com.android.customization.picker.clock.ui.view.ThemePickerClockViewFactory
 import com.android.customization.picker.clock.ui.viewmodel.ClockCarouselViewModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockSettingsViewModel
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
-import com.android.customization.picker.color.domain.interactor.ColorPickerSnapshotRestorer
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.grid.data.repository.GridRepositoryImpl
 import com.android.customization.picker.grid.domain.interactor.GridInteractor
-import com.android.customization.picker.grid.domain.interactor.GridSnapshotRestorer
 import com.android.customization.picker.grid.ui.viewmodel.GridScreenViewModel
-import com.android.customization.picker.notifications.domain.interactor.NotificationsSnapshotRestorer
 import com.android.customization.picker.notifications.ui.viewmodel.NotificationSectionViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
-import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordanceSnapshotRestorer
 import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel
 import com.android.systemui.shared.clocks.ClockRegistry
 import com.android.systemui.shared.notifications.data.repository.NotificationSettingsRepository
@@ -74,7 +66,6 @@ import com.android.wallpaper.picker.customization.domain.interactor.WallpaperInt
 import com.android.wallpaper.picker.customization.ui.CustomizationPickerActivity2
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import com.android.wallpaper.picker.di.modules.MainDispatcher
-import com.android.wallpaper.picker.undo.domain.interactor.SnapshotRestorer
 import com.android.wallpaper.system.UiModeManagerWrapper
 import com.android.wallpaper.util.DisplayUtils
 import dagger.Lazy
@@ -92,16 +83,12 @@ constructor(
     @BackgroundDispatcher private val bgDispatcher: CoroutineDispatcher,
     private val keyguardQuickAffordancePickerInteractor:
         Lazy<KeyguardQuickAffordancePickerInteractor>,
-    private val keyguardQuickAffordanceSnapshotRestorer:
-        Lazy<KeyguardQuickAffordanceSnapshotRestorer>,
     private val themesUserEventLogger: Lazy<ThemesUserEventLogger>,
     private val colorPickerInteractor: Lazy<ColorPickerInteractor>,
-    private val colorPickerSnapshotRestorer: Lazy<ColorPickerSnapshotRestorer>,
     private val clockRegistry: Lazy<ClockRegistry>,
     private val secureSettingsRepository: Lazy<SecureSettingsRepository>,
     private val systemSettingsRepository: Lazy<SystemSettingsRepository>,
     private val clockPickerInteractor: Lazy<ClockPickerInteractor>,
-    private val clockPickerSnapshotRestorer: Lazy<ClockPickerSnapshotRestorer>,
     displayUtils: Lazy<DisplayUtils>,
     requester: Lazy<Requester>,
     networkStatusNotifier: Lazy<NetworkStatusNotifier>,
@@ -136,18 +123,14 @@ constructor(
     private var keyguardQuickAffordancePickerViewModelFactory:
         KeyguardQuickAffordancePickerViewModel.Factory? =
         null
-    private var notificationsSnapshotRestorer: NotificationsSnapshotRestorer? = null
     private var clockCarouselViewModelFactory: ClockCarouselViewModel.Factory? = null
     private var clockViewFactory: ClockViewFactory? = null
     private var notificationSettingsInteractor: NotificationSettingsInteractor? = null
     private var notificationSectionViewModelFactory: NotificationSectionViewModel.Factory? = null
     private var colorPickerViewModelFactory: ColorPickerViewModel.Factory? = null
-    private var darkModeSnapshotRestorer: DarkModeSnapshotRestorer? = null
-    private var themedIconSnapshotRestorer: ThemedIconSnapshotRestorer? = null
     private var themedIconInteractor: ThemedIconInteractor? = null
     private var clockSettingsViewModelFactory: ClockSettingsViewModel.Factory? = null
     private var gridInteractor: GridInteractor? = null
-    private var gridSnapshotRestorer: GridSnapshotRestorer? = null
     private var gridScreenViewModelFactory: GridScreenViewModel.Factory? = null
 
     override fun getDeepLinkRedirectIntent(context: Context, uri: Uri): Intent {
@@ -165,23 +148,6 @@ constructor(
     @Synchronized
     override fun getUserEventLogger(): ThemesUserEventLogger {
         return themesUserEventLogger.get()
-    }
-
-    override fun getSnapshotRestorers(context: Context): Map<Int, SnapshotRestorer> {
-        return super<WallpaperPicker2Injector>.getSnapshotRestorers(context).toMutableMap().apply {
-            this[KEY_QUICK_AFFORDANCE_SNAPSHOT_RESTORER] =
-                keyguardQuickAffordanceSnapshotRestorer.get()
-            // TODO(b/285047815): Enable after adding wallpaper id for default static wallpaper
-            if (getFlags().isWallpaperRestorerEnabled()) {
-                this[KEY_WALLPAPER_SNAPSHOT_RESTORER] = getWallpaperSnapshotRestorer(context)
-            }
-            this[KEY_NOTIFICATIONS_SNAPSHOT_RESTORER] = getNotificationsSnapshotRestorer(context)
-            this[KEY_DARK_MODE_SNAPSHOT_RESTORER] = getDarkModeSnapshotRestorer(context)
-            this[KEY_THEMED_ICON_SNAPSHOT_RESTORER] = getThemedIconSnapshotRestorer(context)
-            this[KEY_APP_GRID_SNAPSHOT_RESTORER] = getGridSnapshotRestorer(context)
-            this[KEY_COLOR_PICKER_SNAPSHOT_RESTORER] = colorPickerSnapshotRestorer.get()
-            this[KEY_CLOCKS_SNAPSHOT_RESTORER] = clockPickerSnapshotRestorer.get()
-        }
     }
 
     override fun getCustomizationPreferences(context: Context): CustomizationPreferences {
@@ -237,15 +203,6 @@ constructor(
                 .also { notificationSettingsInteractor = it }
     }
 
-    private fun getNotificationsSnapshotRestorer(context: Context): NotificationsSnapshotRestorer {
-        return notificationsSnapshotRestorer
-            ?: NotificationsSnapshotRestorer(
-                    interactor = getNotificationsInteractor(context = context),
-                    backgroundScope = bgScope,
-                )
-                .also { notificationsSnapshotRestorer = it }
-    }
-
     override fun getClockCarouselViewModelFactory(
         interactor: ClockPickerInteractor,
         clockViewFactory: ClockViewFactory,
@@ -291,30 +248,6 @@ constructor(
                     getUserEventLogger(),
                 )
                 .also { colorPickerViewModelFactory = it }
-    }
-
-    fun getDarkModeSnapshotRestorer(context: Context): DarkModeSnapshotRestorer {
-        val appContext = context.applicationContext
-        return darkModeSnapshotRestorer
-            ?: DarkModeSnapshotRestorer(
-                    context = appContext,
-                    manager = uiModeManager.get(),
-                    backgroundDispatcher = bgDispatcher,
-                )
-                .also { darkModeSnapshotRestorer = it }
-    }
-
-    protected fun getThemedIconSnapshotRestorer(context: Context): ThemedIconSnapshotRestorer {
-        val optionProvider = ThemedIconSwitchProvider.getInstance(context)
-        return themedIconSnapshotRestorer
-            ?: ThemedIconSnapshotRestorer(
-                    isActivated = { optionProvider.isThemedIconEnabled },
-                    setActivated = { isActivated ->
-                        optionProvider.isThemedIconEnabled = isActivated
-                    },
-                    interactor = getThemedIconInteractor(),
-                )
-                .also { themedIconSnapshotRestorer = it }
     }
 
     protected fun getThemedIconInteractor(): ThemedIconInteractor {
@@ -363,48 +296,13 @@ constructor(
                             isGridApplyButtonEnabled =
                                 BaseFlags.get().isGridApplyButtonEnabled(appContext),
                         ),
-                    snapshotRestorer = { getGridSnapshotRestorer(appContext) },
                 )
                 .also { gridInteractor = it }
-    }
-
-    private fun getGridSnapshotRestorer(context: Context): GridSnapshotRestorer {
-        return gridSnapshotRestorer
-            ?: GridSnapshotRestorer(interactor = getGridInteractor(context)).also {
-                gridSnapshotRestorer = it
-            }
     }
 
     override fun isCurrentSelectedColorPreset(context: Context): Boolean {
         val colorManager =
             ColorCustomizationManager.getInstance(context, OverlayManagerCompat(context))
         return COLOR_SOURCE_PRESET == colorManager.currentColorSource
-    }
-
-    companion object {
-        @JvmStatic
-        private val KEY_QUICK_AFFORDANCE_SNAPSHOT_RESTORER =
-            WallpaperPicker2Injector.MIN_SNAPSHOT_RESTORER_KEY
-        @JvmStatic
-        private val KEY_WALLPAPER_SNAPSHOT_RESTORER = KEY_QUICK_AFFORDANCE_SNAPSHOT_RESTORER + 1
-        @JvmStatic
-        private val KEY_NOTIFICATIONS_SNAPSHOT_RESTORER = KEY_WALLPAPER_SNAPSHOT_RESTORER + 1
-        @JvmStatic
-        private val KEY_DARK_MODE_SNAPSHOT_RESTORER = KEY_NOTIFICATIONS_SNAPSHOT_RESTORER + 1
-        @JvmStatic
-        private val KEY_THEMED_ICON_SNAPSHOT_RESTORER = KEY_DARK_MODE_SNAPSHOT_RESTORER + 1
-        @JvmStatic
-        private val KEY_APP_GRID_SNAPSHOT_RESTORER = KEY_THEMED_ICON_SNAPSHOT_RESTORER + 1
-        @JvmStatic
-        private val KEY_COLOR_PICKER_SNAPSHOT_RESTORER = KEY_APP_GRID_SNAPSHOT_RESTORER + 1
-        @JvmStatic private val KEY_CLOCKS_SNAPSHOT_RESTORER = KEY_COLOR_PICKER_SNAPSHOT_RESTORER + 1
-
-        /**
-         * When this injector is overridden, this is the minimal value that should be used by
-         * restorers returns in [getSnapshotRestorers].
-         *
-         * It should always be greater than the biggest restorer key.
-         */
-        @JvmStatic protected val MIN_SNAPSHOT_RESTORER_KEY = KEY_CLOCKS_SNAPSHOT_RESTORER + 1
     }
 }

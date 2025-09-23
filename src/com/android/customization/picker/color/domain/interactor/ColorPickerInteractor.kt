@@ -26,12 +26,7 @@ import kotlinx.coroutines.flow.onEach
 
 /** Single entry-point for all application state and business logic related to system color. */
 @Singleton
-class ColorPickerInteractor
-@Inject
-constructor(
-    private val repository: ColorPickerRepository,
-    private val snapshotRestorer: ColorPickerSnapshotRestorer,
-) {
+class ColorPickerInteractor @Inject constructor(private val repository: ColorPickerRepository) {
     val isApplyingSystemColor = repository.isApplyingSystemColor
 
     /**
@@ -55,7 +50,6 @@ constructor(
             // actually updated until the picker restarts. Wait to do so when updated color options
             // become available
             repository.select(colorOptionModel)
-            snapshotRestorer.storeSnapshot(colorOptionModel)
         } catch (e: Exception) {
             _selectingColorOption.value = null
         }

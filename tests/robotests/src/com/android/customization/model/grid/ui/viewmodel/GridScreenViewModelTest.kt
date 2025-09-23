@@ -21,15 +21,11 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.customization.model.grid.data.repository.FakeGridRepository
 import com.android.customization.picker.grid.domain.interactor.GridInteractor
-import com.android.customization.picker.grid.domain.interactor.GridSnapshotRestorer
 import com.android.customization.picker.grid.ui.viewmodel.GridIconViewModel
 import com.android.customization.picker.grid.ui.viewmodel.GridScreenViewModel
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -38,7 +34,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @SmallTest
 @RunWith(JUnit4::class)
 class GridScreenViewModelTest {
@@ -46,26 +41,15 @@ class GridScreenViewModelTest {
     private lateinit var underTest: GridScreenViewModel
     private lateinit var testScope: TestScope
     private lateinit var interactor: GridInteractor
-    private lateinit var store: FakeSnapshotStore
 
     @Before
     fun setUp() {
         testScope = TestScope()
-        store = FakeSnapshotStore()
         interactor =
             GridInteractor(
                 applicationScope = testScope.backgroundScope,
                 repository =
-                    FakeGridRepository(
-                        scope = testScope.backgroundScope,
-                        initialOptionCount = 4,
-                    ),
-                snapshotRestorer = {
-                    GridSnapshotRestorer(
-                            interactor = interactor,
-                        )
-                        .apply { runBlocking { setUpSnapshotRestorer(store) } }
-                }
+                    FakeGridRepository(scope = testScope.backgroundScope, initialOptionCount = 4),
             )
 
         underTest =

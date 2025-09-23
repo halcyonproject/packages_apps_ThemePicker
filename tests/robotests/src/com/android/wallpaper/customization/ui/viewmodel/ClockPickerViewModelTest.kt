@@ -21,7 +21,6 @@ import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.clock.data.repository.FakeClockPickerRepository
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
-import com.android.customization.picker.clock.domain.interactor.ClockPickerSnapshotRestorer
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockColorViewModel
@@ -36,7 +35,6 @@ import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.data.repository.CustomizationRuntimeValuesRepository
 import com.android.wallpaper.picker.customization.ui.viewmodel.FloatingToolbarTabViewModel
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -46,7 +44,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
@@ -85,10 +82,6 @@ class ClockPickerViewModelTest {
         val clockPickerInteractor =
             ClockPickerInteractor(
                 repository = repository,
-                snapshotRestorer =
-                    ClockPickerSnapshotRestorer(repository = repository).apply {
-                        runBlocking { setUpSnapshotRestorer(store = FakeSnapshotStore()) }
-                    },
                 CustomizationRuntimeValuesRepository(customizationProviderClient),
             )
         val colorPickerRepository = FakeColorPickerRepository2()
