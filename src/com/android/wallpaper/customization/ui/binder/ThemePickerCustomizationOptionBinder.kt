@@ -37,7 +37,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.customization.model.color.ColorOptionImpl
-import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView.Companion.addClockViews
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
@@ -47,7 +46,6 @@ import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewMo
 import com.android.customization.picker.icon.ui.util.IconStyleViewUtil
 import com.android.customization.picker.settings.ui.binder.ColorContrastSectionViewBinder2
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockAxisStyle
-import com.android.systemui.shared.Flags
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.customization.ui.compose.ColorFloatingSheet
@@ -741,39 +739,23 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                         )
                         .collect { (clock, size, showClock) ->
                             clockHostView.removeAllViews()
-                            // For new customization picker, we should get views from clocklayout
-                            if (Flags.newCustomizationPickerUi()) {
-                                if (showClock) {
-                                    clockViewFactory.getController(clock.clockId)?.run {
-                                        val cs = ConstraintSet()
-                                        clockHostView.addClockViews(this, size, cs)
-                                        val cfg = clockPickerViewModel.buildPreviewConfig(context)
-                                        largeClock.layout.applyPreviewConstraints(cfg, cs)
-                                        smallClock.layout.applyPreviewConstraints(cfg, cs)
-                                        cs.applyTo(clockHostView)
-                                    }
-                                    clockViewFactory.updateTimeFormat(clock.clockId)
+                            if (showClock) {
+                                clockViewFactory.getController(clock.clockId)?.run {
+                                    val cs = ConstraintSet()
+                                    clockHostView.addClockViews(this, size, cs)
+                                    val cfg = clockPickerViewModel.buildPreviewConfig(context)
+                                    largeClock.layout.applyPreviewConstraints(cfg, cs)
+                                    smallClock.layout.applyPreviewConstraints(cfg, cs)
+                                    cs.applyTo(clockHostView)
                                 }
-                                val shouldFadeIn = (isClockCurrentlyShown == false) && showClock
-                                if (shouldFadeIn) {
-                                    clockHostView.alpha = 0F
-                                    clockHostView.animateToAlpha(1F)
-                                }
-                                isClockCurrentlyShown = showClock
-                            } else {
-                                val clockView =
-                                    when (size) {
-                                        ClockSize.DYNAMIC ->
-                                            clockViewFactory.getLargeView(clock.clockId)
-                                        ClockSize.SMALL ->
-                                            clockViewFactory.getSmallView(clock.clockId)
-                                    }
-                                // The clock view might still be attached to an existing parent.
-                                // Detach
-                                // before adding to another parent.
-                                (clockView.parent as? ViewGroup)?.removeView(clockView)
-                                clockHostView.addView(clockView)
+                                clockViewFactory.updateTimeFormat(clock.clockId)
                             }
+                            val shouldFadeIn = (isClockCurrentlyShown == false) && showClock
+                            if (shouldFadeIn) {
+                                clockHostView.alpha = 0F
+                                clockHostView.animateToAlpha(1F)
+                            }
+                            isClockCurrentlyShown = showClock
                         }
                 }
 
