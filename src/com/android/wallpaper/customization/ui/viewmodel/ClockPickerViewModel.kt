@@ -409,19 +409,19 @@ constructor(
 
     // Note that this flow can emit as frequently as user drags the color slider.
     val previewingSeedColor: Flow<Int?> =
-        combine(previewingClockColorId, previewingColorSliderProgress) {
-            clockColorId,
-            colorSliderProgress ->
+        combine(
+            clockPickerInteractor.seedColor,
+            previewingClockColorId,
+            previewingColorSliderProgress,
+        ) { seedColor, clockColorId, colorSliderProgress ->
             val clockColorViewModel =
                 if (clockColorId == DEFAULT_CLOCK_COLOR_ID) null else colorMap[clockColorId]
-            if (clockColorViewModel == null) {
-                null
-            } else {
+            clockColorViewModel?.let {
                 blendColorWithTone(
                     color = clockColorViewModel.color,
                     colorTone = clockColorViewModel.getColorTone(colorSliderProgress),
                 )
-            }
+            } ?: seedColor // Fallback to current clock seed color if clockColorViewModel is null
         }
 
     val clockColorOptions: Flow<List<OptionItemViewModel2<ColorOptionIconViewModel>>> =
