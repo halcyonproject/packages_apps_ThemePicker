@@ -19,6 +19,7 @@ package com.android.wallpaper.customization.ui.viewmodel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import com.android.customization.module.logging.ThemesUserEventLogger
@@ -29,6 +30,7 @@ import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordance
 import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_START
 import com.android.systemui.shared.quickaffordance.shared.model.KeyguardPreviewConstants.KEYGUARD_QUICK_AFFORDANCE_ID_NONE
 import com.android.themepicker.R
+import com.android.wallpaper.picker.broadcast.BroadcastDispatcher
 import com.android.wallpaper.picker.common.button.ui.viewmodel.ButtonStyle
 import com.android.wallpaper.picker.common.button.ui.viewmodel.ButtonViewModel
 import com.android.wallpaper.picker.common.dialog.ui.viewmodel.DialogViewModel
@@ -54,6 +56,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class KeyguardQuickAffordancePickerViewModel2
 @AssistedInject
@@ -61,9 +64,23 @@ constructor(
     @ApplicationContext private val applicationContext: Context,
     private val quickAffordanceInteractor: KeyguardQuickAffordancePickerInteractor,
     private val logger: ThemesUserEventLogger,
+    private val broadcastDispatcher: BroadcastDispatcher,
     @Assisted private val viewModelScope: CoroutineScope,
     @Assisted initialDeepLinkShortcutSlotId: String?,
 ) {
+
+    init {
+        val localeChangeReceiver =
+            broadcastDispatcher.broadcastFlow(IntentFilter(Intent.ACTION_LOCALE_CHANGED))
+
+        viewModelScope.launch {
+            localeChangeReceiver.collect {
+                quickAffordanceInteractor.refreshDueToLocaleChange()
+                quickAffordances = initiateQuickAffordances()
+            }
+        }
+    }
+
     /** A locally-selected slot, if the user ever switched from the original one. */
     private val _selectedSlotId: MutableStateFlow<String?> =
         MutableStateFlow(initialDeepLinkShortcutSlotId)
@@ -179,7 +196,9 @@ constructor(
         }
 
     /** The list of all available quick affordances for the selected slot. */
-    val quickAffordances: Flow<List<OptionItemViewModel2<Icon>>> =
+    var quickAffordances: Flow<List<OptionItemViewModel2<Icon>>> = initiateQuickAffordances()
+
+    private fun initiateQuickAffordances() =
         quickAffordanceInteractor.affordances.map { affordances ->
             val isNoneSelected =
                 combine(selectedSlotId, previewingQuickAffordances) {
