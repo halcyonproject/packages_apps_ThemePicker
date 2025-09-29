@@ -19,12 +19,14 @@ package com.android.customization.model.picker.quickaffordance.data.repository
 
 import androidx.test.filters.SmallTest
 import com.android.customization.picker.quickaffordance.data.repository.KeyguardQuickAffordancePickerRepository
+import com.android.systemui.shared.customization.data.content.CustomizationProviderClient
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -38,7 +40,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class KeyguardQuickAffordancePickerRepositoryTest {
 
-    private lateinit var underTest: KeyguardQuickAffordancePickerRepository
+    private lateinit var repository: KeyguardQuickAffordancePickerRepository
 
     private lateinit var testScope: TestScope
     private lateinit var client: FakeCustomizationProviderClient
@@ -50,21 +52,33 @@ class KeyguardQuickAffordancePickerRepositoryTest {
         testScope = TestScope(coroutineDispatcher)
         Dispatchers.setMain(coroutineDispatcher)
 
-        underTest =
+        repository =
             KeyguardQuickAffordancePickerRepository(
                 client = client,
                 mainScope = testScope.backgroundScope,
             )
     }
 
-    // We need at least one test to prevent Studio errors
-    @Test
-    fun creationSucceeds() {
-        assertThat(underTest).isNotNull()
-    }
-
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun localeChange_updateAffordances() {
+        assertThat(repository.affordances.value.size).isEqualTo(3)
+
+        client.addAffordance(
+            CustomizationProviderClient.Affordance(
+                id = "affordance_4",
+                name = "affordance_4",
+                iconResourceId = 4,
+            )
+        )
+
+        repository.refreshAffordancesDueToLocaleChange()
+        testScope.advanceUntilIdle()
+
+        assertThat(repository.affordances.value.size).isEqualTo(4)
     }
 }

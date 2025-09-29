@@ -17,6 +17,7 @@
 package com.android.wallpaper.customization.ui.viewmodel
 
 import android.content.Context
+import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
@@ -28,6 +29,7 @@ import com.android.systemui.shared.customization.data.content.FakeCustomizationP
 import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordanceSlots
 import com.android.systemui.shared.quickaffordance.shared.model.KeyguardPreviewConstants
 import com.android.themepicker.R
+import com.android.wallpaper.picker.broadcast.BroadcastDispatcher
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.ui.viewmodel.FloatingToolbarTabViewModel
@@ -62,10 +64,12 @@ class KeyguardQuickAffordancePickerViewModel2Test {
     private lateinit var testDispatcher: TestDispatcher
     private lateinit var testScope: TestScope
     private lateinit var client: FakeCustomizationProviderClient
+    private lateinit var broadcastDispatcher: BroadcastDispatcher
 
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
+        broadcastDispatcher = BroadcastDispatcher(context, Looper.getMainLooper())
         testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
         testScope = TestScope(testDispatcher)
@@ -85,6 +89,7 @@ class KeyguardQuickAffordancePickerViewModel2Test {
                 applicationContext = context,
                 quickAffordanceInteractor = quickAffordanceInteractor,
                 logger = logger,
+                broadcastDispatcher = broadcastDispatcher,
                 viewModelScope = testScope.backgroundScope,
                 initialDeepLinkShortcutSlotId = null,
             )
@@ -99,7 +104,6 @@ class KeyguardQuickAffordancePickerViewModel2Test {
     fun selectedSlotIdUpdates_whenClickingOnTabsAndCallingResetPreview() =
         testScope.runTest {
             val selectedSlotId = collectLastValue(underTest.selectedSlotId)
-
             val tabs = collectLastValue(underTest.tabs)
 
             // Default selected slot ID is bottom_start
