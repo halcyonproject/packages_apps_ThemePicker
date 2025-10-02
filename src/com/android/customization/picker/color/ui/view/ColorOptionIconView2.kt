@@ -161,7 +161,7 @@ class ColorOptionIconView2(context: Context, attrs: AttributeSet) :
     }
 
     companion object {
-        const val DEFAULT_PLACEHOLDER_COLOR = Color.BLACK
+        const val DEFAULT_PLACEHOLDER_COLOR = Color.TRANSPARENT
 
         fun Int.roundDownToEven(): Int {
             return if (this % 2 == 0) this else this - 1

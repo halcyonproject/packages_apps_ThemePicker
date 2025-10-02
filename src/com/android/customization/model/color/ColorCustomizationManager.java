@@ -327,6 +327,10 @@ public class ColorCustomizationManager implements CustomizationManager<ColorOpti
         mListener = listener;
     }
 
+    public ColorOptionsProvider getProvider() {
+        return mProvider;
+    }
+
     /**
      * A listener for listening to when ColorCustomizationManager is updated.
      */

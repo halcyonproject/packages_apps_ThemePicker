@@ -33,6 +33,7 @@ import com.android.customization.model.ResourceConstants.OVERLAY_CATEGORY_COLOR
 import com.android.customization.model.ResourceConstants.OVERLAY_CATEGORY_SYSTEM_PALETTE
 import com.android.customization.model.ResourcesApkProvider
 import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_HOME
+import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_LOCK
 import com.android.customization.model.color.ColorUtils.toColorString
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
@@ -185,6 +186,32 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
             builder.isDefault = isDefault
             builder.type = ColorType.WALLPAPER_COLOR
             bundles.add(builder.build())
+        }
+    }
+
+    fun getColorPreview(
+        colorScheme: ColorScheme,
+        colorSource: String?,
+        darkTheme: Boolean,
+    ): IntArray {
+        return if (colorSource == COLOR_SOURCE_HOME || colorSource == COLOR_SOURCE_LOCK) {
+            if (darkTheme) {
+                getDarkColorPreview(colorScheme)
+            } else {
+                getLightColorPreview(colorScheme)
+            }
+        } else if (colorScheme.style == ThemeStyle.MONOCHROMATIC) {
+            if (darkTheme) {
+                getDarkMonochromePreview(colorScheme)
+            } else {
+                getLightMonochromePreview(colorScheme)
+            }
+        } else {
+            if (darkTheme) {
+                getDarkPresetColorPreview(colorScheme)
+            } else {
+                getLightPresetColorPreview(colorScheme)
+            }
         }
     }
 

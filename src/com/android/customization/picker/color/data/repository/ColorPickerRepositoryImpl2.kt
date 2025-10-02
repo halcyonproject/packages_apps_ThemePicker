@@ -18,14 +18,20 @@ package com.android.customization.picker.color.data.repository
 
 import android.app.WallpaperColors
 import android.app.WallpaperManager
+import android.content.theming.ThemeStyle
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.core.graphics.toColorInt
 import com.android.customization.model.CustomizationManager
+import com.android.customization.model.ResourceConstants
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
+import com.android.customization.model.color.ColorProvider
 import com.android.customization.picker.color.shared.model.ColorType
+import com.android.systemui.monet.ColorScheme
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.picker.customization.data.content.WallpaperClient
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
@@ -138,9 +144,54 @@ constructor(
                         }
                     }
                 }
-                return@combine null
+                return@combine getSettingsColorOption()
             }
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
+
+    private fun getSettingsColorOption(): ColorOption {
+        val overlays = colorManager.currentOverlays
+        val styleOrNull = colorManager.currentStyle
+        val style = styleOrNull?.let { ThemeStyle.valueOf(it) } ?: ThemeStyle.TONAL_SPOT
+        val source = colorManager.currentColorSource
+        val builder = ColorOptionImpl.Builder()
+        builder.source = source
+        builder.style = style
+        for (overlay in overlays) {
+            builder.addOverlayPackage(overlay.key, overlay.value)
+        }
+        val seedColorStr = overlays[ResourceConstants.OVERLAY_CATEGORY_SYSTEM_PALETTE]
+        if (seedColorStr != null && !seedColorStr.startsWith("#")) {
+            val seedColorInt = "#$seedColorStr".toColorInt()
+            builder.lightColors =
+                (colorManager.provider as ColorProvider).getColorPreview(
+                    ColorScheme(seedColorInt, /* darkTheme= */ false, style),
+                    source,
+                    /* darkTheme= */ false,
+                )
+            builder.darkColors =
+                (colorManager.provider as ColorProvider).getColorPreview(
+                    ColorScheme(seedColorInt, /* darkTheme= */ true, style),
+                    source,
+                    /* darkTheme= */ true,
+                )
+        } else {
+            builder.lightColors =
+                intArrayOf(
+                    Color.TRANSPARENT,
+                    Color.TRANSPARENT,
+                    Color.TRANSPARENT,
+                    Color.TRANSPARENT,
+                )
+            builder.darkColors =
+                intArrayOf(
+                    Color.TRANSPARENT,
+                    Color.TRANSPARENT,
+                    Color.TRANSPARENT,
+                    Color.TRANSPARENT,
+                )
+        }
+        return builder.build()
+    }
 
     override suspend fun select(colorOption: ColorOption): Boolean {
         return suspendCancellableCoroutine { continuation ->
