@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.color.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
@@ -23,7 +22,6 @@ import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
 import com.android.customization.picker.color.shared.model.ColorType
-import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.themepicker.R
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text

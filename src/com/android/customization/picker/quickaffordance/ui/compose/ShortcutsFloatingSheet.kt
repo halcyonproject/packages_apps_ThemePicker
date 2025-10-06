@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.compose
+package com.android.customization.picker.quickaffordance.ui.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -58,8 +58,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.compose.theme.PlatformTheme
 import com.android.compose.ui.graphics.painter.rememberDrawablePainter
+import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel2
 import com.android.themepicker.R
-import com.android.wallpaper.customization.ui.viewmodel.KeyguardQuickAffordancePickerViewModel2
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.customization.ui.viewmodel.FloatingToolbarTabViewModel
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
