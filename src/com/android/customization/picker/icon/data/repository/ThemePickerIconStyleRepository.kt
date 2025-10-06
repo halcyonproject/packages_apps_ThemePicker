@@ -29,10 +29,10 @@ import com.android.customization.module.logging.ThemesUserEventLoggerImpl.Compan
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
+import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
+import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
-import com.android.wallpaper.customization.ui.binder.ShapeIconViewBinder
-import com.android.wallpaper.customization.ui.view.ShapeTileDrawable
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.module.InjectorProvider
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon

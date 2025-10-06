@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.binder
+package com.android.customization.picker.icon.ui.binder
 
 import android.content.Context
 import android.content.pm.PackageManager.NameNotFoundException
@@ -23,8 +23,8 @@ import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.LifecycleOwner
-import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
-import com.android.wallpaper.customization.ui.view.ShapeTileDrawable
+import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
+import com.android.customization.picker.icon.ui.viewmodel.ShapeIconViewModel
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.customization.ui.binder.ColorUpdateBinder
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel

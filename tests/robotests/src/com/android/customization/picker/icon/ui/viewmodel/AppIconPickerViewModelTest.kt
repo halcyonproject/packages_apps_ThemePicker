@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.icon.ui.viewmodel
 
 import android.content.Context
 import android.stats.style.StyleEnums.APP_ICON_STYLE_THEMED
@@ -23,7 +23,6 @@ import androidx.test.filters.SmallTest
 import com.android.customization.model.grid.FakeShapeGridManager
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.grid.data.repository.ShapeRepository
-import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
 import com.android.customization.picker.icon.data.repository.FakeIconStyleRepository
 import com.android.customization.picker.icon.domain.interactor.AppIconInteractor
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle

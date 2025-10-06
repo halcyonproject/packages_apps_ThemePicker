@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.binder
+package com.android.customization.picker.icon.ui.binder
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -32,14 +32,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.customization.picker.common.ui.view.SingleRowListItemSpacing
-import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.ui.util.IconStyleViewUtil
+import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
+import com.android.customization.picker.icon.ui.viewmodel.AppIconPickerViewModel.Tab
+import com.android.customization.picker.icon.ui.viewmodel.ShapeIconViewModel
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
+import com.android.wallpaper.customization.ui.binder.FloatingSheetHeightAnimationBinder
+import com.android.wallpaper.customization.ui.binder.SwitchColorBinder
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_ICONS
-import com.android.wallpaper.customization.ui.view.ShapeTileDrawable
-import com.android.wallpaper.customization.ui.viewmodel.AppIconPickerViewModel.Tab
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsViewModel
 import com.android.wallpaper.picker.common.icon.ui.viewbinder.IconViewBinder
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon

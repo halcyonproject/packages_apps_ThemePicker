@@ -19,6 +19,8 @@ package com.android.wallpaper.customization.ui.viewmodel
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel2
+import com.android.customization.picker.grid.ui.viewmodel.GridPickerViewModel
+import com.android.customization.picker.icon.ui.viewmodel.AppIconPickerViewModel
 import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
 import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel2
 import com.android.wallpaper.config.BaseFlags

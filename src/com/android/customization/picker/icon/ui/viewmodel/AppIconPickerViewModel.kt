@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.icon.ui.viewmodel
 
 import android.content.Context
 import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
 import android.util.Log
 import com.android.customization.model.grid.ShapeOptionModel
 import com.android.customization.module.logging.ThemesUserEventLogger
-import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
 import com.android.customization.picker.icon.domain.interactor.AppIconInteractor
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel

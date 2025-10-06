@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.icon.ui.viewmodel
 
-data class ShapeGridFloatingSheetHeightsViewModel(
-    val shapeContentHeight: Int? = null,
-    val gridContentHeight: Int? = null,
+import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
+import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
+
+/** View model representing information needed for the app icon entry point summary. */
+data class AppIconPickerSummaryViewModel(
+    val description: Text,
+    val iconShape: ShapeIconViewModel?,
+    val icon: Icon?,
+    val isThemed: Boolean,
 )

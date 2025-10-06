@@ -45,6 +45,9 @@ import com.android.customization.picker.color.ui.binder.ColorsFloatingSheetBinde
 import com.android.customization.picker.color.ui.compose.ColorFloatingSheet
 import com.android.customization.picker.color.ui.view.ColorOptionIconView2
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
+import com.android.customization.picker.grid.ui.binder.GridFloatingSheetBinder
+import com.android.customization.picker.icon.ui.binder.AppIconFloatingSheetBinder
+import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
 import com.android.customization.picker.icon.ui.util.IconStyleViewUtil
 import com.android.customization.picker.quickaffordance.ui.binder.ShortcutFloatingSheetBinder
 import com.android.customization.picker.quickaffordance.ui.compose.ShortcutsFloatingSheet
