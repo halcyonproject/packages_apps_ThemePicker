@@ -5,12 +5,10 @@ import com.android.customization.picker.clock.data.repository.FakeClockPickerRep
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.wallpaper.picker.customization.data.repository.CustomizationRuntimeValuesRepository
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -37,10 +35,6 @@ class ClockPickerInteractorTest {
         underTest =
             ClockPickerInteractor(
                 repository = repository,
-                snapshotRestorer =
-                    ClockPickerSnapshotRestorer(repository = repository).apply {
-                        runBlocking { setUpSnapshotRestorer(store = FakeSnapshotStore()) }
-                    },
                 CustomizationRuntimeValuesRepository(customizationProviderClient),
             )
     }

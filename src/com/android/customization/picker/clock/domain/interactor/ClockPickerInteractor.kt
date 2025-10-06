@@ -41,7 +41,6 @@ class ClockPickerInteractor
 @Inject
 constructor(
     private val repository: ClockPickerRepository,
-    private val snapshotRestorer: ClockPickerSnapshotRestorer,
     private val customizationRuntimeValuesRepository: CustomizationRuntimeValuesRepository,
 ) {
 
@@ -121,10 +120,6 @@ constructor(
     suspend fun getUdfpsLocation() = customizationRuntimeValuesRepository.getUdfpsLocation()
 
     private suspend fun setClockOption(clockSnapshotModel: ClockSnapshotModel) {
-        // [ClockCarouselViewModel] is monitoring the [ClockPickerInteractor.setSelectedClock] job,
-        // so it needs to finish last.
-        storeCurrentClockOption(clockSnapshotModel)
-
         clockSnapshotModel.clockSize?.let { repository.setClockSize(it) }
         clockSnapshotModel.colorToneProgress?.let {
             repository.setClockColor(
@@ -135,11 +130,6 @@ constructor(
         }
         clockSnapshotModel.clockId?.let { repository.setSelectedClock(it) }
         clockSnapshotModel.axisSettings?.let { repository.setClockAxisStyle(it) }
-    }
-
-    private suspend fun storeCurrentClockOption(clockSnapshotModel: ClockSnapshotModel) {
-        val option = getCurrentClockToRestore(clockSnapshotModel)
-        snapshotRestorer.storeSnapshot(option)
     }
 
     /**

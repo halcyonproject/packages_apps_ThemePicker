@@ -20,13 +20,10 @@ package com.android.customization.model.grid.domain.interactor
 import androidx.test.filters.SmallTest
 import com.android.customization.model.grid.data.repository.FakeGridRepository
 import com.android.customization.picker.grid.domain.interactor.GridInteractor
-import com.android.customization.picker.grid.domain.interactor.GridSnapshotRestorer
 import com.android.customization.picker.grid.shared.model.GridOptionItemsModel
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -43,23 +40,13 @@ class GridInteractorTest {
     private lateinit var underTest: GridInteractor
     private lateinit var testScope: TestScope
     private lateinit var repository: FakeGridRepository
-    private lateinit var store: FakeSnapshotStore
 
     @Before
     fun setUp() {
         testScope = TestScope()
         repository = FakeGridRepository(scope = testScope.backgroundScope, initialOptionCount = 3)
-        store = FakeSnapshotStore()
         underTest =
-            GridInteractor(
-                applicationScope = testScope.backgroundScope,
-                repository = repository,
-                snapshotRestorer = {
-                    GridSnapshotRestorer(interactor = underTest).apply {
-                        runBlocking { setUpSnapshotRestorer(store = store) }
-                    }
-                },
-            )
+            GridInteractor(applicationScope = testScope.backgroundScope, repository = repository)
     }
 
     @Test
@@ -74,7 +61,6 @@ class GridInteractorTest {
                 assertThat(loaded.options[2].isSelected.value).isFalse()
             }
 
-            val storedSnapshot = store.retrieve()
             (options() as? GridOptionItemsModel.Loaded)?.let { loaded ->
                 loaded.options[1].onSelected()
             }
@@ -86,7 +72,6 @@ class GridInteractorTest {
                 assertThat(loaded.options[1].isSelected.value).isTrue()
                 assertThat(loaded.options[2].isSelected.value).isFalse()
             }
-            assertThat(store.retrieve()).isNotEqualTo(storedSnapshot)
         }
 
     @Test
@@ -98,12 +83,10 @@ class GridInteractorTest {
                 assertThat(loaded.options).hasSize(3)
             }
 
-            val storedSnapshot = store.retrieve()
             (options() as? GridOptionItemsModel.Loaded)?.let { loaded ->
                 underTest.setSelectedOption(loaded.options[1])
                 runCurrent()
                 assertThat(underTest.getSelectedOption()?.name).isEqualTo(loaded.options[1].name)
-                assertThat(store.retrieve()).isNotEqualTo(storedSnapshot)
             }
         }
 
@@ -116,15 +99,12 @@ class GridInteractorTest {
                 assertThat(loaded.options).hasSize(3)
             }
 
-            val storedSnapshot = store.retrieve()
             repository.setOptions(4)
 
             assertThat(options()).isInstanceOf(GridOptionItemsModel.Loaded::class.java)
             (options() as? GridOptionItemsModel.Loaded)?.let { loaded ->
                 assertThat(loaded.options).hasSize(4)
             }
-            // External updates do not record a new snapshot with the undo system.
-            assertThat(store.retrieve()).isEqualTo(storedSnapshot)
         }
 
     @Test
