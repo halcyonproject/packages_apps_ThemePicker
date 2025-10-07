@@ -654,6 +654,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                         ColorFloatingSheet(
                             optionsViewModel.darkModeViewModel.previewingIsDarkMode,
                             optionsViewModel.colorPickerViewModel2.allColorOptions,
+                            optionsViewModel.colorPickerViewModel2.previewingColorOption,
                         )
                     }
                 }
