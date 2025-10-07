@@ -38,7 +38,6 @@ class KeyguardQuickAffordancePickerInteractor
 constructor(
     private val repository: KeyguardQuickAffordancePickerRepository,
     private val client: CustomizationProviderClient,
-    private val snapshotRestorer: KeyguardQuickAffordanceSnapshotRestorer,
 ) {
     /** List of slots available on the device. */
     val slots: Flow<List<SlotModel>> = repository.slots
@@ -65,15 +64,11 @@ constructor(
      */
     suspend fun select(slotId: String, affordanceId: String) {
         client.insertSelection(slotId = slotId, affordanceId = affordanceId)
-
-        snapshotRestorer.storeSnapshot()
     }
 
     /** Unselects all affordances from the slot with the given ID. */
     suspend fun unselectAllFromSlot(slotId: String) {
         client.deleteAllSelections(slotId = slotId)
-
-        snapshotRestorer.storeSnapshot()
     }
 
     /** Unselects all affordances from all slots. */

@@ -20,7 +20,6 @@ package com.android.customization.model.picker.quickaffordance.domain.interactor
 import androidx.test.filters.SmallTest
 import com.android.customization.picker.quickaffordance.data.repository.KeyguardQuickAffordancePickerRepository
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
-import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordanceSnapshotRestorer
 import com.android.customization.picker.quickaffordance.shared.model.KeyguardQuickAffordancePickerSelectionModel
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordanceSlots
@@ -63,7 +62,6 @@ class KeyguardQuickAffordancePickerInteractorTest {
                         mainScope = testScope.backgroundScope,
                     ),
                 client = client,
-                snapshotRestorer = KeyguardQuickAffordanceSnapshotRestorer(client),
             )
     }
 
@@ -87,7 +85,7 @@ class KeyguardQuickAffordancePickerInteractorTest {
                         KeyguardQuickAffordancePickerSelectionModel(
                             slotId = KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_START,
                             affordanceId = FakeCustomizationProviderClient.AFFORDANCE_1,
-                        ),
+                        )
                     )
                 )
 
@@ -101,7 +99,7 @@ class KeyguardQuickAffordancePickerInteractorTest {
                         KeyguardQuickAffordancePickerSelectionModel(
                             slotId = KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_START,
                             affordanceId = FakeCustomizationProviderClient.AFFORDANCE_2,
-                        ),
+                        )
                     )
                 )
         }
@@ -124,9 +122,7 @@ class KeyguardQuickAffordancePickerInteractorTest {
                 affordanceId = FakeCustomizationProviderClient.AFFORDANCE_3,
             )
 
-            underTest.unselectAllFromSlot(
-                slotId = KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_END,
-            )
+            underTest.unselectAllFromSlot(slotId = KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_END)
 
             assertThat(selections()).isEmpty()
         }

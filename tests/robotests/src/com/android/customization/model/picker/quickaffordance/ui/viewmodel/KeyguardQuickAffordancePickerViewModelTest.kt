@@ -25,7 +25,6 @@ import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.quickaffordance.data.repository.KeyguardQuickAffordancePickerRepository
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
-import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordanceSnapshotRestorer
 import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel
 import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordanceSlotViewModel
 import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordanceSummaryViewModel
@@ -130,7 +129,6 @@ class KeyguardQuickAffordancePickerViewModelTest {
                         mainScope = testScope.backgroundScope,
                     ),
                 client = client,
-                snapshotRestorer = KeyguardQuickAffordanceSnapshotRestorer(client),
             )
         wallpaperInteractor =
             WallpaperInteractor(
