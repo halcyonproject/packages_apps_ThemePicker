@@ -23,7 +23,6 @@ import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.quickaffordance.data.repository.KeyguardQuickAffordancePickerRepository
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
-import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordanceSnapshotRestorer
 import com.android.systemui.shared.customization.data.content.CustomizationProviderClient
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordanceSlots
@@ -82,7 +81,6 @@ class KeyguardQuickAffordancePickerViewModel2Test {
                         mainScope = testScope.backgroundScope,
                     ),
                 client = client,
-                snapshotRestorer = KeyguardQuickAffordanceSnapshotRestorer(client),
             )
         underTest =
             KeyguardQuickAffordancePickerViewModel2(
