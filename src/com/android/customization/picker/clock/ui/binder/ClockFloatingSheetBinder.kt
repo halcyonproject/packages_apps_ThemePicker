@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.binder
+package com.android.customization.picker.clock.ui.binder
 
 import android.content.Context
 import android.view.View
@@ -25,7 +25,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -35,16 +34,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
+import com.android.customization.picker.clock.ui.viewmodel.ClockFloatingSheetHeightsViewModel
+import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.ClockStyleModel
+import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.Tab
 import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder2
 import com.android.customization.picker.color.ui.view.ColorOptionIconView2
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.customization.picker.common.ui.view.SingleRowListItemSpacing
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
+import com.android.wallpaper.customization.ui.binder.FloatingSheetHeightAnimationBinder
+import com.android.wallpaper.customization.ui.binder.SliderColorBinder
+import com.android.wallpaper.customization.ui.binder.SwitchColorBinder
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerLockCustomizationOption.CLOCK
-import com.android.wallpaper.customization.ui.viewmodel.ClockFloatingSheetHeightsViewModel
-import com.android.wallpaper.customization.ui.viewmodel.ClockPickerViewModel.ClockStyleModel
-import com.android.wallpaper.customization.ui.viewmodel.ClockPickerViewModel.Tab
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsViewModel
 import com.android.wallpaper.picker.category.ui.binder.SectionsBinder.removeItemDecorations
 import com.android.wallpaper.picker.customization.ui.binder.ColorUpdateBinder

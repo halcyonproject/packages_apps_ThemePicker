@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.clock.ui.viewmodel
 
 import android.content.Context
 import androidx.test.filters.SmallTest
@@ -23,14 +23,12 @@ import com.android.customization.picker.clock.data.repository.FakeClockPickerRep
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
-import com.android.customization.picker.clock.ui.viewmodel.ClockColorViewModel
-import com.android.customization.picker.clock.ui.viewmodel.ClockSettingsViewModel
+import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.Tab
 import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
 import com.android.systemui.plugins.keyguard.ui.clocks.AxisPresetConfig.IndexedStyle
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.themepicker.R
-import com.android.wallpaper.customization.ui.viewmodel.ClockPickerViewModel.Tab
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.data.repository.CustomizationRuntimeValuesRepository

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The Android Open Source Project
+ * Copyright (C) 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.settings.ui.viewmodel
 
-/** Data class representing [com.google.android.material.slider]'s configuration. */
-data class ClockAxisPresetSliderViewModel(
-    val valueFrom: Float,
-    val valueTo: Float,
-    val stepSize: Float,
-    val onSliderStopTrackingTouch: (value: Float) -> Unit,
-)
+import com.android.customization.picker.settings.domain.interactor.ColorContrastSectionInteractor
+import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
+
+@ViewModelScoped
+class ColorContrastSectionViewModel2
+@Inject
+constructor(colorContrastSectionInteractor: ColorContrastSectionInteractor) {
+    val contrast = colorContrastSectionInteractor.contrast
+}

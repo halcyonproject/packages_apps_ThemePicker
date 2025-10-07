@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.clock.ui.viewmodel
 
-import com.android.customization.picker.settings.domain.interactor.ColorContrastSectionInteractor
-import dagger.hilt.android.scopes.ViewModelScoped
-import javax.inject.Inject
-
-@ViewModelScoped
-class ColorContrastSectionViewModel2
-@Inject
-constructor(colorContrastSectionInteractor: ColorContrastSectionInteractor) {
-    val contrast = colorContrastSectionInteractor.contrast
-}
+data class ClockFloatingSheetHeightsViewModel(
+    val clockStyleContentHeight: Int? = null,
+    val clockColorContentHeight: Int? = null,
+    val clockSizeContentHeight: Int? = null,
+    val axisPresetSliderHeight: Int? = null,
+)
