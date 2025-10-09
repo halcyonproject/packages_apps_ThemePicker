@@ -24,13 +24,9 @@ import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
-import com.android.customization.model.grid.GridOptionsManager
 import com.android.customization.model.theme.OverlayManagerCompat
-import com.android.customization.model.themedicon.data.repository.ThemeIconRepository
-import com.android.customization.model.themedicon.domain.interactor.ThemedIconInteractor
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
@@ -39,18 +35,8 @@ import com.android.customization.picker.clock.ui.viewmodel.ClockCarouselViewMode
 import com.android.customization.picker.clock.ui.viewmodel.ClockSettingsViewModel
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
-import com.android.customization.picker.grid.data.repository.GridRepositoryImpl
-import com.android.customization.picker.grid.domain.interactor.GridInteractor
-import com.android.customization.picker.grid.ui.viewmodel.GridScreenViewModel
-import com.android.customization.picker.notifications.ui.viewmodel.NotificationSectionViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
-import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel
 import com.android.systemui.shared.clocks.ClockRegistry
-import com.android.systemui.shared.notifications.data.repository.NotificationSettingsRepository
-import com.android.systemui.shared.notifications.domain.interactor.NotificationSettingsInteractor
-import com.android.systemui.shared.settings.data.repository.SecureSettingsRepository
-import com.android.systemui.shared.settings.data.repository.SystemSettingsRepository
-import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.module.NetworkStatusNotifier
 import com.android.wallpaper.module.PackageStatusNotifier
 import com.android.wallpaper.module.PartnerProvider
@@ -86,8 +72,6 @@ constructor(
     private val themesUserEventLogger: Lazy<ThemesUserEventLogger>,
     private val colorPickerInteractor: Lazy<ColorPickerInteractor>,
     private val clockRegistry: Lazy<ClockRegistry>,
-    private val secureSettingsRepository: Lazy<SecureSettingsRepository>,
-    private val systemSettingsRepository: Lazy<SystemSettingsRepository>,
     private val clockPickerInteractor: Lazy<ClockPickerInteractor>,
     displayUtils: Lazy<DisplayUtils>,
     requester: Lazy<Requester>,
@@ -120,18 +104,10 @@ constructor(
         wallpaperRefresher,
     ),
     CustomizationInjector {
-    private var keyguardQuickAffordancePickerViewModelFactory:
-        KeyguardQuickAffordancePickerViewModel.Factory? =
-        null
     private var clockCarouselViewModelFactory: ClockCarouselViewModel.Factory? = null
     private var clockViewFactory: ClockViewFactory? = null
-    private var notificationSettingsInteractor: NotificationSettingsInteractor? = null
-    private var notificationSectionViewModelFactory: NotificationSectionViewModel.Factory? = null
     private var colorPickerViewModelFactory: ColorPickerViewModel.Factory? = null
-    private var themedIconInteractor: ThemedIconInteractor? = null
     private var clockSettingsViewModelFactory: ClockSettingsViewModel.Factory? = null
-    private var gridInteractor: GridInteractor? = null
-    private var gridScreenViewModelFactory: GridScreenViewModel.Factory? = null
 
     override fun getDeepLinkRedirectIntent(context: Context, uri: Uri): Intent {
         val intent = Intent()
@@ -162,45 +138,6 @@ constructor(
         context: Context
     ): KeyguardQuickAffordancePickerInteractor {
         return keyguardQuickAffordancePickerInteractor.get()
-    }
-
-    fun getKeyguardQuickAffordancePickerViewModelFactory(
-        context: Context
-    ): KeyguardQuickAffordancePickerViewModel.Factory {
-        return keyguardQuickAffordancePickerViewModelFactory
-            ?: KeyguardQuickAffordancePickerViewModel.Factory(
-                    context.applicationContext,
-                    getKeyguardQuickAffordancePickerInteractor(context),
-                    getWallpaperInteractor(context),
-                    getCurrentWallpaperInfoFactory(context),
-                    getUserEventLogger(),
-                )
-                .also { keyguardQuickAffordancePickerViewModelFactory = it }
-    }
-
-    fun getNotificationSectionViewModelFactory(
-        context: Context
-    ): NotificationSectionViewModel.Factory {
-        return notificationSectionViewModelFactory
-            ?: NotificationSectionViewModel.Factory(
-                    interactor = getNotificationsInteractor(context),
-                    logger = getUserEventLogger(),
-                )
-                .also { notificationSectionViewModelFactory = it }
-    }
-
-    private fun getNotificationsInteractor(context: Context): NotificationSettingsInteractor {
-        return notificationSettingsInteractor
-            ?: NotificationSettingsInteractor(
-                    repository =
-                        NotificationSettingsRepository(
-                            backgroundScope = bgScope,
-                            backgroundDispatcher = bgDispatcher,
-                            secureSettingsRepository = secureSettingsRepository.get(),
-                            systemSettingsRepository = systemSettingsRepository.get(),
-                        )
-                )
-                .also { notificationSettingsInteractor = it }
     }
 
     override fun getClockCarouselViewModelFactory(
@@ -250,13 +187,6 @@ constructor(
                 .also { colorPickerViewModelFactory = it }
     }
 
-    protected fun getThemedIconInteractor(): ThemedIconInteractor {
-        return themedIconInteractor
-            ?: ThemedIconInteractor(repository = ThemeIconRepository()).also {
-                themedIconInteractor = it
-            }
-    }
-
     override fun getClockSettingsViewModelFactory(
         context: Context,
         wallpaperColorsRepository: WallpaperColorsRepository,
@@ -271,33 +201,6 @@ constructor(
                     clockId?.let { clockPickerInteractor.get().isReactiveToTone(it) } ?: false
                 }
                 .also { clockSettingsViewModelFactory = it }
-    }
-
-    fun getGridScreenViewModelFactory(context: Context): ViewModelProvider.Factory {
-        return gridScreenViewModelFactory
-            ?: GridScreenViewModel.Factory(
-                    context = context,
-                    interactor = getGridInteractor(context),
-                )
-                .also { gridScreenViewModelFactory = it }
-    }
-
-    fun getGridInteractor(context: Context): GridInteractor {
-        val appContext = context.applicationContext
-        return gridInteractor
-            ?: GridInteractor(
-                    applicationScope = getApplicationCoroutineScope(),
-                    repository =
-                        GridRepositoryImpl(
-                            appContext = appContext,
-                            applicationScope = getApplicationCoroutineScope(),
-                            manager = GridOptionsManager.getInstance(context),
-                            backgroundDispatcher = bgDispatcher,
-                            isGridApplyButtonEnabled =
-                                BaseFlags.get().isGridApplyButtonEnabled(appContext),
-                        ),
-                )
-                .also { gridInteractor = it }
     }
 
     override fun isCurrentSelectedColorPreset(context: Context): Boolean {
