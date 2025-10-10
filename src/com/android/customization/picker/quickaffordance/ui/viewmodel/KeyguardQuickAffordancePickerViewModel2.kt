@@ -58,10 +58,10 @@ import kotlinx.coroutines.launch
 class KeyguardQuickAffordancePickerViewModel2
 @AssistedInject
 constructor(
+    broadcastDispatcher: BroadcastDispatcher,
     @ApplicationContext private val applicationContext: Context,
     private val quickAffordanceInteractor: KeyguardQuickAffordancePickerInteractor,
     private val logger: ThemesUserEventLogger,
-    private val broadcastDispatcher: BroadcastDispatcher,
     @Assisted private val viewModelScope: CoroutineScope,
     @Assisted initialDeepLinkShortcutSlotId: String?,
 ) {
@@ -84,14 +84,11 @@ constructor(
     /** The ID of the selected slot. */
     val selectedSlotId: StateFlow<String> =
         combine(quickAffordanceInteractor.slots, _selectedSlotId) { slots, selectedSlotIdOrNull ->
-                if (selectedSlotIdOrNull != null) {
-                    slots.first { slot -> slot.id == selectedSlotIdOrNull }
-                } else {
-                    // If we haven't yet selected a new slot locally, default to the first slot.
-                    slots[0]
-                }
+                // If we haven't yet selected a slot locally, default to the first slot.
+                selectedSlotIdOrNull?.let { slots.find { slot -> slot.id == selectedSlotIdOrNull } }
+                    ?: slots.firstOrNull()
             }
-            .map { selectedSlot -> selectedSlot.id }
+            .map { selectedSlot -> selectedSlot?.id ?: "" }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(),
