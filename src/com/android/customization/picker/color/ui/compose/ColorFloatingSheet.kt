@@ -33,7 +33,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -83,7 +82,7 @@ fun ColorFloatingSheet(
             }
 
         ColorPreviewTheme(scheme) {
-            val colorScheme = MaterialTheme.colorScheme
+            val colorScheme = LocalAnimatedColorScheme.current
             Box(
                 modifier =
                     modifier
@@ -144,7 +143,7 @@ fun ColorFloatingSheet(
 
 @Composable
 fun OptionListGroupDivider(modifier: Modifier = Modifier) {
-    val colorScheme = MaterialTheme.colorScheme
+    val colorScheme = LocalAnimatedColorScheme.current
     Box(
         modifier =
             modifier.width(10.dp).height(28.dp).padding(horizontal = 4.dp).drawBehind {
@@ -162,7 +161,7 @@ fun ColorOptionIcon(
     optionItem: OptionItemViewModel2<ColorOptionIconViewModel>,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
+    val colorScheme = LocalAnimatedColorScheme.current
     val coroutineScope = rememberCoroutineScope()
     val colorIcon = optionItem.payload
     val onClickState by optionItem.onClicked.collectAsStateWithLifecycle(initialValue = null)
