@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.packtheme.ui.viewmodel
 
 import android.content.ComponentName
 import android.content.Intent
