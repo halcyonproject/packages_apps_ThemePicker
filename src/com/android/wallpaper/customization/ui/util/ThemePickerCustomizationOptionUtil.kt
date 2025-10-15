@@ -16,7 +16,9 @@
 
 package com.android.wallpaper.customization.ui.util
 
+import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_ICONS
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerLockCustomizationOption.SHORTCUTS
+import com.android.wallpaper.model.Screen
 import com.android.wallpaper.picker.customization.ui.util.CustomizationOptionUtil
 import com.android.wallpaper.picker.customization.ui.util.CustomizationOptionUtil.CustomizationOption
 import com.android.wallpaper.picker.customization.ui.util.DefaultCustomizationOptionUtil
@@ -49,11 +51,21 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
         return defaultCustomizationOptionUtil.getCustomizationOptionFromDestination(destination)
             ?: when (destination) {
                 DESTINATION_QUICK_AFFORDANCES -> SHORTCUTS
+                DESTINATION_ICONS -> APP_ICONS
                 else -> null
             }
     }
 
+    override fun getScreenFromOption(option: CustomizationOption): Screen? {
+        return when (option) {
+            is ThemePickerLockCustomizationOption -> Screen.LOCK_SCREEN
+            is ThemePickerHomeCustomizationOption -> Screen.HOME_SCREEN
+            else -> null
+        }
+    }
+
     companion object {
         const val DESTINATION_QUICK_AFFORDANCES = "quick_affordances"
+        const val DESTINATION_ICONS = "icons"
     }
 }
