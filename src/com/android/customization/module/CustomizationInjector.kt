@@ -16,16 +16,9 @@
 package com.android.customization.module
 
 import android.content.Context
-import android.content.res.Resources
-import androidx.activity.ComponentActivity
-import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
-import com.android.customization.picker.clock.ui.view.ClockViewFactory
-import com.android.customization.picker.clock.ui.viewmodel.ClockCarouselViewModel
-import com.android.customization.picker.clock.ui.viewmodel.ClockSettingsViewModel
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
 import com.android.wallpaper.module.Injector
-import com.android.wallpaper.picker.customization.data.repository.WallpaperColorsRepository
 
 interface CustomizationInjector : Injector {
     fun getCustomizationPreferences(context: Context): CustomizationPreferences
@@ -35,17 +28,4 @@ interface CustomizationInjector : Injector {
     ): KeyguardQuickAffordancePickerInteractor
 
     fun getColorPickerViewModelFactory(context: Context): ColorPickerViewModel.Factory
-
-    fun getClockCarouselViewModelFactory(
-        interactor: ClockPickerInteractor,
-        clockViewFactory: ClockViewFactory,
-        resources: Resources,
-    ): ClockCarouselViewModel.Factory
-
-    fun getClockViewFactory(activity: ComponentActivity): ClockViewFactory
-
-    fun getClockSettingsViewModelFactory(
-        context: Context,
-        wallpaperColorsRepository: WallpaperColorsRepository,
-    ): ClockSettingsViewModel.Factory
 }

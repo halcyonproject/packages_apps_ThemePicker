@@ -17,6 +17,7 @@
 package com.android.customization.picker.clock.ui.viewmodel
 
 import android.content.Context
+import androidx.core.graphics.ColorUtils
 import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.clock.data.repository.FakeClockPickerRepository
@@ -489,7 +490,7 @@ class ClockPickerViewModelTest {
         val expectedSelectedColorModel = colorMap.values.first() // RED
         assertThat(previewingSeedColor())
             .isEqualTo(
-                ClockSettingsViewModel.blendColorWithTone(
+                blendColorWithTone(
                     expectedSelectedColorModel.color,
                     expectedSelectedColorModel.getColorTone(targetProgress),
                 )
@@ -623,5 +624,11 @@ class ClockPickerViewModelTest {
         onApply()?.invoke()
 
         assertThat(onApply()).isNull()
+    }
+
+    private fun blendColorWithTone(color: Int, colorTone: Double): Int {
+        val helperColorLab = DoubleArray(3)
+        ColorUtils.colorToLAB(color, helperColorLab)
+        return ColorUtils.LABToColor(colorTone, helperColorLab[1], helperColorLab[2])
     }
 }
