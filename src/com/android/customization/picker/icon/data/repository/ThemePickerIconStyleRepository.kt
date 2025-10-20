@@ -22,13 +22,17 @@ import android.content.Context
 import android.database.ContentObserver
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.net.Uri
+import android.stats.style.StyleEnums.APP_ICON_STYLE_THEMED
+import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
 import com.android.customization.module.CustomizationPreferences
+import com.android.customization.module.logging.ThemesUserEventLoggerImpl.Companion.TIMEOUT
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
+import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
+import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
 import com.android.themepicker.R
-import com.android.wallpaper.customization.ui.binder.ShapeIconViewBinder
-import com.android.wallpaper.customization.ui.view.ShapeTileDrawable
+import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.module.InjectorProvider
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
@@ -49,6 +53,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withTimeoutOrNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
@@ -75,12 +80,11 @@ constructor(
         }
         emit(previewUtils)
     }
-    val themedIconUri: Flow<Uri?> = previewUtilsFlow.map { it?.getUri(ICON_THEMED) }
 
     override val isCustomizationAvailable: Flow<Boolean> = previewUtilsFlow.map { it != null }
 
     override val isThemedIconActivated: Flow<Boolean> =
-        themedIconUri
+        previewUtilsFlow
             .flatMapLatest {
                 callbackFlow {
                     var disposableHandle: DisposableHandle? = null
@@ -88,16 +92,22 @@ constructor(
                         val contentObserver =
                             object : ContentObserver(null) {
                                 override fun onChange(selfChange: Boolean) {
-                                    trySend(getThemedIconEnabled(it))
+                                    trySend(getThemedIconEnabled(it.getUri(ICON_THEMED)))
                                 }
                             }
+                        // Icons can be set with ICON_THEMED or SET_ICON_THEMED URI
                         contentResolver.registerContentObserver(
-                            it,
+                            it.getUri(ICON_THEMED),
+                            /* notifyForDescendants= */ true,
+                            contentObserver,
+                        )
+                        contentResolver.registerContentObserver(
+                            it.getUri(SET_ICON_THEMED),
                             /* notifyForDescendants= */ true,
                             contentObserver,
                         )
 
-                        trySend(getThemedIconEnabled(it))
+                        trySend(getThemedIconEnabled(it.getUri(ICON_THEMED)))
 
                         disposableHandle = DisposableHandle {
                             contentResolver.unregisterContentObserver(contentObserver)
@@ -177,26 +187,48 @@ constructor(
     }
 
     override suspend fun setThemedIconEnabled(enabled: Boolean) {
-        themedIconUri.first()?.let {
+        previewUtilsFlow.first()?.let {
             val values = ContentValues()
             values.put(COL_ICON_THEMED_VALUE, enabled)
-            contentResolver.update(it, values, /* where= */ null, /* selectionArgs= */ null)
+            contentResolver.update(
+                it.getUri(ICON_THEMED),
+                values,
+                /* where= */ null,
+                /* selectionArgs= */ null,
+            )
         }
     }
 
     override suspend fun setIconStyle(iconStyle: IconStyle): Boolean {
-        themedIconUri.first()?.let {
+        previewUtilsFlow.first()?.let {
             val values = ContentValues()
             values.put(COL_ICON_THEMED_VALUE, iconStyle == ThemePickerIconStyle.MONOCHROME)
             val rowsUpdated =
-                contentResolver.update(it, values, /* where= */ null, /* selectionArgs= */ null)
+                contentResolver.update(
+                    it.getUri(ICON_THEMED),
+                    values,
+                    /* where= */ null,
+                    /* selectionArgs= */ null,
+                )
             return rowsUpdated > 0
         }
         return false
     }
 
+    override suspend fun getIconStyleForLogging(): Int {
+        if (BaseFlags.get().isExtendibleThemeManager()) {
+            val iconStyle = withTimeoutOrNull(TIMEOUT) { selectedIconStyle.first() }
+            return iconStyle?.loggingId ?: APP_ICON_STYLE_UNSPECIFIED
+        } else {
+            val isThemedIconActivated =
+                withTimeoutOrNull(TIMEOUT) { isThemedIconActivated.first() } ?: false
+            return if (isThemedIconActivated) APP_ICON_STYLE_THEMED else APP_ICON_STYLE_UNSPECIFIED
+        }
+    }
+
     companion object {
         const val ICON_THEMED = "icon_themed"
+        const val SET_ICON_THEMED = "set_icon_themed"
         const val COL_ICON_THEMED_VALUE = "boolean_value"
         private const val ENABLED = 1
     }

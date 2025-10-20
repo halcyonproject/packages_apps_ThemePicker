@@ -18,20 +18,17 @@ package com.android.customization.picker.clock.ui.view
 import android.app.Activity
 import android.app.WallpaperColors
 import android.app.WallpaperManager
-import android.graphics.Rect
 import android.util.Log
-import android.view.View
-import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.lifecycle.LifecycleOwner
 import com.android.systemui.customization.clocks.R as clocksR
 import com.android.systemui.customization.clocks.utils.ContextUtils.getSafeStatusBarHeight
+import com.android.systemui.plugins.keyguard.VRect
 import com.android.systemui.plugins.keyguard.data.model.WeatherData
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockAxisStyle
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockController
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockFaceController.Companion.updateTheme
 import com.android.systemui.plugins.keyguard.ui.clocks.TimeFormatKind
-import com.android.systemui.shared.Flags
 import com.android.systemui.shared.clocks.ClockRegistry
 import com.android.wallpaper.util.ScreenSizeCalculator
 import com.android.wallpaper.util.TimeUtils.TimeTicker
@@ -56,57 +53,10 @@ constructor(
         ScreenSizeCalculator.getInstance().getScreenSize(activity.windowManager.defaultDisplay)
     private val timeTickListeners: ConcurrentHashMap<Int, TimeTicker> = ConcurrentHashMap()
     private val clockControllers: ConcurrentHashMap<String, ClockController> = ConcurrentHashMap()
-    private val smallClockFrames: HashMap<String, FrameLayout> = HashMap()
 
     override fun getController(clockId: String): ClockController? {
         return clockControllers[clockId]
             ?: initClockController(clockId)?.also { clockControllers[clockId] = it }
-    }
-
-    /**
-     * Reset the large view to its initial state when getting the view. This is because some view
-     * configs, e.g. animation state, might change during the reuse of the clock view in the app.
-     */
-    override fun getLargeView(clockId: String): View {
-        assert(!Flags.newCustomizationPickerUi())
-        return getController(clockId)?.largeClock?.let {
-            it.animations.onPickerCarouselSwiping(1F)
-            it.view
-        } ?: FrameLayout(activity)
-    }
-
-    /**
-     * Reset the small view to its initial state when getting the view. This is because some view
-     * configs, e.g. translation X, might change during the reuse of the clock view in the app.
-     */
-    override fun getSmallView(clockId: String): View {
-        assert(!Flags.newCustomizationPickerUi())
-        val smallClockFrame =
-            smallClockFrames[clockId]?.apply {
-                (layoutParams as FrameLayout.LayoutParams).topMargin = getSmallClockTopMargin()
-                (layoutParams as FrameLayout.LayoutParams).marginStart = getSmallClockStartPadding()
-            }
-                ?: createSmallClockFrame().also { frame ->
-                    getController(clockId)?.let { frame.addView(it.smallClock.view) }
-                    smallClockFrames[clockId] = frame
-                }
-        smallClockFrame.translationX = 0F
-        smallClockFrame.translationY = 0F
-        return smallClockFrame
-    }
-
-    private fun createSmallClockFrame(): FrameLayout {
-        val smallClockFrame = FrameLayout(appContext)
-        val layoutParams =
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                resources.getDimensionPixelSize(clocksR.dimen.small_clock_height),
-            )
-        layoutParams.topMargin = getSmallClockTopMargin()
-        layoutParams.marginStart = getSmallClockStartPadding()
-        smallClockFrame.layoutParams = layoutParams
-        smallClockFrame.clipChildren = false
-        return smallClockFrame
     }
 
     private fun getSmallClockTopMargin() =
@@ -169,7 +119,6 @@ constructor(
         timeTickListeners.forEach { (_, timeTicker) -> appContext.unregisterReceiver(timeTicker) }
         timeTickListeners.clear()
         clockControllers.clear()
-        smallClockFrames.clear()
     }
 
     private fun onTimeTick() {
@@ -221,12 +170,12 @@ constructor(
      * proper region corresponding to lock screen in picker and for onTargetRegionChanged to scale
      * and position the clock view
      */
-    private fun getLargeClockRegion(): Rect {
+    private fun getLargeClockRegion(): VRect {
         val largeClockTopMargin =
             resources.getDimensionPixelSize(clocksR.dimen.keyguard_large_clock_top_margin)
         val targetHeight = resources.getDimensionPixelSize(clocksR.dimen.large_clock_text_size) * 2
         val top = (screenSize.y / 2 - targetHeight / 2 + largeClockTopMargin / 2)
-        return Rect(0, top, screenSize.x, (top + targetHeight))
+        return VRect(0, top, screenSize.x, (top + targetHeight))
     }
 
     /**
@@ -234,9 +183,9 @@ constructor(
      * proper region corresponding to lock screen in picker and for onTargetRegionChanged to scale
      * and position the clock view
      */
-    private fun getSmallClockRegion(): Rect {
+    private fun getSmallClockRegion(): VRect {
         val topMargin = getSmallClockTopMargin()
         val targetHeight = resources.getDimensionPixelSize(clocksR.dimen.small_clock_height)
-        return Rect(getSmallClockStartPadding(), topMargin, screenSize.x, topMargin + targetHeight)
+        return VRect(getSmallClockStartPadding(), topMargin, screenSize.x, topMargin + targetHeight)
     }
 }

@@ -22,7 +22,6 @@ import com.android.customization.model.CustomizationManager
 import com.android.customization.picker.grid.data.repository.GridRepository
 import com.android.customization.picker.grid.shared.model.GridOptionItemModel
 import com.android.customization.picker.grid.shared.model.GridOptionItemsModel
-import javax.inject.Provider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,7 +35,6 @@ import kotlinx.coroutines.flow.shareIn
 class GridInteractor(
     private val applicationScope: CoroutineScope,
     private val repository: GridRepository,
-    private val snapshotRestorer: Provider<GridSnapshotRestorer>,
 ) {
     val options: Flow<GridOptionItemsModel> =
         flow { emit(repository.isAvailable()) }
@@ -97,10 +95,7 @@ class GridInteractor(
                             rows = option.rows,
                             iconId = option.iconId,
                             isSelected = option.isSelected,
-                            onSelected = {
-                                option.onSelected()
-                                snapshotRestorer.get().store(option)
-                            },
+                            onSelected = { option.onSelected() },
                         )
                     }
             )

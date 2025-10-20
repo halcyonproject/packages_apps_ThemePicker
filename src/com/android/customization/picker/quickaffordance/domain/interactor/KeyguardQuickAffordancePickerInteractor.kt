@@ -36,9 +36,8 @@ import kotlinx.coroutines.flow.Flow
 class KeyguardQuickAffordancePickerInteractor
 @Inject
 constructor(
-    repository: KeyguardQuickAffordancePickerRepository,
+    private val repository: KeyguardQuickAffordancePickerRepository,
     private val client: CustomizationProviderClient,
-    private val snapshotRestorer: KeyguardQuickAffordanceSnapshotRestorer,
 ) {
     /** List of slots available on the device. */
     val slots: Flow<List<SlotModel>> = repository.slots
@@ -48,6 +47,11 @@ constructor(
 
     /** List of slot-affordance pairs, modeling what the user has currently chosen for each slot. */
     val selections: Flow<List<SelectionModel>> = repository.selections
+
+    /** Refresh fetched resources due to locale change */
+    fun refreshDueToLocaleChange() {
+        repository.refreshAffordancesDueToLocaleChange()
+    }
 
     /**
      * Selects an affordance with the given ID for a slot with the given ID.
@@ -59,21 +63,12 @@ constructor(
      * ID, that affordance is moved to the newest position on the slot.
      */
     suspend fun select(slotId: String, affordanceId: String) {
-        client.insertSelection(
-            slotId = slotId,
-            affordanceId = affordanceId,
-        )
-
-        snapshotRestorer.storeSnapshot()
+        client.insertSelection(slotId = slotId, affordanceId = affordanceId)
     }
 
     /** Unselects all affordances from the slot with the given ID. */
     suspend fun unselectAllFromSlot(slotId: String) {
-        client.deleteAllSelections(
-            slotId = slotId,
-        )
-
-        snapshotRestorer.storeSnapshot()
+        client.deleteAllSelections(slotId = slotId)
     }
 
     /** Unselects all affordances from all slots. */
@@ -82,9 +77,7 @@ constructor(
     }
 
     /** Returns a [Drawable] for the given resource ID, from the system UI package. */
-    suspend fun getAffordanceIcon(
-        @DrawableRes iconResourceId: Int,
-    ): Drawable {
+    suspend fun getAffordanceIcon(@DrawableRes iconResourceId: Int): Drawable {
         return client.getAffordanceIcon(iconResourceId)
     }
 }

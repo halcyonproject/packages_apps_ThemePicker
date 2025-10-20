@@ -18,7 +18,14 @@ package com.android.wallpaper.customization.ui.viewmodel
 
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
+import com.android.customization.packtheme.ui.viewmodel.PackThemeViewModel
+import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel
+import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel2
+import com.android.customization.picker.grid.ui.viewmodel.GridPickerViewModel
+import com.android.customization.picker.icon.ui.viewmodel.AppIconPickerViewModel
 import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
+import com.android.customization.picker.quickaffordance.ui.viewmodel.KeyguardQuickAffordancePickerViewModel2
+import com.android.customization.picker.settings.ui.viewmodel.ColorContrastSectionViewModel2
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_ICONS
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.COLORS
@@ -34,9 +41,11 @@ import com.android.wallpaper.picker.customization.ui.viewmodel.CustomizationOpti
 import com.android.wallpaper.picker.customization.ui.viewmodel.CustomizationOptionsViewModelFactory
 import com.android.wallpaper.picker.customization.ui.viewmodel.DefaultCustomizationOptionsViewModel
 import com.android.wallpaper.picker.preview.ui.util.AccessibilityUtil
+import com.android.wallpaper.util.ActivityUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,6 +64,7 @@ import kotlinx.coroutines.launch
 class ThemePickerCustomizationOptionsViewModel
 @AssistedInject
 constructor(
+    @ApplicationContext appContext: Context,
     defaultCustomizationOptionsViewModelFactory: DefaultCustomizationOptionsViewModel.Factory,
     keyguardQuickAffordancePickerViewModel2Factory: KeyguardQuickAffordancePickerViewModel2.Factory,
     colorPickerViewModel2Factory: ColorPickerViewModel2.Factory,
@@ -63,7 +73,6 @@ constructor(
     appIconPickerViewModelFactory: AppIconPickerViewModel.Factory,
     val colorContrastSectionViewModel: ColorContrastSectionViewModel2,
     val darkModeViewModel: DarkModeViewModel,
-    val themedIconViewModel: ThemedIconViewModel,
     val packThemeViewModel: PackThemeViewModel,
     @Assisted private val viewModelScope: CoroutineScope,
     @Assisted("destination") initialDeepLinkDestination: String?,
@@ -102,6 +111,7 @@ constructor(
                     isGridCustomizationAvailable = isGridCustomizationAvailable,
                     isIconStyleAvailable = isIconStyleAvailable,
                     isShapeAvailable = isShapeOptionsAvailable,
+                    isColorCustomizationAvailable = !ActivityUtils.isSUWMode(appContext),
                 )
             }
         } else {
@@ -114,6 +124,7 @@ constructor(
                     isGridCustomizationAvailable = isGridCustomizationAvailable,
                     isIconStyleAvailable = isThemedIconAvailable,
                     isShapeAvailable = isShapeOptionsAvailable,
+                    isColorCustomizationAvailable = !ActivityUtils.isSUWMode(appContext),
                 )
             }
         }

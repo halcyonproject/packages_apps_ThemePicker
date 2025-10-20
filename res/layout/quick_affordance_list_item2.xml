@@ -53,6 +53,7 @@
         android:gravity="center_horizontal"
         android:textColor="@color/system_on_surface"
         android:lines="2"
-        android:hyphenationFrequency="normal"
+        android:breakStrategy="simple"
+        android:hyphenationFrequency="none"
         android:ellipsize="end" />
 </androidx.constraintlayout.widget.ConstraintLayout>

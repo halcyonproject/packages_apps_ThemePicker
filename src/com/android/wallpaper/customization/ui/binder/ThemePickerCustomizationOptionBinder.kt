@@ -37,20 +37,25 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.customization.model.color.ColorOptionImpl
-import com.android.customization.picker.clock.shared.ClockSize
+import com.android.customization.picker.clock.ui.binder.ClockFloatingSheetBinder
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView.Companion.addClockViews
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
 import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder2
+import com.android.customization.picker.color.ui.binder.ColorsFloatingSheetBinder
+import com.android.customization.picker.color.ui.compose.ColorFloatingSheet
 import com.android.customization.picker.color.ui.view.ColorOptionIconView2
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
+import com.android.customization.picker.grid.ui.binder.GridFloatingSheetBinder
+import com.android.customization.picker.icon.ui.binder.AppIconFloatingSheetBinder
+import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
 import com.android.customization.picker.icon.ui.util.IconStyleViewUtil
+import com.android.customization.picker.quickaffordance.ui.binder.ShortcutFloatingSheetBinder
+import com.android.customization.picker.quickaffordance.ui.compose.ShortcutsFloatingSheet
 import com.android.customization.picker.settings.ui.binder.ColorContrastSectionViewBinder2
 import com.android.systemui.plugins.keyguard.ui.clocks.ClockAxisStyle
-import com.android.systemui.shared.Flags
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
-import com.android.wallpaper.customization.ui.compose.ShortcutsFloatingSheet
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerLockCustomizationOption
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsData
@@ -123,6 +128,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
         val isComposeRefactorEnabled = BaseFlags.get().isComposeRefactorEnabled()
         val isColorPickerUpdateEnabled = BaseFlags.get().isColorPickerUpdateEnabled()
+        val isColorPickerComposeEnabled = BaseFlags.get().isColorPickerComposeEnabled()
 
         val showPackEntry =
             Settings.Secure.getInt(
@@ -243,12 +249,14 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             }
         }
 
-        val optionColors: View =
-            homeScreenCustomizationOptionEntries
-                .first { it.first == ThemePickerHomeCustomizationOption.COLORS }
-                .second
-        val optionColorsIcon: ColorOptionIconView2 =
-            optionColors.requireViewById(R.id.option_entry_icon)
+        val optionColors: View? =
+            if (customizationOptionsData.isColorCustomizationAvailable) {
+                homeScreenCustomizationOptionEntries
+                    .first { it.first == ThemePickerHomeCustomizationOption.COLORS }
+                    .second
+            } else null
+        val optionColorsIcon: ColorOptionIconView2? =
+            optionColors?.requireViewById(R.id.option_entry_icon)
 
         val optionAppIcons: View? =
             if (customizationOptionsData.isIconCustomizationAvailable) {
@@ -346,9 +354,11 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     }
                 }
 
-                launch {
-                    optionsViewModel.onCustomizeColorsClicked.collect {
-                        optionColors.setOnClickListener { _ -> it?.invoke() }
+                if (customizationOptionsData.isColorCustomizationAvailable) {
+                    launch {
+                        optionsViewModel.onCustomizeColorsClicked.collect {
+                            optionColors?.setOnClickListener { _ -> it?.invoke() }
+                        }
                     }
                 }
 
@@ -457,21 +467,27 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     }
                 }
 
-                launch {
-                    var binding: ColorOptionIconBinder2.Binding? = null
-                    optionsViewModel.colorPickerViewModel2.selectedColorOption.collect { colorOption
-                        ->
-                        (colorOption as? ColorOptionImpl)?.let {
-                            binding?.destroy()
-                            binding =
-                                ColorOptionIconBinder2.bind(
-                                    view = optionColorsIcon,
-                                    viewModel =
-                                        ColorOptionIconViewModel.fromColorOption(colorOption),
-                                    colorUpdateViewModel = colorUpdateViewModel,
-                                    shouldAnimateColor = isOnMainScreen,
-                                    lifecycleOwner = lifecycleOwner,
-                                )
+                if (customizationOptionsData.isColorCustomizationAvailable) {
+                    launch {
+                        var binding: ColorOptionIconBinder2.Binding? = null
+                        optionsViewModel.colorPickerViewModel2.selectedColorOption.collect {
+                            colorOption ->
+                            (colorOption as? ColorOptionImpl)?.let {
+                                optionColorsIcon?.let {
+                                    binding?.destroy()
+                                    binding =
+                                        ColorOptionIconBinder2.bind(
+                                            view = optionColorsIcon,
+                                            viewModel =
+                                                ColorOptionIconViewModel.fromColorOption(
+                                                    colorOption
+                                                ),
+                                            colorUpdateViewModel = colorUpdateViewModel,
+                                            shouldAnimateColor = isOnMainScreen,
+                                            lifecycleOwner = lifecycleOwner,
+                                        )
+                                }
+                            }
                         }
                     }
                 }
@@ -479,6 +495,8 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 if (BaseFlags.get().isPackThemeEnabled()) {
                     launch {
                         optionsViewModel.packThemeViewModel.packThemeData.collect { packThemeData ->
+                            optionPackThemeHome?.isEnabled = packThemeData.isEnabled
+                            optionPackThemeLock?.isEnabled = packThemeData.isEnabled
                             val homeTitle =
                                 optionPackThemeHome?.findViewById<TextView>(R.id.option_entry_title)
                             val lockTitle =
@@ -491,6 +509,17 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                                 optionPackThemeLock?.findViewById<TextView>(
                                     R.id.option_entry_description
                                 )
+                            if (packThemeData.isEnabled) {
+                                homeTitle?.alpha = 1.0f
+                                lockTitle?.alpha = 1.0f
+                                homeDescription?.alpha = 1.0f
+                                lockDescription?.alpha = 1.0f
+                            } else {
+                                homeTitle?.alpha = DISABLE_TEXT_ALPHA
+                                lockTitle?.alpha = DISABLE_TEXT_ALPHA
+                                homeDescription?.alpha = DISABLE_TEXT_ALPHA
+                                lockDescription?.alpha = DISABLE_TEXT_ALPHA
+                            }
                             if (packThemeData.currentThemePackInfo.title.isNotEmpty()) {
                                 homeTitle?.text = packThemeData.currentThemePackInfo.title
                                 lockTitle?.text = packThemeData.currentThemePackInfo.title
@@ -617,7 +646,18 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 }
         }
 
-        if (!isColorPickerUpdateEnabled) {
+        if (isColorPickerUpdateEnabled && isColorPickerComposeEnabled) {
+            customizationOptionFloatingSheetViewMap
+                ?.get(ThemePickerHomeCustomizationOption.COLORS)
+                ?.let {
+                    (it as ComposeView).setContent {
+                        ColorFloatingSheet(
+                            optionsViewModel.darkModeViewModel.previewingIsDarkMode,
+                            optionsViewModel.colorPickerViewModel2.allColorOptions,
+                        )
+                    }
+                }
+        } else {
             customizationOptionFloatingSheetViewMap
                 ?.get(ThemePickerHomeCustomizationOption.COLORS)
                 ?.let {
@@ -705,39 +745,23 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                         )
                         .collect { (clock, size, showClock) ->
                             clockHostView.removeAllViews()
-                            // For new customization picker, we should get views from clocklayout
-                            if (Flags.newCustomizationPickerUi()) {
-                                if (showClock) {
-                                    clockViewFactory.getController(clock.clockId)?.run {
-                                        val cs = ConstraintSet()
-                                        clockHostView.addClockViews(this, size, cs)
-                                        val cfg = clockPickerViewModel.buildPreviewConfig(context)
-                                        largeClock.layout.applyPreviewConstraints(cfg, cs)
-                                        smallClock.layout.applyPreviewConstraints(cfg, cs)
-                                        cs.applyTo(clockHostView)
-                                    }
-                                    clockViewFactory.updateTimeFormat(clock.clockId)
+                            if (showClock) {
+                                clockViewFactory.getController(clock.clockId)?.run {
+                                    val cs = ConstraintSet()
+                                    clockHostView.addClockViews(this, size, cs)
+                                    val cfg = clockPickerViewModel.buildPreviewConfig(context)
+                                    largeClock.layout.applyPreviewConstraints(cfg, cs)
+                                    smallClock.layout.applyPreviewConstraints(cfg, cs)
+                                    cs.applyTo(clockHostView)
                                 }
-                                val shouldFadeIn = (isClockCurrentlyShown == false) && showClock
-                                if (shouldFadeIn) {
-                                    clockHostView.alpha = 0F
-                                    clockHostView.animateToAlpha(1F)
-                                }
-                                isClockCurrentlyShown = showClock
-                            } else {
-                                val clockView =
-                                    when (size) {
-                                        ClockSize.DYNAMIC ->
-                                            clockViewFactory.getLargeView(clock.clockId)
-                                        ClockSize.SMALL ->
-                                            clockViewFactory.getSmallView(clock.clockId)
-                                    }
-                                // The clock view might still be attached to an existing parent.
-                                // Detach
-                                // before adding to another parent.
-                                (clockView.parent as? ViewGroup)?.removeView(clockView)
-                                clockHostView.addView(clockView)
+                                clockViewFactory.updateTimeFormat(clock.clockId)
                             }
+                            val shouldFadeIn = (isClockCurrentlyShown == false) && showClock
+                            if (shouldFadeIn) {
+                                clockHostView.alpha = 0F
+                                clockHostView.animateToAlpha(1F)
+                            }
+                            isClockCurrentlyShown = showClock
                         }
                 }
 
@@ -819,6 +843,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
     companion object {
         private const val THUMBNAIL_CORNER_RADIUS = 18
+        private const val DISABLE_TEXT_ALPHA = 0.38f
         private const val BACKGROUND_CONTEXT = "backgroundContext"
     }
 }

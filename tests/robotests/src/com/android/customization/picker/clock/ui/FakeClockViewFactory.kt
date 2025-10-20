@@ -1,6 +1,5 @@
 package com.android.customization.picker.clock.ui
 
-import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.android.customization.picker.clock.data.repository.FakeClockPickerRepository
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
@@ -39,14 +38,6 @@ class FakeClockViewFactory @Inject constructor() : ClockViewFactory {
     }
 
     override fun getController(clockId: String): ClockController? = clockControllers[clockId]
-
-    override fun getLargeView(clockId: String): View {
-        TODO("Not yet implemented")
-    }
-
-    override fun getSmallView(clockId: String): View {
-        TODO("Not yet implemented")
-    }
 
     override fun updateColorForAllClocks(seedColor: Int?) {
         TODO("Not yet implemented")

@@ -17,6 +17,7 @@
 package com.android.customization.model.picker.color.ui.viewmodel
 
 import android.content.Context
+import android.content.theming.ThemeStyle
 import android.stats.style.StyleEnums
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -24,20 +25,16 @@ import com.android.customization.model.color.ColorOptionsProvider
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
-import com.android.customization.picker.color.domain.interactor.ColorPickerSnapshotRestorer
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.color.ui.viewmodel.ColorTypeTabViewModel
-import com.android.systemui.monet.Style
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -58,7 +55,6 @@ class ColorPickerViewModelTest {
     private lateinit var underTest: ColorPickerViewModel
     private lateinit var repository: FakeColorPickerRepository
     private lateinit var interactor: ColorPickerInteractor
-    private lateinit var store: FakeSnapshotStore
 
     private lateinit var context: Context
     private lateinit var testScope: TestScope
@@ -70,16 +66,8 @@ class ColorPickerViewModelTest {
         Dispatchers.setMain(testDispatcher)
         testScope = TestScope(testDispatcher)
         repository = FakeColorPickerRepository(context = context)
-        store = FakeSnapshotStore()
 
-        interactor =
-            ColorPickerInteractor(
-                repository = repository,
-                snapshotRestorer =
-                    ColorPickerSnapshotRestorer(repository = repository).apply {
-                        runBlocking { setUpSnapshotRestorer(store = store) }
-                    },
-            )
+        interactor = ColorPickerInteractor(repository = repository)
 
         underTest =
             ColorPickerViewModel.Factory(
@@ -127,11 +115,11 @@ class ColorPickerViewModelTest {
                 listOf(
                     repository.buildWallpaperOption(
                         ColorOptionsProvider.COLOR_SOURCE_LOCK,
-                        Style.EXPRESSIVE,
+                        ThemeStyle.EXPRESSIVE,
                         121212,
                     )
                 ),
-                listOf(repository.buildPresetOption(Style.FRUIT_SALAD, -54321)),
+                listOf(repository.buildPresetOption(ThemeStyle.FRUIT_SALAD, -54321)),
                 ColorType.PRESET_COLOR,
                 0,
             )
@@ -148,7 +136,7 @@ class ColorPickerViewModelTest {
             assertThat(logger.themeColorSource)
                 .isEqualTo(StyleEnums.COLOR_SOURCE_LOCK_SCREEN_WALLPAPER)
             assertThat(logger.themeColorStyle)
-                .isEqualTo(Style.toString(Style.EXPRESSIVE).hashCode())
+                .isEqualTo(ThemeStyle.toString(ThemeStyle.EXPRESSIVE).hashCode())
             assertThat(logger.themeSeedColor).isEqualTo(121212)
         }
 
@@ -159,11 +147,11 @@ class ColorPickerViewModelTest {
                 listOf(
                     repository.buildWallpaperOption(
                         ColorOptionsProvider.COLOR_SOURCE_LOCK,
-                        Style.EXPRESSIVE,
+                        ThemeStyle.EXPRESSIVE,
                         121212,
                     )
                 ),
-                listOf(repository.buildPresetOption(Style.FRUIT_SALAD, -54321)),
+                listOf(repository.buildPresetOption(ThemeStyle.FRUIT_SALAD, -54321)),
                 ColorType.WALLPAPER_COLOR,
                 0,
             )
@@ -179,7 +167,7 @@ class ColorPickerViewModelTest {
 
             assertThat(logger.themeColorSource).isEqualTo(StyleEnums.COLOR_SOURCE_PRESET_COLOR)
             assertThat(logger.themeColorStyle)
-                .isEqualTo(Style.toString(Style.FRUIT_SALAD).hashCode())
+                .isEqualTo(ThemeStyle.toString(ThemeStyle.FRUIT_SALAD).hashCode())
             assertThat(logger.themeSeedColor).isEqualTo(-54321)
         }
 

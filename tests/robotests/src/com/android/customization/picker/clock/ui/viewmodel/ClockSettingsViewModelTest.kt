@@ -7,21 +7,17 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.clock.data.repository.FakeClockPickerRepository
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
-import com.android.customization.picker.clock.domain.interactor.ClockPickerSnapshotRestorer
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
-import com.android.customization.picker.color.domain.interactor.ColorPickerSnapshotRestorer
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.wallpaper.picker.customization.data.repository.CustomizationRuntimeValuesRepository
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
@@ -68,21 +64,10 @@ class ClockSettingsViewModelTest {
         clockPickerInteractor =
             ClockPickerInteractor(
                 repository = repository,
-                snapshotRestorer =
-                    ClockPickerSnapshotRestorer(repository = repository).apply {
-                        runBlocking { setUpSnapshotRestorer(store = FakeSnapshotStore()) }
-                    },
                 CustomizationRuntimeValuesRepository(customizationProviderClient),
             )
         val colorPickerRepository = FakeColorPickerRepository(context = context)
-        colorPickerInteractor =
-            ColorPickerInteractor(
-                repository = colorPickerRepository,
-                snapshotRestorer =
-                    ColorPickerSnapshotRestorer(repository = colorPickerRepository).apply {
-                        runBlocking { setUpSnapshotRestorer(store = FakeSnapshotStore()) }
-                    },
-            )
+        colorPickerInteractor = ColorPickerInteractor(repository = colorPickerRepository)
         underTest =
             ClockSettingsViewModel.Factory(
                     context = context,

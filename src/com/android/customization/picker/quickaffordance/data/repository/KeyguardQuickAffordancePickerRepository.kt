@@ -26,9 +26,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 
 /**
  * Abstracts access to application state related to functionality for selecting, picking, or setting
@@ -37,17 +40,17 @@ import kotlinx.coroutines.flow.shareIn
 @Singleton
 class KeyguardQuickAffordancePickerRepository
 @Inject
-constructor(client: CustomizationProviderClient, @MainDispatcher mainScope: CoroutineScope) {
+constructor(
+    private val client: CustomizationProviderClient,
+    @MainDispatcher private val mainScope: CoroutineScope,
+) {
     /** List of slots available on the device. */
     val slots: Flow<List<SlotModel>> =
         client.observeSlots().map { slots -> slots.map { slot -> slot.toModel() } }
 
     /** List of all available quick affordances. */
-    val affordances: Flow<List<AffordanceModel>> =
-        client
-            .observeAffordances()
-            .map { affordances -> affordances.map { affordance -> affordance.toModel() } }
-            .shareIn(mainScope, replay = 1, started = SharingStarted.Lazily)
+    private val _affordances = MutableStateFlow<List<AffordanceModel>>(emptyList())
+    val affordances = _affordances.asStateFlow()
 
     /** List of slot-affordance pairs, modeling what the user has currently chosen for each slot. */
     val selections: Flow<List<SelectionModel>> =
@@ -56,11 +59,22 @@ constructor(client: CustomizationProviderClient, @MainDispatcher mainScope: Coro
             .map { selections -> selections.map { selection -> selection.toModel() } }
             .shareIn(mainScope, replay = 1, started = SharingStarted.Lazily)
 
+    init {
+        mainScope.launch {
+            _affordances.value =
+                client.queryAffordances().map { affordance -> affordance.toModel() }
+        }
+    }
+
+    fun refreshAffordancesDueToLocaleChange() {
+        mainScope.launch {
+            _affordances.value =
+                client.queryAffordances().map { affordance -> affordance.toModel() }
+        }
+    }
+
     private fun CustomizationProviderClient.Slot.toModel(): SlotModel {
-        return SlotModel(
-            id = id,
-            maxSelectedQuickAffordances = capacity,
-        )
+        return SlotModel(id = id, maxSelectedQuickAffordances = capacity)
     }
 
     private fun CustomizationProviderClient.Affordance.toModel(): AffordanceModel {
@@ -77,9 +91,6 @@ constructor(client: CustomizationProviderClient, @MainDispatcher mainScope: Coro
     }
 
     private fun CustomizationProviderClient.Selection.toModel(): SelectionModel {
-        return SelectionModel(
-            slotId = slotId,
-            affordanceId = affordanceId,
-        )
+        return SelectionModel(slotId = slotId, affordanceId = affordanceId)
     }
 }

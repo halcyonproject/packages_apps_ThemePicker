@@ -43,9 +43,11 @@ import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptio
 import com.android.wallpaper.effects.EffectsController
 import com.android.wallpaper.effects.FakeEffectsController
 import com.android.wallpaper.module.DefaultRecentWallpaperManager
+import com.android.wallpaper.module.DefaultThirdPartyLiveWallpaperModelFactory
 import com.android.wallpaper.module.Injector
 import com.android.wallpaper.module.PartnerProvider
 import com.android.wallpaper.module.RecentWallpaperManager
+import com.android.wallpaper.module.ThirdPartyLiveWallpaperModelFactory
 import com.android.wallpaper.module.WallpaperPreferences
 import com.android.wallpaper.module.logging.TestUserEventLogger
 import com.android.wallpaper.module.logging.UserEventLogger
@@ -74,6 +76,8 @@ import com.android.wallpaper.picker.preview.ui.binder.ApplyWallpaperOptionsProvi
 import com.android.wallpaper.picker.preview.ui.binder.DefaultApplyWallpaperOptionsProvider
 import com.android.wallpaper.picker.preview.ui.util.DefaultImageEffectDialogUtil
 import com.android.wallpaper.picker.preview.ui.util.ImageEffectDialogUtil
+import com.android.wallpaper.picker.wallpapers.data.repository.DefaultRotationInitializerFactory
+import com.android.wallpaper.picker.wallpapers.data.repository.RotationInitializerFactory
 import com.android.wallpaper.settings.data.repository.SecureSettingsRepositoryImpl
 import com.android.wallpaper.testing.FakeCategoryInteractor
 import com.android.wallpaper.testing.FakeCuratedPhotosInteractorImpl
@@ -162,6 +166,12 @@ abstract class ThemePickerTestModule {
 
     @Binds
     @Singleton
+    abstract fun bindRotationInitializerFactory(
+        impl: DefaultRotationInitializerFactory
+    ): RotationInitializerFactory
+
+    @Binds
+    @Singleton
     abstract fun bindIndividualPickerFactoryFragment(
         impl: DefaultIndividualPickerFactory
     ): IndividualPickerFactory
@@ -237,6 +247,12 @@ abstract class ThemePickerTestModule {
     abstract fun bindApplyWallpaperOptionsProvider(
         impl: DefaultApplyWallpaperOptionsProvider
     ): ApplyWallpaperOptionsProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindThirdPartyLiveWallpaperModelFactory(
+        impl: DefaultThirdPartyLiveWallpaperModelFactory
+    ): ThirdPartyLiveWallpaperModelFactory
 
     companion object {
 

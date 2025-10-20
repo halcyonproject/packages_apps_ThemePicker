@@ -1,10 +1,8 @@
 package com.android.customization.testing
 
-import android.app.WallpaperColors
 import android.content.Context
 import android.content.res.Resources
 import androidx.activity.ComponentActivity
-import com.android.customization.model.color.WallpaperColorResources
 import com.android.customization.module.CustomizationInjector
 import com.android.customization.module.CustomizationPreferences
 import com.android.customization.module.logging.ThemesUserEventLogger
@@ -78,13 +76,6 @@ constructor(
     override fun getKeyguardQuickAffordancePickerInteractor(
         context: Context
     ): KeyguardQuickAffordancePickerInteractor {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun getWallpaperColorResources(
-        wallpaperColors: WallpaperColors,
-        context: Context,
-    ): WallpaperColorResources {
         throw UnsupportedOperationException("not implemented")
     }
 
