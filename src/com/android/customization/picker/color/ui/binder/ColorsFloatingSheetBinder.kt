@@ -141,7 +141,7 @@ object ColorsFloatingSheetBinder {
                 }
 
                 launch {
-                    colorsViewModel.previewingColorOptionIndex.collect { indexToFocus ->
+                    colorsViewModel.overridingColorOptionIndex.collect { indexToFocus ->
                         colorsList.post {
                             val layoutManager =
                                 colorsList.layoutManager as? LinearLayoutManager ?: return@post
@@ -159,14 +159,14 @@ object ColorsFloatingSheetBinder {
 
                 launch {
                     combine(
-                            colorsViewModel.previewingColorOption,
+                            colorsViewModel.overridingColorOption,
                             colorsViewModel.selectedColorOption,
                             darkModeViewModel.overridingIsDarkMode,
                             ::Triple,
                         )
-                        .collect { (previewColor, selectedColor, overridingIsDarkMode) ->
-                            if (previewColor != null || overridingIsDarkMode != null) {
-                                val previewColorOption = previewColor ?: selectedColor
+                        .collect { (overridingColor, selectedColor, overridingIsDarkMode) ->
+                            if (overridingColor != null || overridingIsDarkMode != null) {
+                                val previewColorOption = overridingColor ?: selectedColor
                                 val previewIsDarkMode =
                                     overridingIsDarkMode
                                         ?: view.resources.configuration.isNightModeActive
