@@ -15,28 +15,16 @@
  */
 package com.android.customization.module
 
-import android.app.Activity
-import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
-import androidx.activity.ComponentActivity
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
 import com.android.customization.model.theme.OverlayManagerCompat
 import com.android.customization.module.logging.ThemesUserEventLogger
-import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
-import com.android.customization.picker.clock.ui.view.ClockViewFactory
-import com.android.customization.picker.clock.ui.view.ThemePickerClockViewFactory
-import com.android.customization.picker.clock.ui.viewmodel.ClockCarouselViewModel
-import com.android.customization.picker.clock.ui.viewmodel.ClockSettingsViewModel
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
-import com.android.systemui.shared.clocks.ClockRegistry
 import com.android.wallpaper.module.NetworkStatusNotifier
 import com.android.wallpaper.module.PackageStatusNotifier
 import com.android.wallpaper.module.PartnerProvider
@@ -50,14 +38,12 @@ import com.android.wallpaper.picker.customization.data.content.WallpaperClient
 import com.android.wallpaper.picker.customization.data.repository.WallpaperColorsRepository
 import com.android.wallpaper.picker.customization.domain.interactor.WallpaperInteractor
 import com.android.wallpaper.picker.customization.ui.CustomizationPickerActivity2
-import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import com.android.wallpaper.picker.di.modules.MainDispatcher
 import com.android.wallpaper.system.UiModeManagerWrapper
 import com.android.wallpaper.util.DisplayUtils
 import dagger.Lazy
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 
 @Singleton
@@ -65,14 +51,10 @@ open class ThemePickerInjector
 @Inject
 constructor(
     @MainDispatcher private val mainScope: CoroutineScope,
-    @BackgroundDispatcher private val bgScope: CoroutineScope,
-    @BackgroundDispatcher private val bgDispatcher: CoroutineDispatcher,
     private val keyguardQuickAffordancePickerInteractor:
         Lazy<KeyguardQuickAffordancePickerInteractor>,
     private val themesUserEventLogger: Lazy<ThemesUserEventLogger>,
     private val colorPickerInteractor: Lazy<ColorPickerInteractor>,
-    private val clockRegistry: Lazy<ClockRegistry>,
-    private val clockPickerInteractor: Lazy<ClockPickerInteractor>,
     displayUtils: Lazy<DisplayUtils>,
     requester: Lazy<Requester>,
     networkStatusNotifier: Lazy<NetworkStatusNotifier>,
@@ -104,10 +86,7 @@ constructor(
         wallpaperRefresher,
     ),
     CustomizationInjector {
-    private var clockCarouselViewModelFactory: ClockCarouselViewModel.Factory? = null
-    private var clockViewFactory: ClockViewFactory? = null
     private var colorPickerViewModelFactory: ColorPickerViewModel.Factory? = null
-    private var clockSettingsViewModelFactory: ClockSettingsViewModel.Factory? = null
 
     override fun getDeepLinkRedirectIntent(context: Context, uri: Uri): Intent {
         val intent = Intent()
@@ -140,43 +119,6 @@ constructor(
         return keyguardQuickAffordancePickerInteractor.get()
     }
 
-    override fun getClockCarouselViewModelFactory(
-        interactor: ClockPickerInteractor,
-        clockViewFactory: ClockViewFactory,
-        resources: Resources,
-    ): ClockCarouselViewModel.Factory {
-        return clockCarouselViewModelFactory
-            ?: ClockCarouselViewModel.Factory(
-                    interactor,
-                    bgDispatcher,
-                    clockViewFactory,
-                    resources,
-                    getUserEventLogger(),
-                )
-                .also { clockCarouselViewModelFactory = it }
-    }
-
-    override fun getClockViewFactory(activity: ComponentActivity): ClockViewFactory {
-        return clockViewFactory
-            ?: ThemePickerClockViewFactory(
-                    activity,
-                    WallpaperManager.getInstance(activity.applicationContext),
-                    clockRegistry.get(),
-                )
-                .also {
-                    clockViewFactory = it
-                    activity.lifecycle.addObserver(
-                        object : DefaultLifecycleObserver {
-                            override fun onDestroy(owner: LifecycleOwner) {
-                                super.onDestroy(owner)
-                                if ((owner as Activity).isChangingConfigurations()) return
-                                clockViewFactory?.onDestroy()
-                            }
-                        }
-                    )
-                }
-    }
-
     override fun getColorPickerViewModelFactory(context: Context): ColorPickerViewModel.Factory {
         return colorPickerViewModelFactory
             ?: ColorPickerViewModel.Factory(
@@ -185,22 +127,6 @@ constructor(
                     getUserEventLogger(),
                 )
                 .also { colorPickerViewModelFactory = it }
-    }
-
-    override fun getClockSettingsViewModelFactory(
-        context: Context,
-        wallpaperColorsRepository: WallpaperColorsRepository,
-    ): ClockSettingsViewModel.Factory {
-        return clockSettingsViewModelFactory
-            ?: ClockSettingsViewModel.Factory(
-                    context.applicationContext,
-                    clockPickerInteractor.get(),
-                    colorPickerInteractor.get(),
-                    getUserEventLogger(),
-                ) { clockId ->
-                    clockId?.let { clockPickerInteractor.get().isReactiveToTone(it) } ?: false
-                }
-                .also { clockSettingsViewModelFactory = it }
     }
 
     override fun isCurrentSelectedColorPreset(context: Context): Boolean {
