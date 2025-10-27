@@ -33,7 +33,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,8 +51,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.compose.animation.bounceable
 import com.android.compose.theme.PlatformTheme
+import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
+import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import kotlin.math.ceil
@@ -64,63 +65,73 @@ import kotlinx.coroutines.launch
 fun ColorFloatingSheet(
     isDarkMode: Flow<Boolean>,
     colorOptions: Flow<Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>>,
+    previewingColorOption: Flow<ColorOption?>,
     modifier: Modifier = Modifier,
 ) {
     val colorOptionState by colorOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
     val darkModeState by isDarkMode.collectAsStateWithLifecycle(initialValue = false)
+    val previewingColorOptionState by
+        previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
 
     // TODO (b/391927276): figure out how to animate color scheme changes
     PlatformTheme {
-        val colorScheme = MaterialTheme.colorScheme
+        // Set color scheme when wallpaper bitmap is selected or changed.
+        val scheme =
+            previewingColorOptionState?.let {
+                ColorScheme(it.seedColor, darkModeState, it.style).materialScheme
+            }
 
-        Box(
-            modifier =
-                modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clip(shape = RoundedCornerShape(28.dp))
-                    .drawBehind { drawRect(colorScheme.surfaceBright) }
-        ) {
-            Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    text = stringResource(R.string.wallpaper_color_tab),
-                    color = colorScheme.onSurface,
-                )
+        ColorPreviewTheme(scheme) {
+            val colorScheme = LocalAnimatedColorScheme.current
+            Box(
+                modifier =
+                    modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .clip(shape = RoundedCornerShape(28.dp))
+                        .drawBehind { drawRect(colorScheme.surfaceBright) }
+            ) {
+                Column(modifier = Modifier.padding(vertical = 20.dp)) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        text = stringResource(R.string.wallpaper_color_tab),
+                        color = colorScheme.onSurface,
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                LazyRow(
-                    verticalAlignment = Alignment.CenterVertically,
-                    contentPadding = PaddingValues(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    ColorType.entries.forEachIndexed { colorTypeIdx, colorType ->
-                        colorOptionState[colorType]?.let { colorList ->
-                            if (colorTypeIdx != 0 && colorList.isNotEmpty()) {
-                                item { OptionListGroupDivider() }
-                            }
-                            itemsIndexed(colorList) { idx, option ->
-                                ColorOptionIcon(
-                                    isDarkMode = darkModeState,
-                                    optionItem = option,
-                                    modifier =
-                                        Modifier.size(
-                                                dimensionResource(
-                                                    R.dimen.floating_sheet_color_option_size
+                    LazyRow(
+                        verticalAlignment = Alignment.CenterVertically,
+                        contentPadding = PaddingValues(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
+                        ColorType.entries.forEachIndexed { colorTypeIdx, colorType ->
+                            colorOptionState[colorType]?.let { colorList ->
+                                if (colorTypeIdx != 0 && colorList.isNotEmpty()) {
+                                    item { OptionListGroupDivider() }
+                                }
+                                itemsIndexed(colorList) { idx, option ->
+                                    ColorOptionIcon(
+                                        isDarkMode = darkModeState,
+                                        optionItem = option,
+                                        modifier =
+                                            Modifier.size(
+                                                    dimensionResource(
+                                                        R.dimen.floating_sheet_color_option_size
+                                                    )
                                                 )
-                                            )
-                                            .bounceable(
-                                                bounceable = colorList[idx],
-                                                previousBounceable =
-                                                    if (idx > 0) colorList[idx - 1] else null,
-                                                nextBounceable =
-                                                    if (idx < colorList.lastIndex)
-                                                        colorList[idx + 1]
-                                                    else null,
-                                                orientation = Horizontal,
-                                            ),
-                                )
+                                                .bounceable(
+                                                    bounceable = colorList[idx],
+                                                    previousBounceable =
+                                                        if (idx > 0) colorList[idx - 1] else null,
+                                                    nextBounceable =
+                                                        if (idx < colorList.lastIndex)
+                                                            colorList[idx + 1]
+                                                        else null,
+                                                    orientation = Horizontal,
+                                                ),
+                                    )
+                                }
                             }
                         }
                     }
@@ -132,7 +143,7 @@ fun ColorFloatingSheet(
 
 @Composable
 fun OptionListGroupDivider(modifier: Modifier = Modifier) {
-    val colorScheme = MaterialTheme.colorScheme
+    val colorScheme = LocalAnimatedColorScheme.current
     Box(
         modifier =
             modifier.width(10.dp).height(28.dp).padding(horizontal = 4.dp).drawBehind {
@@ -150,7 +161,7 @@ fun ColorOptionIcon(
     optionItem: OptionItemViewModel2<ColorOptionIconViewModel>,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
+    val colorScheme = LocalAnimatedColorScheme.current
     val coroutineScope = rememberCoroutineScope()
     val colorIcon = optionItem.payload
     val onClickState by optionItem.onClicked.collectAsStateWithLifecycle(initialValue = null)

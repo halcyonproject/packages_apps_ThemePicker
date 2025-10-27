@@ -195,7 +195,7 @@ constructor(
 
                             launch {
                                 combine(
-                                        viewModel.colorPickerViewModel2.previewingColorOption,
+                                        viewModel.colorPickerViewModel2.overridingColorOption,
                                         viewModel.darkModeViewModel.overridingIsDarkMode,
                                         ::Pair,
                                     )

@@ -44,11 +44,9 @@ import com.android.wallpaper.effects.DefaultEffectsController
 import com.android.wallpaper.effects.EffectsController
 import com.android.wallpaper.module.DefaultExtendedEffectsHelper
 import com.android.wallpaper.module.DefaultPartnerProvider
-import com.android.wallpaper.module.DefaultRecentWallpaperManager
 import com.android.wallpaper.module.DefaultThirdPartyLiveWallpaperModelFactory
 import com.android.wallpaper.module.ExtendedEffectsHelper
 import com.android.wallpaper.module.PartnerProvider
-import com.android.wallpaper.module.RecentWallpaperManager
 import com.android.wallpaper.module.ThirdPartyLiveWallpaperModelFactory
 import com.android.wallpaper.module.WallpaperPreferences
 import com.android.wallpaper.module.logging.UserEventLogger
@@ -250,12 +248,6 @@ abstract class ThemePickerAppModule {
     abstract fun bindWorkspaceCallbackBinder(
         impl: ThemePickerWorkspaceCallbackBinder
     ): WorkspaceCallbackBinder
-
-    @Binds
-    @Singleton
-    abstract fun bindRecentWallpaperManager(
-        impl: DefaultRecentWallpaperManager
-    ): RecentWallpaperManager
 
     @Binds
     @Singleton

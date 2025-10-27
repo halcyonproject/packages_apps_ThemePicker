@@ -59,11 +59,15 @@ constructor(
 ) {
     val selectedColorOption = interactor.selectedColorOption
 
-    private val overridingColorOption = MutableStateFlow<ColorOption?>(null)
-    val previewingColorOption = overridingColorOption.asStateFlow()
+    private val _overridingColorOption = MutableStateFlow<ColorOption?>(null)
+    val overridingColorOption = _overridingColorOption.asStateFlow()
+    val previewingColorOption =
+        combine(overridingColorOption, selectedColorOption) { overriding, selected ->
+            overriding ?: selected
+        }
 
-    val _previewingColorOptionIndex = MutableStateFlow<Int>(0)
-    val previewingColorOptionIndex = _previewingColorOptionIndex.asStateFlow()
+    val _overridingColorOptionIndex = MutableStateFlow<Int>(0)
+    val overridingColorOptionIndex = _overridingColorOptionIndex.asStateFlow()
 
     private val selectedColorTypeTabId = MutableStateFlow<ColorType?>(null)
 
@@ -126,10 +130,10 @@ constructor(
                         colorOptionEntry.value.mapIndexed { index, colorOption ->
                             colorOption as ColorOptionImpl
                             val isSelectedFlow: StateFlow<Boolean> =
-                                combine(previewingColorOption, selectedColorOption) {
-                                        previewing,
+                                combine(overridingColorOption, selectedColorOption) {
+                                        overriding,
                                         selected ->
-                                        previewing?.isEquivalent(colorOption)
+                                        overriding?.isEquivalent(colorOption)
                                             ?: selected?.isEquivalent(colorOption)
                                             ?: false
                                     }
@@ -152,8 +156,8 @@ constructor(
                                         } else {
                                             {
                                                 viewModelScope.launch {
-                                                    overridingColorOption.value = colorOption
-                                                    _previewingColorOptionIndex.value = index
+                                                    _overridingColorOption.value = colorOption
+                                                    _overridingColorOptionIndex.value = index
                                                 }
                                             }
                                         }
@@ -169,7 +173,7 @@ constructor(
      * change updates, which are applied with a latency.
      */
     val onApply: Flow<(suspend () -> Unit)?> =
-        combine(previewingColorOption, selectedColorOption) { previewing, selected ->
+        combine(overridingColorOption, selectedColorOption) { previewing, selected ->
             previewing?.let {
                 if (previewing.isEquivalent(selected)) {
                     null
@@ -205,7 +209,7 @@ constructor(
         }
 
     fun resetPreview() {
-        overridingColorOption.value = null
+        _overridingColorOption.value = null
     }
 
     /** The list of all available color options for the selected Color Type. */
