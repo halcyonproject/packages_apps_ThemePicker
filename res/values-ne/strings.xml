@@ -148,7 +148,7 @@
     <string name="keyguard_affordance_enablement_dialog_headline" msgid="365379085932610314">"सर्टकट सिर्जना गर्न सकिएन"</string>
     <string name="keyguard_affordance_enablement_dialog_action_template" msgid="8117011931337357438">"<xliff:g id="APPNAME">%1$s</xliff:g> खोल्नुहोस्"</string>
     <string name="keyguard_affordance_enablement_dialog_message" msgid="6136286758939253570">"<xliff:g id="APPNAME">%1$s</xliff:g> एपलाई सर्टकटका रूपमा हाल्न, निम्न कुरा सुनिश्चित गर्नुहोस्:"</string>
-    <string name="keyguard_affordance_enablement_dialog_dismiss_button" msgid="629754625264422508">"पूरा भयो"</string>
+    <string name="keyguard_affordance_enablement_dialog_dismiss_button" msgid="629754625264422508">"भयो"</string>
     <string name="keyguard_quick_affordance_title" msgid="4242813186995735584">"सर्टकटहरू"</string>
     <string name="keyguard_quick_affordance_section_title" msgid="2806304242671717309">"सर्टकटहरू"</string>
     <string name="color_contrast_section_title" msgid="7194809124718896091">"कलर कन्ट्रास्ट"</string>
