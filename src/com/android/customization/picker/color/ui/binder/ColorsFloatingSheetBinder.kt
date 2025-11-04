@@ -39,7 +39,6 @@ import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewMo
 import com.android.wallpaper.picker.option.ui.adapter.OptionItemAdapter2
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 object ColorsFloatingSheetBinder {
@@ -155,30 +154,6 @@ object ColorsFloatingSheetBinder {
                             }
                         }
                     }
-                }
-
-                launch {
-                    combine(
-                            colorsViewModel.overridingColorOption,
-                            colorsViewModel.selectedColorOption,
-                            darkModeViewModel.overridingIsDarkMode,
-                            ::Triple,
-                        )
-                        .collect { (overridingColor, selectedColor, overridingIsDarkMode) ->
-                            if (overridingColor != null || overridingIsDarkMode != null) {
-                                val previewColorOption = overridingColor ?: selectedColor
-                                val previewIsDarkMode =
-                                    overridingIsDarkMode
-                                        ?: view.resources.configuration.isNightModeActive
-                                previewColorOption?.let {
-                                    colorUpdateViewModel.previewColors(
-                                        previewColorOption.seedColor,
-                                        previewColorOption.style,
-                                        previewIsDarkMode,
-                                    )
-                                }
-                            } else colorUpdateViewModel.resetPreview()
-                        }
                 }
             }
         }
