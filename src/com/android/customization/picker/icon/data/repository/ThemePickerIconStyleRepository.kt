@@ -163,7 +163,7 @@ constructor(
             }
         }
 
-    fun getThemedIconEnabled(uri: Uri): Boolean {
+    private fun getThemedIconEnabled(uri: Uri): Boolean {
         val cursor =
             contentResolver.query(
                 uri,
@@ -184,6 +184,26 @@ constructor(
         }
         cursor?.close()
         return isEnabled
+    }
+
+    private fun getShouldShowAppLabels(uri: Uri): Boolean {
+        val cursor =
+            contentResolver.query(
+                uri,
+                /* projection= */ null,
+                /* selection= */ null,
+                /* selectionArgs= */ null,
+                /* sortOrder= */ null,
+            )
+        var shouldHideLabels = false
+        cursor?.use {
+            if (cursor.moveToNext()) {
+                shouldHideLabels =
+                    (cursor.getInt(cursor.getColumnIndex(COL_SHOULD_HIDE_WORKSPACE_ITEM_LABELS)) ==
+                        ENABLED)
+            }
+        }
+        return !shouldHideLabels
     }
 
     override suspend fun setThemedIconEnabled(enabled: Boolean) {
@@ -226,10 +246,61 @@ constructor(
         }
     }
 
+    override val shouldShowAppLabels: Flow<Boolean> =
+        previewUtilsFlow
+            .flatMapLatest {
+                callbackFlow {
+                    var disposableHandle: DisposableHandle? = null
+                    if (it != null) {
+                        val contentObserver =
+                            object : ContentObserver(null) {
+                                override fun onChange(selfChange: Boolean) {
+                                    trySend(getShouldShowAppLabels(it.getUri(HIDE_APP_LABELS)))
+                                }
+                            }
+                        contentResolver.registerContentObserver(
+                            it.getUri(HIDE_APP_LABELS),
+                            /* notifyForDescendants= */ true,
+                            contentObserver,
+                        )
+
+                        trySend(getShouldShowAppLabels(it.getUri(HIDE_APP_LABELS)))
+
+                        disposableHandle = DisposableHandle {
+                            contentResolver.unregisterContentObserver(contentObserver)
+                        }
+                    }
+                    awaitClose { disposableHandle?.dispose() }
+                }
+            }
+            .stateIn(
+                scope = backgroundScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = false,
+            )
+
+    override suspend fun setShouldShowAppLabels(shouldShowAppLabels: Boolean) {
+        previewUtilsFlow.first()?.let {
+            val values = ContentValues()
+            values.put(KEY_SHOULD_HIDE_WORKSPACE_ITEM_LABELS, !shouldShowAppLabels)
+            contentResolver.update(
+                it.getUri(HIDE_APP_LABELS),
+                values,
+                /* where= */ null,
+                /* selectionArgs= */ null,
+            )
+        }
+    }
+
     companion object {
         const val ICON_THEMED = "icon_themed"
         const val SET_ICON_THEMED = "set_icon_themed"
         const val COL_ICON_THEMED_VALUE = "boolean_value"
+        const val HIDE_APP_LABELS = "hide_app_labels"
+        // Key for applying the boolean to hide the workspace item labels
+        const val KEY_SHOULD_HIDE_WORKSPACE_ITEM_LABELS = "should_hide_workspace_item_labels"
+        // Key for querying the boolean to hide the workspace item labels
+        const val COL_SHOULD_HIDE_WORKSPACE_ITEM_LABELS = "should_hide_workspace_item_labels"
         private const val ENABLED = 1
     }
 }

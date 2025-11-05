@@ -162,6 +162,12 @@
     <!-- Title of a tab to change the app icon shape [CHAR LIMIT=15] -->
     <string name="app_icons_shape">Shape</string>
 
+    <!-- Title of a tab to show or hide the app icon label [CHAR LIMIT=15] -->
+    <string name="app_icons_label">Label</string>
+
+    <!-- Title of a toggle to show or hide the app labels. Show when toggled on [CHAR LIMIT=35] -->
+    <string name="app_labels">App labels</string>
+
     <!-- Title of a tab to change the app icon theme [CHAR LIMIT=15] -->
     <string name="app_icons_style">Style</string>
 
