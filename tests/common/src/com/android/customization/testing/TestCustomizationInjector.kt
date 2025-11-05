@@ -4,7 +4,6 @@ import android.content.Context
 import com.android.customization.module.CustomizationInjector
 import com.android.customization.module.CustomizationPreferences
 import com.android.customization.module.logging.ThemesUserEventLogger
-import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
 import com.android.wallpaper.module.NetworkStatusNotifier
 import com.android.wallpaper.module.PartnerProvider
@@ -69,10 +68,6 @@ constructor(
     override fun getKeyguardQuickAffordancePickerInteractor(
         context: Context
     ): KeyguardQuickAffordancePickerInteractor {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun getColorPickerViewModelFactory(context: Context): ColorPickerViewModel.Factory {
         throw UnsupportedOperationException("not implemented")
     }
 
