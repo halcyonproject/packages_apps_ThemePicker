@@ -22,8 +22,6 @@ import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
 import com.android.customization.model.theme.OverlayManagerCompat
 import com.android.customization.module.logging.ThemesUserEventLogger
-import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
-import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
 import com.android.wallpaper.module.NetworkStatusNotifier
 import com.android.wallpaper.module.PackageStatusNotifier
@@ -54,7 +52,6 @@ constructor(
     private val keyguardQuickAffordancePickerInteractor:
         Lazy<KeyguardQuickAffordancePickerInteractor>,
     private val themesUserEventLogger: Lazy<ThemesUserEventLogger>,
-    private val colorPickerInteractor: Lazy<ColorPickerInteractor>,
     displayUtils: Lazy<DisplayUtils>,
     requester: Lazy<Requester>,
     networkStatusNotifier: Lazy<NetworkStatusNotifier>,
@@ -86,7 +83,6 @@ constructor(
         wallpaperRefresher,
     ),
     CustomizationInjector {
-    private var colorPickerViewModelFactory: ColorPickerViewModel.Factory? = null
 
     override fun getDeepLinkRedirectIntent(context: Context, uri: Uri): Intent {
         val intent = Intent()
@@ -117,16 +113,6 @@ constructor(
         context: Context
     ): KeyguardQuickAffordancePickerInteractor {
         return keyguardQuickAffordancePickerInteractor.get()
-    }
-
-    override fun getColorPickerViewModelFactory(context: Context): ColorPickerViewModel.Factory {
-        return colorPickerViewModelFactory
-            ?: ColorPickerViewModel.Factory(
-                    context.applicationContext,
-                    colorPickerInteractor.get(),
-                    getUserEventLogger(),
-                )
-                .also { colorPickerViewModelFactory = it }
     }
 
     override fun isCurrentSelectedColorPreset(context: Context): Boolean {

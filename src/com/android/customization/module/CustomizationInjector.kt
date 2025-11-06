@@ -16,7 +16,6 @@
 package com.android.customization.module
 
 import android.content.Context
-import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
 import com.android.wallpaper.module.Injector
 
@@ -26,6 +25,4 @@ interface CustomizationInjector : Injector {
     fun getKeyguardQuickAffordancePickerInteractor(
         context: Context
     ): KeyguardQuickAffordancePickerInteractor
-
-    fun getColorPickerViewModelFactory(context: Context): ColorPickerViewModel.Factory
 }
