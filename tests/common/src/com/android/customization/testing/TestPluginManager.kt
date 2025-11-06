@@ -5,8 +5,6 @@ import com.android.systemui.plugins.PluginListener
 import com.android.systemui.plugins.PluginManager
 
 class TestPluginManager : PluginManager {
-    override val config = PluginManager.Config()
-
     override fun <T : Plugin> addPluginListener(
         listener: PluginListener<T>,
         cls: Class<T>,
