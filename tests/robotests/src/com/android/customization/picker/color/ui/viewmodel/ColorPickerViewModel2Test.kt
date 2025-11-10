@@ -21,6 +21,7 @@ import android.content.theming.ThemeStyle
 import android.stats.style.StyleEnums
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionsProvider
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
@@ -286,6 +287,101 @@ class ColorPickerViewModel2Test {
             )
         }
 
+    @Test
+    fun previewingAndOverriding_initialState() =
+        testScope.runTest {
+            val wallpaperOptions = setupPreviewingTest()
+
+            val overridingColorOption = collectLastValue(underTest.overridingColorOption)
+            val previewingColorOption = collectLastValue(underTest.previewingColorOption)
+            val overridingColorOptionIndex = collectLastValue(underTest.overridingColorOptionIndex)
+            val colorOptions = collectLastValue(underTest.colorOptions)
+            val onApply = collectLastValue(underTest.onApply)
+
+            // Assert Initial state: no override, previewing the selected option.
+            assertThat(overridingColorOption()).isNull()
+            assertThat(previewingColorOption()?.isEquivalent(wallpaperOptions[0])).isTrue()
+            assertThat(overridingColorOptionIndex()).isEqualTo(0) // Default value.
+            assertThat(onApply()).isNull()
+            assertColorOptionUiState(colorOptions(), selectedColorOptionIndex = 0)
+        }
+
+    @Test
+    fun previewingAndOverriding_previews() =
+        testScope.runTest {
+            val wallpaperOptions = setupPreviewingTest()
+
+            val overridingColorOption = collectLastValue(underTest.overridingColorOption)
+            val previewingColorOption = collectLastValue(underTest.previewingColorOption)
+            val overridingColorOptionIndex = collectLastValue(underTest.overridingColorOptionIndex)
+            val colorOptions = collectLastValue(underTest.colorOptions)
+            val onApply = collectLastValue(underTest.onApply)
+
+            // Act: User clicks a different option (index 1) to preview it.
+            selectColorOption(colorOptions, 1)
+            runCurrent()
+
+            // Assert state after previewing: overriding option is set.
+            assertThat(overridingColorOption()?.isEquivalent(wallpaperOptions[1])).isTrue()
+            assertThat(previewingColorOption()?.isEquivalent(wallpaperOptions[1])).isTrue()
+            assertThat(overridingColorOptionIndex()).isEqualTo(1)
+            assertThat(onApply()).isNotNull()
+            assertColorOptionUiState(colorOptions(), selectedColorOptionIndex = 1)
+        }
+
+    @Test
+    fun previewingAndOverriding_resets() =
+        testScope.runTest {
+            val wallpaperOptions = setupPreviewingTest()
+
+            val overridingColorOption = collectLastValue(underTest.overridingColorOption)
+            val previewingColorOption = collectLastValue(underTest.previewingColorOption)
+            val colorOptions = collectLastValue(underTest.colorOptions)
+            val onApply = collectLastValue(underTest.onApply)
+
+            // Preview an option.
+            selectColorOption(colorOptions, 1)
+            runCurrent()
+
+            // Act: User resets the preview without applying.
+            underTest.resetPreview()
+            runCurrent()
+
+            // Assert state after reset: back to initial state, previewing the selected option.
+            assertThat(overridingColorOption()).isNull()
+            assertThat(previewingColorOption()?.isEquivalent(wallpaperOptions[0])).isTrue()
+            assertThat(onApply()).isNull()
+            assertColorOptionUiState(colorOptions(), selectedColorOptionIndex = 0)
+        }
+
+    @Test
+    fun previewingAndOverriding_applies() =
+        testScope.runTest {
+            val wallpaperOptions = setupPreviewingTest()
+
+            val overridingColorOption = collectLastValue(underTest.overridingColorOption)
+            val previewingColorOption = collectLastValue(underTest.previewingColorOption)
+            val colorOptions = collectLastValue(underTest.colorOptions)
+            val onApply = collectLastValue(underTest.onApply)
+
+            // Preview an option.
+            selectColorOption(colorOptions, 1)
+            runCurrent()
+
+            // Act: apply the previewed option.
+            applySelectedColorOption()
+            runCurrent()
+
+            // Assert state after apply: the new option is now the "selected" one.
+            // The overriding option is still set, but it's equivalent to the new selected one.
+            assertThat(overridingColorOption()?.isEquivalent(wallpaperOptions[1])).isTrue()
+            assertThat(previewingColorOption()?.isEquivalent(wallpaperOptions[1])).isTrue()
+            // onApply should now be null because the overriding and selected options are the same.
+            assertThat(onApply()).isNull()
+            // The UI should still show option 1 as selected.
+            assertColorOptionUiState(colorOptions(), selectedColorOptionIndex = 1)
+        }
+
     /** Simulates a user selecting the color option at the given index. */
     private fun TestScope.selectColorOption(
         colorOptions: () -> List<OptionItemViewModel2<ColorOptionIconViewModel>>?,
@@ -298,6 +394,32 @@ class ColorPickerViewModel2Test {
             val onClickedOrNull: (() -> Unit)? = onClickedLastValue()
             onClickedOrNull?.invoke()
         }
+    }
+
+    private fun setupPreviewingTest(): List<ColorOption> {
+        // Arrange: set up distinct options for clarity.
+        val wallpaperOptions =
+            listOf(
+                repository.buildWallpaperOption(
+                    ColorOptionsProvider.COLOR_SOURCE_HOME,
+                    ThemeStyle.TONAL_SPOT,
+                    1,
+                ),
+                repository.buildWallpaperOption(
+                    ColorOptionsProvider.COLOR_SOURCE_HOME,
+                    ThemeStyle.VIBRANT,
+                    2,
+                ),
+            )
+        val presetOptions = listOf(repository.buildPresetOption(ThemeStyle.FRUIT_SALAD, 3))
+        // Initially select the first wallpaper option (index 0).
+        repository.setOptions(
+            wallpaperOptions,
+            presetOptions,
+            ColorType.WALLPAPER_COLOR,
+            0,
+        )
+        return wallpaperOptions
     }
 
     /** Simulates a user applying the color option at the given index, and the apply completes. */
