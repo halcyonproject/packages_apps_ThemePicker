@@ -29,6 +29,7 @@ import com.android.customization.model.grid.DefaultShapeGridManager.Companion.CO
 import com.android.customization.model.grid.DefaultShapeGridManager.Companion.COL_SHAPE_KEY
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
 import com.android.customization.picker.color.data.util.MaterialColorsGenerator
+import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_END
 import com.android.systemui.shared.keyguard.shared.model.KeyguardQuickAffordanceSlots.SLOT_ID_BOTTOM_START
 import com.android.systemui.shared.quickaffordance.shared.model.KeyguardPreviewConstants.KEY_HIDE_SMART_SPACE
@@ -232,7 +233,10 @@ constructor(
                                             workspaceCallback,
                                             MESSAGE_ID_UPDATE_ICON_THEMED,
                                             Bundle().apply {
-                                                putBoolean(KEY_BOOLEAN_VALUE, it.getIsThemedIcon())
+                                                putBoolean(
+                                                    KEY_BOOLEAN_VALUE,
+                                                    it == ThemePickerIconStyle.MONOCHROME,
+                                                )
                                             },
                                         )
                                     }

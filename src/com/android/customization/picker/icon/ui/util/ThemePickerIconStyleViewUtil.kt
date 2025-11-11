@@ -17,7 +17,14 @@
 package com.android.customization.picker.icon.ui.util
 
 import android.content.Context
+import android.graphics.drawable.AdaptiveIconDrawable
 import com.android.customization.picker.icon.shared.model.IconStyle
+import com.android.customization.picker.icon.shared.model.IconStyleModel
+import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
+import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
+import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
+import com.android.themepicker.R
+import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -28,5 +35,19 @@ class ThemePickerIconStyleViewUtil
 constructor(@ApplicationContext private val context: Context) : IconStyleViewUtil {
     override fun getOnClick(iconStyle: IconStyle): (() -> Unit)? {
         return null
+    }
+
+    override fun getIcon(iconStyleModel: IconStyleModel): Icon {
+        val previewIconPackageName = context.resources.getString(R.string.camera_package)
+        val appIconDrawable = ShapeIconViewBinder.loadAppIcon(context, previewIconPackageName)
+        return Icon.Loaded(
+            drawable =
+                ShapeTileDrawable(
+                    context = context,
+                    icon = appIconDrawable as? AdaptiveIconDrawable,
+                    isThemed = iconStyleModel.iconStyle == ThemePickerIconStyle.MONOCHROME,
+                ),
+            contentDescription = null,
+        )
     }
 }

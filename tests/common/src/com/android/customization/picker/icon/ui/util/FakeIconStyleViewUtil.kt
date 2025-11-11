@@ -17,6 +17,8 @@
 package com.android.customization.picker.icon.ui.util
 
 import com.android.customization.picker.icon.shared.model.IconStyle
+import com.android.customization.picker.icon.shared.model.IconStyleModel
+import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import javax.inject.Inject
 
 /**
@@ -25,6 +27,10 @@ import javax.inject.Inject
  */
 class FakeIconStyleViewUtil @Inject constructor() : IconStyleViewUtil {
     override fun getOnClick(iconStyle: IconStyle): (() -> Unit)? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getIcon(iconStyleModel: IconStyleModel): Icon? {
         TODO("Not yet implemented")
     }
 }

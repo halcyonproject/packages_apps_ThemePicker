@@ -376,12 +376,15 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                                 .collect { summary ->
                                     disposableHandle?.dispose()
                                     summary.iconShape?.let {
-                                        optionAppIconsIcon?.let { it1 ->
+                                        optionAppIconsIcon?.let { imageView ->
                                             disposableHandle =
                                                 ShapeIconViewBinder
                                                     .bindIconStyleAndShapePreviewIcon(
-                                                        view = it1,
-                                                        icon = summary.icon,
+                                                        view = imageView,
+                                                        icon =
+                                                            summary.iconStyleModel?.let { model ->
+                                                                iconStyleViewUtil.getIcon(model)
+                                                            },
                                                         shapeIcon = summary.iconShape,
                                                         colorUpdateViewModel = colorUpdateViewModel,
                                                         shouldAnimateColor = isOnMainScreen,

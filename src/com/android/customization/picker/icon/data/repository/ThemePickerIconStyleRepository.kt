@@ -20,7 +20,6 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.database.ContentObserver
-import android.graphics.drawable.AdaptiveIconDrawable
 import android.net.Uri
 import android.stats.style.StyleEnums.APP_ICON_STYLE_THEMED
 import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
@@ -29,13 +28,10 @@ import com.android.customization.module.logging.ThemesUserEventLoggerImpl.Compan
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
-import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
-import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.module.InjectorProvider
-import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import com.android.wallpaper.util.PreviewUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -127,32 +123,12 @@ constructor(
             ThemePickerIconStyle.entries
                 .toList()
                 // Filter entries if themed icon is not available
-                .filter { isThemedIconAvailable || !it.getIsThemedIcon() }
+                .filter { isThemedIconAvailable || it != ThemePickerIconStyle.MONOCHROME }
                 .map { it.toIconStyleModel() }
         }
 
     private fun IconStyle.toIconStyleModel(): IconStyleModel {
-        return IconStyleModel(
-            iconStyle = this,
-            nameResId = this.nameResId,
-            icon = this.getIcon(),
-            isThemedIcon = this == ThemePickerIconStyle.MONOCHROME,
-            isExternalLink = false,
-        )
-    }
-
-    private fun IconStyle.getIcon(): Icon {
-        val previewIconPackageName = appContext.resources.getString(R.string.camera_package)
-        val appIconDrawable = ShapeIconViewBinder.loadAppIcon(appContext, previewIconPackageName)
-        return Icon.Loaded(
-            drawable =
-                ShapeTileDrawable(
-                    context = appContext,
-                    icon = appIconDrawable as? AdaptiveIconDrawable,
-                    isThemed = this == ThemePickerIconStyle.MONOCHROME,
-                ),
-            contentDescription = null,
-        )
+        return IconStyleModel(iconStyle = this, isExternalLink = false)
     }
 
     override val selectedIconStyle =
