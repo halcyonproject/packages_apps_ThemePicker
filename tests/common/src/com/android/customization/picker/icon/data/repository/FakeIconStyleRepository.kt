@@ -91,4 +91,11 @@ class FakeIconStyleRepository @Inject constructor() : IconStyleRepository {
     fun setIsCustomizationAvailable(isAvailable: Boolean) {
         _isCustomizationAvailable.value = isAvailable
     }
+
+    private val _shouldShowAppLabels = MutableStateFlow(false)
+    override val shouldShowAppLabels = _shouldShowAppLabels.asStateFlow()
+
+    override suspend fun setShouldShowAppLabels(shouldShowAppLabels: Boolean) {
+        _shouldShowAppLabels.value = shouldShowAppLabels
+    }
 }

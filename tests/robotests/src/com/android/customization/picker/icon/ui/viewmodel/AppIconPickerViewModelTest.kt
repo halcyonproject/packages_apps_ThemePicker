@@ -27,8 +27,10 @@ import com.android.customization.picker.icon.data.repository.FakeIconStyleReposi
 import com.android.customization.picker.icon.domain.interactor.AppIconInteractor
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.themepicker.R
+import com.android.wallpaper.module.InjectorProvider
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
+import com.android.wallpaper.testing.TestInjector
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -64,12 +66,14 @@ class AppIconPickerViewModelTest {
     @Inject lateinit var shapeRepository: ShapeRepository
     @Inject @ApplicationContext lateinit var appContext: Context
     @Inject lateinit var logger: TestThemesUserEventLogger
+    @Inject lateinit var testInjector: TestInjector
 
     private lateinit var underTest: AppIconPickerViewModel
 
     @Before
     fun setUp() {
         hiltRule.inject()
+        InjectorProvider.setInjector(testInjector)
         underTest =
             AppIconPickerViewModel(appContext, interactor, logger, testScope.backgroundScope)
         shapeManager.setShapeOptions(FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST)
@@ -171,6 +175,19 @@ class AppIconPickerViewModelTest {
         }
 
     @Test
+    fun iconStyleAndShapeOnApply_shouldBeNonnull_whenTogglingShouldShowAppLabels() =
+        testScope.runTest {
+            val toggleShouldShowAppLabels = collectLastValue(underTest.toggleShouldShowAppLabels)
+            val onApply = collectLastValue(underTest.iconStyleAndShapeOnApply)
+
+            assertThat(onApply()).isNull()
+
+            toggleShouldShowAppLabels()?.invoke()
+
+            assertThat(onApply()).isNotNull()
+        }
+
+    @Test
     fun isThemeIconEnabled_shouldBeFalseByDefault() =
         testScope.runTest {
             val isThemeIconEnabled = collectLastValue(underTest.isThemedIconEnabled)
@@ -202,7 +219,7 @@ class AppIconPickerViewModelTest {
         }
 
     @Test
-    fun shapeAndThemedIconOnApply_shouldBeNonnull_whenToggle() =
+    fun shapeAndThemedIconOnApply_shouldBeNonnull_whenToggleThemedIcon() =
         testScope.runTest {
             val toggleThemedIcon = collectLastValue(underTest.toggleThemedIcon)
             val onApply = collectLastValue(underTest.shapeAndThemedIconOnApply)
@@ -234,6 +251,19 @@ class AppIconPickerViewModelTest {
             assertThat(onApply()).isNull()
 
             onMinimalOptionClick()?.invoke()
+
+            assertThat(onApply()).isNotNull()
+        }
+
+    @Test
+    fun iconStyleAndShapeOnApply_shouldBeNonnull_whenShouldShowAppLabelsChanged() =
+        testScope.runTest {
+            val toggleShouldShowAppLabels = collectLastValue(underTest.toggleShouldShowAppLabels)
+            val onApply = collectLastValue(underTest.iconStyleAndShapeOnApply)
+
+            assertThat(onApply()).isNull()
+
+            toggleShouldShowAppLabels()?.invoke()
 
             assertThat(onApply()).isNotNull()
         }
@@ -293,6 +323,32 @@ class AppIconPickerViewModelTest {
             runCurrent()
 
             assertThat(job.isActive).isFalse()
+        }
+
+    @Test
+    fun iconStyleAndShapeOnApply_completesOnSuccess_whenShouldShowAppLabelsChanged() =
+        testScope.runTest {
+            val initialShouldShowAppLabels =
+                collectLastValue(underTest.previewingShouldShowAppLabels)().also {
+                    assertThat(it).isNotNull()
+                }
+            val toggleShouldShowAppLabels = collectLastValue(underTest.toggleShouldShowAppLabels)
+            val onApply = collectLastValue(underTest.iconStyleAndShapeOnApply)
+            val previewingShouldShowAppLabels =
+                collectLastValue(underTest.previewingShouldShowAppLabels)
+            val repositoryShouldShowAppLabels =
+                collectLastValue(iconStyleRepository.shouldShowAppLabels)
+
+            // Toggle the value
+            toggleShouldShowAppLabels()?.invoke()
+            assertThat(previewingShouldShowAppLabels()).isNotEqualTo(initialShouldShowAppLabels)
+            assertThat(repositoryShouldShowAppLabels()).isEqualTo(initialShouldShowAppLabels)
+
+            // Apply the change
+            onApply()?.invoke()
+
+            // Verify the repository value is updated
+            assertThat(repositoryShouldShowAppLabels()).isEqualTo(previewingShouldShowAppLabels())
         }
 
     @Test
@@ -581,6 +637,30 @@ class AppIconPickerViewModelTest {
             shapeManager.setShapeOptions(emptyList())
             interactor.applyShape("")
             assertThat(isAvailable()).isEqualTo(false)
+        }
+
+    @Test
+    fun previewingShouldShowAppLabels_matchesRepositoryByDefault() =
+        testScope.runTest {
+            val repositoryShouldShowAppLabels =
+                collectLastValue(iconStyleRepository.shouldShowAppLabels).invoke()
+
+            val isEnabled = collectLastValue(underTest.previewingShouldShowAppLabels)
+
+            assertThat(isEnabled()).isEqualTo(repositoryShouldShowAppLabels)
+        }
+
+    @Test
+    fun toggleShouldShowAppLabels_togglesValue() =
+        testScope.runTest {
+            val isEnabled = collectLastValue(underTest.previewingShouldShowAppLabels)
+            val toggle = collectLastValue(underTest.toggleShouldShowAppLabels)
+
+            val initialValue = isEnabled()
+
+            toggle()?.invoke()
+
+            assertThat(isEnabled()).isNotEqualTo(initialValue)
         }
 
     private fun TestScope.assertShapeItem(
