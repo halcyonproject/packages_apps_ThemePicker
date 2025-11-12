@@ -33,9 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.customization.picker.common.ui.view.SingleRowListItemSpacing
 import com.android.customization.picker.icon.shared.model.IconStyleModel
-import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.customization.picker.icon.ui.util.IconStyleViewUtil
-import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
 import com.android.customization.picker.icon.ui.viewmodel.AppIconPickerViewModel.Tab
 import com.android.customization.picker.icon.ui.viewmodel.ShapeIconViewModel
 import com.android.themepicker.R
@@ -44,8 +42,6 @@ import com.android.wallpaper.customization.ui.binder.FloatingSheetHeightAnimatio
 import com.android.wallpaper.customization.ui.binder.SwitchColorBinder
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_ICONS
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsViewModel
-import com.android.wallpaper.picker.common.icon.ui.viewbinder.IconViewBinder
-import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.customization.ui.binder.ColorUpdateBinder
 import com.android.wallpaper.picker.customization.ui.view.FloatingToolbar
 import com.android.wallpaper.picker.customization.ui.view.adapter.FloatingToolbarTabAdapter
@@ -432,45 +428,13 @@ object AppIconFloatingSheetBinder {
             lifecycleOwner = lifecycleOwner,
             backgroundDispatcher = backgroundDispatcher,
             bindPayload = { view: View, iconStyleModel: IconStyleModel ->
-                val optionIcon = view.requireViewById<ViewGroup>(R.id.option_icon)
-                val buttonIcon = view.requireViewById<ViewGroup>(R.id.button_icon)
-                val icon = iconStyleViewUtil.getIcon(iconStyleModel)
-                if (iconStyleModel.isExternalLink) {
-                    optionIcon.visibility = View.GONE
-                    buttonIcon.visibility = View.VISIBLE
-                    val imageView = view.requireViewById<ImageView>(R.id.button_foreground)
-                    icon?.let { IconViewBinder.bind(imageView, it) }
-                    view.setOnClickListener {
-                        iconStyleViewUtil.getOnClick(iconStyleModel.iconStyle)?.invoke()
-                    }
-                } else {
-                    optionIcon.visibility = View.VISIBLE
-                    buttonIcon.visibility = View.GONE
-                    val imageView =
-                        view.requireViewById<ImageView>(com.android.wallpaper.R.id.foreground)
-                    icon?.let { IconViewBinder.bind(imageView, it) }
-                }
-                // If the icon is a themed icon, bind its foreground and background color
-                val disposableHandle =
-                    if (iconStyleModel.iconStyle == ThemePickerIconStyle.MONOCHROME) {
-                        ((icon as? Icon.Loaded)?.drawable as? ShapeTileDrawable)?.let {
-                            ShapeIconViewBinder.bindPreviewIconColor(
-                                shapeTileDrawable = it,
-                                colorUpdateViewModel = colorUpdateViewModel,
-                                shouldAnimateColor = shouldAnimateColor,
-                                lifecycleOwner = lifecycleOwner,
-                            )
-                        }
-                    } else if (iconStyleModel.isExternalLink) {
-                        ShapeIconViewBinder.bindButtonIconColor(
-                            foreground = buttonIcon.requireViewById(R.id.button_foreground),
-                            background = buttonIcon.requireViewById(R.id.button_background),
-                            colorUpdateViewModel = colorUpdateViewModel,
-                            shouldAnimateColor = shouldAnimateColor,
-                            lifecycleOwner = lifecycleOwner,
-                        )
-                    } else null
-                return@OptionItemAdapter2 disposableHandle
+                return@OptionItemAdapter2 iconStyleViewUtil.bindIconOptionView(
+                    view,
+                    iconStyleModel,
+                    colorUpdateViewModel,
+                    shouldAnimateColor,
+                    lifecycleOwner,
+                )
             },
             colorUpdateViewModel = WeakReference(colorUpdateViewModel),
             shouldAnimateColor = shouldAnimateColor,
