@@ -62,6 +62,10 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"Standaard"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Minimaal"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Vorm"</string>
+    <!-- no translation found for app_icons_label (394863025501627247) -->
+    <skip />
+    <!-- no translation found for app_labels (4290052401987798752) -->
+    <skip />
     <string name="app_icons_style" msgid="993356162262531521">"Stijl"</string>
     <string name="apply_theme_btn" msgid="6293081192321303991">"Toepassen"</string>
     <string name="edit_custom_theme_lbl" msgid="5211377705710775224">"Tik om te bewerken"</string>
