@@ -71,7 +71,7 @@ object AppIconFloatingSheetBinder {
         val viewModel = optionsViewModel.appIconPickerViewModel
         val isFloatingSheetActive = { optionsViewModel.selectedOption.value == APP_ICONS }
 
-        val isExtendibleThemeManager = BaseFlags.get().isExtendibleThemeManager()
+        val isExtendibleThemeManager = BaseFlags.get(view.context).isExtendibleThemeManager()
         val tabs = view.requireViewById<FloatingToolbar>(R.id.floating_toolbar)
         val tabAdapter: FloatingToolbarTabAdapter?
         if (isExtendibleThemeManager) {
