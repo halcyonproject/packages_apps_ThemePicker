@@ -126,9 +126,9 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
         customizationOptionsData as ThemePickerCustomizationOptionsData
 
-        val isComposeRefactorEnabled = BaseFlags.get().isComposeRefactorEnabled()
-        val isColorPickerUpdateEnabled = BaseFlags.get().isColorPickerUpdateEnabled()
-        val isColorPickerComposeEnabled = BaseFlags.get().isColorPickerComposeEnabled()
+        val isComposeRefactorEnabled = BaseFlags.get(view.context).isComposeRefactorEnabled()
+        val isColorPickerUpdateEnabled = BaseFlags.get(view.context).isColorPickerUpdateEnabled()
+        val isColorPickerComposeEnabled = BaseFlags.get(view.context).isColorPickerComposeEnabled()
 
         val showPackEntry =
             Settings.Secure.getInt(
@@ -189,7 +189,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
         val optionClockIcon: ImageView = optionClock.requireViewById(R.id.option_entry_icon)
 
         val isKeyguardQuickAffordanceEnabled =
-            BaseFlags.get().isKeyguardQuickAffordanceEnabled(view.context)
+            BaseFlags.get(view.context).isKeyguardQuickAffordanceEnabled(view.context)
         var optionShortcut: View? = null
         var optionShortcutDescription: TextView? = null
         var optionShortcutIcon1: ImageView? = null
@@ -227,7 +227,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
         var optionPackThemeIconLockDefault: ImageView? = null
         var optionPackThemeHome: View? = null
         var optionPackThemeLock: View? = null
-        if (BaseFlags.get().isPackThemeEnabled() && showPackEntry) {
+        if (BaseFlags.get(view.context).isPackThemeEnabled() && showPackEntry) {
             optionPackThemeHome =
                 homeScreenCustomizationOptionEntries
                     .first { it.first == ThemePickerHomeCustomizationOption.PACK_THEME }
@@ -245,7 +245,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             optionPackThemeIconLock = optionPackThemeLock.requireViewById(R.id.option_entry_icon)
         }
 
-        if (BaseFlags.get().shouldShowDesktopUi(view.context)) {
+        if (BaseFlags.get(view.context).shouldShowDesktopUi(view.context)) {
             val optionScreenSaverEntry: View =
                 homeScreenCustomizationOptionEntries
                     .first { it.first == ThemePickerHomeCustomizationOption.SCREEN_SAVER }
@@ -304,7 +304,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 if (customizationOptionsData.isGridCustomizationAvailable) {
                     optionGridIcon?.setColorFilter(color)
                 }
-                if (BaseFlags.get().isPackThemeEnabled()) {
+                if (BaseFlags.get(view.context).isPackThemeEnabled()) {
                     optionPackThemeIconLockDefault?.setColorFilter(color)
                     optionPackThemeIconHomeDefault?.setColorFilter(color)
                 }
@@ -377,7 +377,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
                     launch {
                         var disposableHandle: DisposableHandle? = null
-                        if (BaseFlags.get().isExtendibleThemeManager()) {
+                        if (BaseFlags.get(view.context).isExtendibleThemeManager()) {
                             optionsViewModel.appIconPickerViewModel.iconStyleAndShapeSummary
                                 .collect { summary ->
                                     disposableHandle?.dispose()
@@ -525,7 +525,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     }
                 }
 
-                if (BaseFlags.get().isPackThemeEnabled()) {
+                if (BaseFlags.get(view.context).isPackThemeEnabled()) {
                     launch {
                         optionsViewModel.packThemeViewModel.packThemeData.collect { packThemeData ->
                             optionPackThemeHome?.isEnabled = packThemeData.isEnabled
