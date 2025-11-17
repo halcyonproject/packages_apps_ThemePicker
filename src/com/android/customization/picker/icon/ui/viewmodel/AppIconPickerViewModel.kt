@@ -244,9 +244,7 @@ constructor(
                                     res = R.drawable.ic_font_size_filled_24px,
                                     contentDescription = Text.Resource(R.string.app_icons_label),
                                 ),
-                            text =
-                                Text.Resource(R.string.app_icons_label)
-                                    .asString(applicationContext),
+                            text = Text.Resource(R.string.app_names).asString(applicationContext),
                             isSelected = isSelected,
                             onClick =
                                 if (isSelected) {
