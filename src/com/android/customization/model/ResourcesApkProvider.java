@@ -11,7 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.ColorInt;
 
-public abstract class ResourcesApkProvider {
+public class ResourcesApkProvider {
     private static final String TAG = "ResourcesApkProvider";
 
     protected final Context mContext;
@@ -40,25 +40,37 @@ public abstract class ResourcesApkProvider {
         }
     }
 
-    protected String[] getItemsFromStub(String arrayName) {
+    /**
+     * Gets a string array resource from the stub aok.
+     */
+    public String[] getItemsFromStub(String arrayName) {
         int themesListResId = mStubApkResources.getIdentifier(arrayName, "array",  mStubPackageName);
         return mStubApkResources.getStringArray(themesListResId);
     }
 
-    protected String getItemStringFromStub(String prefix, String itemName) {
+    /**
+     * Gets a string resource from the stub aok.
+     */
+    public String getItemStringFromStub(String prefix, String itemName) {
         int resourceId = mStubApkResources.getIdentifier(String.format("%s%s", prefix, itemName),
                 "string", mStubPackageName);
         return mStubApkResources.getString(resourceId);
     }
 
-    protected Drawable getItemDrawableFromStub(String prefix, String itemName) {
+    /**
+     * Gets a drawable resource from the stub aok.
+     */
+    public Drawable getItemDrawableFromStub(String prefix, String itemName) {
         int resourceId = mStubApkResources.getIdentifier(String.format("%s%s", prefix, itemName),
                 "drawable", mStubPackageName);
         return mStubApkResources.getDrawable(resourceId, null);
     }
 
+    /**
+     * Gets a color resource from the stub aok.
+     */
     @ColorInt
-    protected int getItemColorFromStub(String prefix, String itemName) {
+    public int getItemColorFromStub(String prefix, String itemName) {
         int resourceId = mStubApkResources.getIdentifier(String.format("%s%s", prefix, itemName),
                 "color", mStubPackageName);
         return mStubApkResources.getColor(resourceId, null);
