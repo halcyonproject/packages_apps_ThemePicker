@@ -23,6 +23,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@Deprecated("Use Hilt instead, see b/459863716")
 open class TestCustomizationInjector
 @Inject
 constructor(

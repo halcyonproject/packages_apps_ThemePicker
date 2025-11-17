@@ -19,6 +19,7 @@ import android.content.Context
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor
 import com.android.wallpaper.module.Injector
 
+@Deprecated("Use Hilt instead, see b/459863716")
 interface CustomizationInjector : Injector {
     fun getCustomizationPreferences(context: Context): CustomizationPreferences
 

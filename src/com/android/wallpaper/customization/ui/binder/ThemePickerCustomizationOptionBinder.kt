@@ -490,6 +490,30 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                             }
                         }
                     }
+
+                    launch {
+                        combine(
+                                optionsViewModel.colorPickerViewModel2.overridingColorOption,
+                                optionsViewModel.colorPickerViewModel2.selectedColorOption,
+                                optionsViewModel.darkModeViewModel.overridingIsDarkMode,
+                                ::Triple,
+                            )
+                            .collect { (overridingColor, selectedColor, overridingIsDarkMode) ->
+                                if (overridingColor != null || overridingIsDarkMode != null) {
+                                    val previewColorOption = overridingColor ?: selectedColor
+                                    val previewIsDarkMode =
+                                        overridingIsDarkMode
+                                            ?: view.resources.configuration.isNightModeActive
+                                    previewColorOption?.let {
+                                        colorUpdateViewModel.previewColors(
+                                            previewColorOption.seedColor,
+                                            previewColorOption.style,
+                                            previewIsDarkMode,
+                                        )
+                                    }
+                                } else colorUpdateViewModel.resetPreview()
+                            }
+                    }
                 }
 
                 if (BaseFlags.get().isPackThemeEnabled()) {
