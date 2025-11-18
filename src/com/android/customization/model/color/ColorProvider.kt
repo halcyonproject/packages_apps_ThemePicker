@@ -140,11 +140,10 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
         wallpaperColors: WallpaperColors,
         bundles: MutableList<ColorOption>,
     ) {
-        val maxColors: Int = MAX_SEED_COLORS / 2
         val seedColors = ColorScheme.getSeedColors(wallpaperColors)
         val defaultSeed = seedColors.first()
         buildBundle(defaultSeed, 0, true, bundles)
-        for ((i, colorInt) in seedColors.drop(1).take(maxColors - 1).withIndex()) {
+        for ((i, colorInt) in seedColors.drop(1).take(MAX_SEED_COLORS - 1).withIndex()) {
             buildBundle(colorInt, i + 1, false, bundles)
         }
     }
