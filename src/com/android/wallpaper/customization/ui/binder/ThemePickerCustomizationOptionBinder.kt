@@ -223,6 +223,8 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
         var optionPackThemeIconHome: ImageView? = null
         var optionPackThemeIconLock: ImageView? = null
+        var optionPackThemeIconHomeDefault: ImageView? = null
+        var optionPackThemeIconLockDefault: ImageView? = null
         var optionPackThemeHome: View? = null
         var optionPackThemeLock: View? = null
         if (BaseFlags.get().isPackThemeEnabled() && showPackEntry) {
@@ -230,12 +232,16 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 homeScreenCustomizationOptionEntries
                     .first { it.first == ThemePickerHomeCustomizationOption.PACK_THEME }
                     .second
+            optionPackThemeIconHomeDefault =
+                optionPackThemeHome.requireViewById(R.id.option_entry_icon_default)
             optionPackThemeIconHome = optionPackThemeHome.requireViewById(R.id.option_entry_icon)
 
             optionPackThemeLock =
                 lockScreenCustomizationOptionEntries
                     .first { it.first == ThemePickerHomeCustomizationOption.PACK_THEME }
                     .second
+            optionPackThemeIconLockDefault =
+                optionPackThemeLock.requireViewById(R.id.option_entry_icon_default)
             optionPackThemeIconLock = optionPackThemeLock.requireViewById(R.id.option_entry_icon)
         }
 
@@ -299,8 +305,8 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     optionGridIcon?.setColorFilter(color)
                 }
                 if (BaseFlags.get().isPackThemeEnabled()) {
-                    optionPackThemeIconHome?.setColorFilter(color)
-                    optionPackThemeIconLock?.setColorFilter(color)
+                    optionPackThemeIconLockDefault?.setColorFilter(color)
+                    optionPackThemeIconHomeDefault?.setColorFilter(color)
                 }
             },
             color = colorUpdateViewModel.colorOnSurfaceVariant,
@@ -550,13 +556,15 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                                         .into(it)
                                     it.colorFilter = null
                                 }
+                                optionPackThemeIconLockDefault?.visibility = View.GONE
+                                optionPackThemeIconHomeDefault?.visibility = View.GONE
+                                optionPackThemeIconLock?.visibility = View.VISIBLE
+                                optionPackThemeIconHome?.visibility = View.VISIBLE
                             } else {
-                                optionPackThemeIconHome?.setImageResource(
-                                    R.drawable.ic_pack_theme_24px
-                                )
-                                optionPackThemeIconLock?.setImageResource(
-                                    R.drawable.ic_pack_theme_24px
-                                )
+                                optionPackThemeIconLockDefault?.visibility = View.VISIBLE
+                                optionPackThemeIconHomeDefault?.visibility = View.VISIBLE
+                                optionPackThemeIconLock?.visibility = View.GONE
+                                optionPackThemeIconHome?.visibility = View.GONE
                             }
                         }
                     }
