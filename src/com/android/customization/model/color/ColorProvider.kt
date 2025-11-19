@@ -29,6 +29,7 @@ import com.android.customization.model.ResourceConstants.COLOR_BUNDLE_STYLE_PREF
 import com.android.customization.model.ResourcesApkProvider
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
+import com.android.wallpaper.config.BaseFlags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,10 +43,10 @@ import kotlinx.coroutines.withContext
  */
 open class ColorProvider(private val context: Context, stubPackageName: String) {
 
-    private val resourcesApkProvider = ResourcesApkProvider(context, stubPackageName)
+    internal open val resourcesApkProvider = ResourcesApkProvider(context, stubPackageName)
 
     private var loaderJob: Job? = null
-    private val monetEnabled = ColorUtils.isMonetEnabled(context)
+    internal open val monetEnabled = ColorUtils.isMonetEnabled(context)
     // TODO(b/202145216): Use style method to fetch the list of style.
     @ThemeStyle.Type
     private var styleList =
@@ -59,6 +60,8 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
         } else {
             CoroutineScope(Dispatchers.Default + SupervisorJob())
         }
+
+    private val isColorPickerUpdateEnabled = BaseFlags.get(context).isColorPickerUpdateEnabled()
 
     private var colorsAvailable = true
     private var presetColorBundles: List<ColorOption>? = null
@@ -103,7 +106,12 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
     private fun loadWallpaperOptions(homeWallpaperColors: WallpaperColors?) {
         if (homeWallpaperColors == null) return
 
-        wallpaperColorBundles = buildColorAndStyleOptions(wallpaperColors = homeWallpaperColors)
+        wallpaperColorBundles =
+            if (isColorPickerUpdateEnabled) {
+                buildColorSeedOptions(wallpaperColors = homeWallpaperColors)
+            } else {
+                buildColorAndStyleOptions(wallpaperColors = homeWallpaperColors)
+            }
     }
 
     private fun buildColorAndStyleOptions(
@@ -123,9 +131,33 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                         style = style,
                         // The first seed color is the default.
                         isDefault = i == 0,
+                        getLightColorPreview = ColorProviderUtil::getLightThreeColorPreview,
+                        getDarkColorPreview = ColorProviderUtil::getDarkThreeColorPreview,
                     )
                 bundles.add(colorOption)
             }
+        }
+        return bundles
+    }
+
+    private fun buildColorSeedOptions(wallpaperColors: WallpaperColors): MutableList<ColorOption> {
+        val bundles: MutableList<ColorOption> = ArrayList()
+        val seedColors = ColorScheme.getSeedColors(wallpaperColors)
+        for ((i, colorInt) in seedColors.take(MAX_SEED_COLORS).withIndex()) {
+            // TODO (b/441279631): enable updating color titles
+            val colorOption =
+                ColorProviderUtil.buildBundle(
+                    context = context,
+                    colorInt = colorInt,
+                    // Color option index value starts from 1.
+                    index = i + 1,
+                    style = ThemeStyle.TONAL_SPOT,
+                    // The first seed color is the default.
+                    isDefault = i == 0,
+                    getLightColorPreview = ColorProviderUtil::getLightOneOrTwoColorPreview,
+                    getDarkColorPreview = ColorProviderUtil::getDarkOneOrTwoColorPreview,
+                )
+            bundles.add(colorOption)
         }
         return bundles
     }
@@ -137,14 +169,11 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
             val bundleNames =
                 if (isAvailable()) resourcesApkProvider.getItemsFromStub(COLOR_BUNDLES_ARRAY_NAME)
                 else emptyArray()
-            // Color option index value starts from 1.
-            var index = 1
-            val maxPresetColors = bundleNames.size
 
             // keep track of whether monochrome is included in preset colors to determine
             // inclusion in wallpaper colors
             var hasMonochrome = false
-            for (bundleName in bundleNames.take(maxPresetColors)) {
+            for ((i, bundleName) in bundleNames.withIndex()) {
                 val title =
                     resourcesApkProvider.getItemStringFromStub(COLOR_BUNDLE_NAME_PREFIX, bundleName)
                 val color =
@@ -178,12 +207,11 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                     ColorProviderUtil.buildPreset(
                         title = title,
                         color = color,
-                        index = index,
+                        // Color option index value starts from 1.
+                        index = i + 1,
                         style = style,
                     )
                 )
-
-                index++
             }
             if (!hasMonochrome) {
                 monochromeBundleName = null
@@ -196,14 +224,21 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
     private fun buildFinalList(): List<ColorOption> {
         val presetColors = presetColorBundles ?: emptyList()
         val wallpaperColors = wallpaperColorBundles?.toMutableList() ?: mutableListOf()
+        if (!isColorPickerUpdateEnabled) {
+            insertMonochrome(wallpaperColors)
+        }
+        return wallpaperColors + presetColors
+    }
+
+    private fun insertMonochrome(colorList: MutableList<ColorOption>) {
         // Insert monochrome in the second position if it is enabled and included in preset
         // colors
         monochromeBundleName?.let {
             val title = resourcesApkProvider.getItemStringFromStub(COLOR_BUNDLE_NAME_PREFIX, it)
             val color =
                 resourcesApkProvider.getItemColorFromStub(COLOR_BUNDLE_MAIN_COLOR_PREFIX, it)
-            if (wallpaperColors.isNotEmpty()) {
-                wallpaperColors.add(
+            if (colorList.isNotEmpty()) {
+                colorList.add(
                     1,
                     ColorProviderUtil.buildPreset(
                         title = title,
@@ -215,7 +250,6 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                 )
             }
         }
-        return wallpaperColors + presetColors
     }
 
     companion object {
