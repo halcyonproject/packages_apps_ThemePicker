@@ -293,7 +293,7 @@ constructor(
             )
         }
 
-    val iconStyleAndShapeSummary: Flow<AppIconPickerSummaryViewModel> =
+    val iconStyleAndShapeSummary: Flow<AppIconPickerSummaryViewModel2> =
         combine(
             selectedShape,
             selectedIconStyle,
@@ -311,9 +311,11 @@ constructor(
             val selectedIconStyleModel = iconStylesModels.find { it.iconStyle == selectedIconStyle }
             val appIconThemeString =
                 if (isIconStyleAvailable)
-                    selectedIconStyleModel?.nameResId?.let { applicationContext.getString(it) }
+                    selectedIconStyleModel?.iconStyle?.nameResId?.let {
+                        applicationContext.getString(it)
+                    }
                 else null
-            AppIconPickerSummaryViewModel(
+            AppIconPickerSummaryViewModel2(
                 description =
                     Text.Loaded(
                         if (
@@ -332,8 +334,7 @@ constructor(
                         }
                     ),
                 iconShape = selectedShape.payload,
-                icon = selectedIconStyleModel?.icon,
-                isThemed = selectedIconStyleModel?.isThemedIcon ?: false,
+                iconStyleModel = selectedIconStyleModel,
             )
         }
 
@@ -519,7 +520,7 @@ constructor(
                     started = SharingStarted.Lazily,
                     initialValue = false,
                 )
-        val text = Text.Resource(iconStyleModel.nameResId)
+        val text = Text.Resource(iconStyleModel.iconStyle.nameResId)
         return OptionItemViewModel2(
             key = MutableStateFlow(text.asString(applicationContext)),
             payload = iconStyleModel,

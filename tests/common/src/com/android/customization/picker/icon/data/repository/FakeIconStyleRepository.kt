@@ -53,18 +53,12 @@ class FakeIconStyleRepository @Inject constructor() : IconStyleRepository {
             ThemePickerIconStyle.entries
                 .toList()
                 // Filter entries if themed icon is not available
-                .filter { isThemedIconAvailable || !it.getIsThemedIcon() }
+                .filter { isThemedIconAvailable || it != ThemePickerIconStyle.MONOCHROME }
                 .map { it.toIconStyleModel() }
         }
 
     private fun IconStyle.toIconStyleModel(): IconStyleModel {
-        return IconStyleModel(
-            iconStyle = this,
-            nameResId = this.nameResId,
-            icon = null,
-            isThemedIcon = this == ThemePickerIconStyle.MONOCHROME,
-            isExternalLink = false,
-        )
+        return IconStyleModel(iconStyle = this, isExternalLink = false)
     }
 
     override suspend fun setIconStyle(iconStyle: IconStyle): Boolean {
