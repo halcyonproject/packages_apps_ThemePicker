@@ -280,20 +280,20 @@ object AppIconFloatingSheetBinder {
                                 when (selectedTab) {
                                     Tab.STYLE -> styleContentHeight
                                     Tab.SHAPE -> shapeContentHeight
-                                    Tab.LABEL -> labelContentHeight
+                                    Tab.NAMES -> labelContentHeight
                                 } + 2 * verticalPadding
                             val currentContent: View? =
                                 when (currentTab) {
                                     Tab.STYLE -> styleContent
                                     Tab.SHAPE -> shapeContent
-                                    Tab.LABEL -> labelContent
+                                    Tab.NAMES -> labelContent
                                     else -> null
                                 }
                             val selectedContent: View =
                                 when (selectedTab) {
                                     Tab.STYLE -> styleContent
                                     Tab.SHAPE -> shapeContent
-                                    Tab.LABEL -> labelContent
+                                    Tab.NAMES -> labelContent
                                 }
                             FloatingSheetHeightAnimationBinder.bind(
                                 floatingSheetContainer,
