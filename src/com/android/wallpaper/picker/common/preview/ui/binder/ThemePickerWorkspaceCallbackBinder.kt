@@ -16,6 +16,7 @@
 
 package com.android.wallpaper.picker.common.preview.ui.binder
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Message
 import android.os.RemoteException
@@ -48,6 +49,7 @@ import com.android.wallpaper.model.Screen
 import com.android.wallpaper.picker.common.preview.ui.binder.WorkspaceCallbackBinder.Companion.sendMessage
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
 import com.android.wallpaper.picker.customization.ui.viewmodel.CustomizationOptionsViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Job
@@ -58,6 +60,7 @@ import kotlinx.coroutines.launch
 class ThemePickerWorkspaceCallbackBinder
 @Inject
 constructor(
+    @ApplicationContext private val context: Context,
     private val defaultWorkspaceCallbackBinder: DefaultWorkspaceCallbackBinder,
     private val materialColorsGenerator: MaterialColorsGenerator,
 ) : WorkspaceCallbackBinder {
@@ -226,7 +229,7 @@ constructor(
                                     }
                             }
 
-                            if (BaseFlags.get().isExtendibleThemeManager()) {
+                            if (BaseFlags.get(context).isExtendibleThemeManager()) {
                                 launch {
                                     viewModel.appIconPickerViewModel.previewingIconStyle.collect {
                                         safeSendMessage(
