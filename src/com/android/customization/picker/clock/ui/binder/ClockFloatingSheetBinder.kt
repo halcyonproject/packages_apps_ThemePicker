@@ -93,7 +93,7 @@ object ClockFloatingSheetBinder {
         val tabs: FloatingToolbar = view.requireViewById(R.id.floating_toolbar)
         val tabContainer =
             tabs.findViewById<ViewGroup>(com.android.wallpaper.R.id.floating_toolbar_tab_container)
-        val isDesktopUi: Boolean = BaseFlags.get(appContext).shouldShowDesktopUi(view.context)
+        val isDesktopUi: Boolean = BaseFlags.get().shouldShowDesktopUi(view.context)
         ColorUpdateBinder.bind(
             setColor = { color ->
                 DrawableCompat.setTint(DrawableCompat.wrap(tabContainer.background), color)

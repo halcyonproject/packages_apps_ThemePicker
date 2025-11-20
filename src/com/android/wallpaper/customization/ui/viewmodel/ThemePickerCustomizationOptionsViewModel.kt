@@ -64,7 +64,7 @@ import kotlinx.coroutines.launch
 class ThemePickerCustomizationOptionsViewModel
 @AssistedInject
 constructor(
-    @ApplicationContext private val appContext: Context,
+    @ApplicationContext appContext: Context,
     defaultCustomizationOptionsViewModelFactory: DefaultCustomizationOptionsViewModel.Factory,
     keyguardQuickAffordancePickerViewModel2Factory: KeyguardQuickAffordancePickerViewModel2.Factory,
     colorPickerViewModel2Factory: ColorPickerViewModel2.Factory,
@@ -101,7 +101,7 @@ constructor(
         appIconPickerViewModelFactory.create(viewModelScope = viewModelScope)
 
     override val customizationOptionsData: Flow<CustomizationOptionsData> =
-        if (BaseFlags.get(appContext).isExtendibleThemeManager()) {
+        if (BaseFlags.get().isExtendibleThemeManager()) {
             combine(
                 gridPickerViewModel.isGridCustomizationAvailable,
                 appIconPickerViewModel.isIconStyleAvailable,
@@ -154,7 +154,7 @@ constructor(
 
         keyguardQuickAffordancePickerViewModel2.resetPreview()
         gridPickerViewModel.resetPreview()
-        if (BaseFlags.get(appContext).isExtendibleThemeManager()) {
+        if (BaseFlags.get().isExtendibleThemeManager()) {
             appIconPickerViewModel.resetPreview2()
         } else {
             appIconPickerViewModel.resetPreview()
@@ -177,7 +177,7 @@ constructor(
     }
 
     override fun refetchThemeInfo() {
-        if (BaseFlags.get(appContext).isPackThemeEnabled()) {
+        if (BaseFlags.get().isPackThemeEnabled()) {
             packThemeViewModel.refetchPackTheme()
         }
     }
@@ -243,7 +243,7 @@ constructor(
                     SHORTCUTS -> keyguardQuickAffordancePickerViewModel2.onApply
                     GRID -> gridPickerViewModel.onApply
                     APP_ICONS ->
-                        if (BaseFlags.get(appContext).isExtendibleThemeManager()) {
+                        if (BaseFlags.get().isExtendibleThemeManager()) {
                             appIconPickerViewModel.iconStyleAndShapeOnApply
                         } else {
                             appIconPickerViewModel.shapeAndThemedIconOnApply

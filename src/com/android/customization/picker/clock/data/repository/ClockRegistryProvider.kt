@@ -23,6 +23,7 @@ import com.android.systemui.shared.clocks.DefaultClockProvider
 import com.android.systemui.shared.plugins.PluginEnabler
 import com.android.systemui.shared.plugins.PluginManagerImpl
 import com.android.systemui.shared.system.UncaughtExceptionPreHandlerManager_Factory
+import com.android.wallpaper.config.BaseFlags
 import java.util.concurrent.Executors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +39,7 @@ class ClockRegistryProvider(
     private val backgroundDispatcher: CoroutineDispatcher,
 ) {
     private val clockRegistry: ClockRegistry by lazy {
+        val flags = BaseFlags.get()
         ClockRegistry(
             context,
             createPluginManager(context),

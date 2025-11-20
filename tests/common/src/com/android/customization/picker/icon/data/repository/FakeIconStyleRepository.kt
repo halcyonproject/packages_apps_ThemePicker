@@ -16,7 +16,6 @@
 
 package com.android.customization.picker.icon.data.repository
 
-import android.content.Context
 import android.stats.style.StyleEnums.APP_ICON_STYLE_THEMED
 import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
 import com.android.customization.picker.icon.shared.model.IconStyle
@@ -25,7 +24,6 @@ import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.testing.FakePreviewUtils
 import com.android.wallpaper.util.BasePreviewUtils
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -35,9 +33,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 @Singleton
-class FakeIconStyleRepository
-@Inject
-constructor(@ApplicationContext private val context: Context) : IconStyleRepository {
+class FakeIconStyleRepository @Inject constructor() : IconStyleRepository {
     override val previewUtilsFlow: Flow<BasePreviewUtils?> = flowOf(FakePreviewUtils())
 
     private val _isCustomizationAvailable = MutableStateFlow(true)
@@ -73,7 +69,7 @@ constructor(@ApplicationContext private val context: Context) : IconStyleReposit
     }
 
     override suspend fun getIconStyleForLogging(): Int {
-        if (BaseFlags.get(context).isExtendibleThemeManager()) {
+        if (BaseFlags.get().isExtendibleThemeManager()) {
             val iconStyle = selectedIconStyle.value
             return iconStyle.loggingId ?: APP_ICON_STYLE_UNSPECIFIED
         } else {

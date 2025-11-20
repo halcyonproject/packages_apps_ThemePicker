@@ -211,7 +211,7 @@ constructor(
     }
 
     override suspend fun getIconStyleForLogging(): Int {
-        if (BaseFlags.get(appContext).isExtendibleThemeManager()) {
+        if (BaseFlags.get().isExtendibleThemeManager()) {
             val iconStyle = withTimeoutOrNull(TIMEOUT) { selectedIconStyle.first() }
             return iconStyle?.loggingId ?: APP_ICON_STYLE_UNSPECIFIED
         } else {

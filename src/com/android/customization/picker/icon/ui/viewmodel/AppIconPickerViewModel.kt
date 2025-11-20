@@ -183,8 +183,7 @@ constructor(
                 }
         }
 
-    private val isHideAppLabelsEnabled: Boolean =
-        BaseFlags.get(applicationContext).isHideAppLabelEnabled()
+    private val isHideAppLabelsEnabled: Boolean = BaseFlags.get().isHideAppLabelEnabled()
 
     val tabs: Flow<List<FloatingToolbarTabViewModel>> =
         combine(isIconStyleAvailable, isShapeOptionsAvailable, selectedTab) {
