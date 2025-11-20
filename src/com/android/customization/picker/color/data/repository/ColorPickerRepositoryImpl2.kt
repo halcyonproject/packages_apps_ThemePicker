@@ -37,6 +37,7 @@ import com.android.wallpaper.picker.customization.data.content.WallpaperClient
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -52,7 +54,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 class ColorPickerRepositoryImpl2
 @Inject
 constructor(
-    @BackgroundDispatcher private val scope: CoroutineScope,
+    @BackgroundDispatcher scope: CoroutineScope,
+    @BackgroundDispatcher backgroundDispatcher: CoroutineDispatcher,
     private val colorManager: ColorCustomizationManager,
     client: WallpaperClient,
 ) : ColorPickerRepository2 {
@@ -72,6 +75,7 @@ constructor(
                 client.addOnColorsChangedListener(listener, Handler(Looper.getMainLooper()))
                 awaitClose { client.removeOnColorsChangedListener(listener) }
             }
+            .flowOn(backgroundDispatcher)
             // Make this a shared flow to make sure only one listener is added.
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
     private val homeWallpaperColors: Flow<WallpaperColors?> =
