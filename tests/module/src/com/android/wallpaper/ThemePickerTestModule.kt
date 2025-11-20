@@ -36,7 +36,6 @@ import com.android.systemui.shared.clocks.ClockRegistry
 import com.android.systemui.shared.customization.data.content.CustomizationProviderClient
 import com.android.systemui.shared.customization.data.content.CustomizationProviderClientImpl
 import com.android.systemui.shared.settings.data.repository.SecureSettingsRepository
-import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.customization.ui.binder.ThemePickerToolbarBinder
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil
 import com.android.wallpaper.effects.EffectsController
@@ -276,12 +275,6 @@ abstract class ThemePickerTestModule {
             @BackgroundDispatcher bgDispatcher: CoroutineDispatcher,
         ): CustomizationProviderClient {
             return CustomizationProviderClientImpl(context, bgDispatcher)
-        }
-
-        @Provides
-        @Singleton
-        fun provideFlags(): BaseFlags {
-            return object : BaseFlags() {}
         }
 
         @Provides
