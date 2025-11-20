@@ -29,7 +29,7 @@ import com.android.customization.model.ResourceConstants
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
-import com.android.customization.model.color.ColorProvider
+import com.android.customization.model.color.ColorProviderUtil
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
 import com.android.wallpaper.model.Screen
@@ -163,13 +163,13 @@ constructor(
         if (seedColorStr != null && !seedColorStr.startsWith("#")) {
             val seedColorInt = "#$seedColorStr".toColorInt()
             builder.lightColors =
-                (colorManager.provider as ColorProvider).getColorPreview(
+                ColorProviderUtil.getColorPreview(
                     ColorScheme(seedColorInt, /* darkTheme= */ false, style),
                     source,
                     /* darkTheme= */ false,
                 )
             builder.darkColors =
-                (colorManager.provider as ColorProvider).getColorPreview(
+                ColorProviderUtil.getColorPreview(
                     ColorScheme(seedColorInt, /* darkTheme= */ true, style),
                     source,
                     /* darkTheme= */ true,

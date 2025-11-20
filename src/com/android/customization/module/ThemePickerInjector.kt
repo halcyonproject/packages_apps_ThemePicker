@@ -19,7 +19,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.android.customization.model.color.ColorCustomizationManager
-import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
+import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_PRESET
 import com.android.customization.model.theme.OverlayManagerCompat
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.quickaffordance.domain.interactor.KeyguardQuickAffordancePickerInteractor

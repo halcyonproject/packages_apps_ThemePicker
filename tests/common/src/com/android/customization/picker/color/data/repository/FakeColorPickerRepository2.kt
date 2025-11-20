@@ -21,7 +21,7 @@ import android.graphics.Color
 import com.android.customization.model.ResourceConstants
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
-import com.android.customization.model.color.ColorOptionsProvider
+import com.android.customization.model.color.ColorProviderUtil
 import com.android.customization.model.color.ColorUtils.toColorString
 import com.android.customization.picker.color.shared.model.ColorType
 import javax.inject.Inject
@@ -130,7 +130,7 @@ class FakeColorPickerRepository2 @Inject constructor() : ColorPickerRepository2 
             intArrayOf(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
         builder.index = index
         builder.type = ColorType.PRESET_COLOR
-        builder.source = ColorOptionsProvider.COLOR_SOURCE_PRESET
+        builder.source = ColorProviderUtil.COLOR_SOURCE_PRESET
         builder.title = "Preset"
         builder
             .addOverlayPackage("TEST_PACKAGE_TYPE", "preset_color")
@@ -145,7 +145,7 @@ class FakeColorPickerRepository2 @Inject constructor() : ColorPickerRepository2 
         builder.darkColors =
             intArrayOf(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
         builder.type = ColorType.PRESET_COLOR
-        builder.source = ColorOptionsProvider.COLOR_SOURCE_PRESET
+        builder.source = ColorProviderUtil.COLOR_SOURCE_PRESET
         builder.style = style
         builder.title = "Preset"
         builder.seedColor = seedColor
@@ -166,7 +166,7 @@ class FakeColorPickerRepository2 @Inject constructor() : ColorPickerRepository2 
             intArrayOf(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
         builder.index = index
         builder.type = ColorType.WALLPAPER_COLOR
-        builder.source = ColorOptionsProvider.COLOR_SOURCE_HOME
+        builder.source = ColorProviderUtil.COLOR_SOURCE_HOME
         builder.title = "Dynamic"
         builder
             .addOverlayPackage("TEST_PACKAGE_TYPE", "wallpaper_color")
