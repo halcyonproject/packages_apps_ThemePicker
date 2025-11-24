@@ -18,9 +18,9 @@ package com.android.customization.model.color
 import android.content.theming.ThemeStyle
 import android.graphics.Color
 import com.android.customization.model.ResourceConstants.OVERLAY_CATEGORY_SYSTEM_PALETTE
-import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_HOME
-import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_LOCK
-import com.android.customization.model.color.ColorOptionsProvider.COLOR_SOURCE_PRESET
+import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_HOME
+import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_LOCK
+import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_PRESET
 import com.android.customization.picker.color.shared.model.ColorType
 import com.google.common.truth.Truth.assertThat
 import org.json.JSONObject

@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.customization.picker.common.ui.view.SingleRowListItemSpacing
 import com.android.customization.picker.icon.shared.model.IconStyleModel
+import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.customization.picker.icon.ui.util.IconStyleViewUtil
 import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
 import com.android.customization.picker.icon.ui.viewmodel.AppIconPickerViewModel.Tab
@@ -70,7 +71,7 @@ object AppIconFloatingSheetBinder {
         val viewModel = optionsViewModel.appIconPickerViewModel
         val isFloatingSheetActive = { optionsViewModel.selectedOption.value == APP_ICONS }
 
-        val isExtendibleThemeManager = BaseFlags.get().isExtendibleThemeManager()
+        val isExtendibleThemeManager = BaseFlags.get(view.context).isExtendibleThemeManager()
         val tabs = view.requireViewById<FloatingToolbar>(R.id.floating_toolbar)
         val tabAdapter: FloatingToolbarTabAdapter?
         if (isExtendibleThemeManager) {
@@ -279,20 +280,20 @@ object AppIconFloatingSheetBinder {
                                 when (selectedTab) {
                                     Tab.STYLE -> styleContentHeight
                                     Tab.SHAPE -> shapeContentHeight
-                                    Tab.LABEL -> labelContentHeight
+                                    Tab.NAMES -> labelContentHeight
                                 } + 2 * verticalPadding
                             val currentContent: View? =
                                 when (currentTab) {
                                     Tab.STYLE -> styleContent
                                     Tab.SHAPE -> shapeContent
-                                    Tab.LABEL -> labelContent
+                                    Tab.NAMES -> labelContent
                                     else -> null
                                 }
                             val selectedContent: View =
                                 when (selectedTab) {
                                     Tab.STYLE -> styleContent
                                     Tab.SHAPE -> shapeContent
-                                    Tab.LABEL -> labelContent
+                                    Tab.NAMES -> labelContent
                                 }
                             FloatingSheetHeightAnimationBinder.bind(
                                 floatingSheetContainer,
@@ -433,7 +434,7 @@ object AppIconFloatingSheetBinder {
             bindPayload = { view: View, iconStyleModel: IconStyleModel ->
                 val optionIcon = view.requireViewById<ViewGroup>(R.id.option_icon)
                 val buttonIcon = view.requireViewById<ViewGroup>(R.id.button_icon)
-                val icon = iconStyleModel.icon
+                val icon = iconStyleViewUtil.getIcon(iconStyleModel)
                 if (iconStyleModel.isExternalLink) {
                     optionIcon.visibility = View.GONE
                     buttonIcon.visibility = View.VISIBLE
@@ -451,7 +452,7 @@ object AppIconFloatingSheetBinder {
                 }
                 // If the icon is a themed icon, bind its foreground and background color
                 val disposableHandle =
-                    if (iconStyleModel.isThemedIcon) {
+                    if (iconStyleModel.iconStyle == ThemePickerIconStyle.MONOCHROME) {
                         ((icon as? Icon.Loaded)?.drawable as? ShapeTileDrawable)?.let {
                             ShapeIconViewBinder.bindPreviewIconColor(
                                 shapeTileDrawable = it,

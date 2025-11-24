@@ -26,9 +26,5 @@ enum class ThemePickerIconStyle(
     @AppIconStyle override val loggingId: Int = APP_ICON_STYLE_UNSPECIFIED,
 ) : IconStyle {
     DEFAULT(R.string.app_icons_style_default, APP_ICON_STYLE_UNSPECIFIED),
-    MONOCHROME(R.string.app_icons_style_minimal, APP_ICON_STYLE_THEMED);
-
-    override fun getIsThemedIcon(): Boolean {
-        return this == MONOCHROME
-    }
+    MONOCHROME(R.string.app_icons_style_minimal, APP_ICON_STYLE_THEMED),
 }

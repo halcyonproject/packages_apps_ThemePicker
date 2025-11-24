@@ -161,7 +161,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/app_labels"
+                android:text="@string/show_app_names"
                 android:layout_marginEnd="@dimen/floating_sheet_clock_style_clock_size_text_margin_end"
                 android:importantForAccessibility="no" />
 
@@ -171,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:contentDescription="@string/app_labels"
+                android:contentDescription="@string/show_app_names"
                 android:clickable="true"
                 android:theme="@style/Theme.Material3.DynamicColors.DayNight" />
         </LinearLayout>

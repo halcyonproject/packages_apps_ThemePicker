@@ -573,8 +573,8 @@ class AppIconPickerViewModelTest {
                 }
             checkNotNull(on4SidedCookieOptionClick)
             val styleOptions = collectLastValue(underTest.styleOptions)
-            val onMinimalOptionClick =
-                styleOptions()?.get(1)?.onClicked?.let { collectLastValue(it) }
+            val minimalOption = styleOptions()?.get(1)
+            val onMinimalOptionClick = minimalOption?.onClicked?.let { collectLastValue(it) }
             checkNotNull(onMinimalOptionClick)
 
             on4SidedCookieOptionClick()?.invoke()
@@ -590,7 +590,7 @@ class AppIconPickerViewModelTest {
                     )
                 )
             assertThat(currentSummary?.description?.asString(appContext)).matches(".+,.+")
-            assertThat(currentSummary?.isThemed).isEqualTo(true)
+            assertThat(currentSummary?.iconStyleModel).isEqualTo(minimalOption.payload)
         }
 
     @Test

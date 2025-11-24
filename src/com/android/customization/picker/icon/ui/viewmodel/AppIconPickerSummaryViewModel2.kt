@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.customization.picker.icon.shared.model
+package com.android.customization.picker.icon.ui.viewmodel
 
-import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
+import com.android.customization.picker.icon.shared.model.IconStyleModel
+import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 
-open class IconStyleModel(
-    val iconStyle: IconStyle,
-    val nameResId: Int,
-    val icon: Icon?,
-    val isThemedIcon: Boolean,
-    val isExternalLink: Boolean,
+/** View model representing information needed for the app icon entry point summary. */
+data class AppIconPickerSummaryViewModel2(
+    val description: Text,
+    val iconShape: ShapeIconViewModel?,
+    val iconStyleModel: IconStyleModel?,
 )

@@ -21,7 +21,6 @@ import android.content.theming.ThemeStyle
 import android.stats.style.StyleEnums
 import android.view.View
 import androidx.annotation.ColorInt
-import com.android.customization.model.color.ColorOptionsProvider.ColorSource
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.themepicker.R
 
@@ -70,9 +69,9 @@ class ColorOptionImpl(
 
     override fun getSourceForLogging(): Int {
         return when (getSource()) {
-            ColorOptionsProvider.COLOR_SOURCE_PRESET -> StyleEnums.COLOR_SOURCE_PRESET_COLOR
-            ColorOptionsProvider.COLOR_SOURCE_HOME -> StyleEnums.COLOR_SOURCE_HOME_SCREEN_WALLPAPER
-            ColorOptionsProvider.COLOR_SOURCE_LOCK -> StyleEnums.COLOR_SOURCE_LOCK_SCREEN_WALLPAPER
+            ColorProviderUtil.COLOR_SOURCE_PRESET -> StyleEnums.COLOR_SOURCE_PRESET_COLOR
+            ColorProviderUtil.COLOR_SOURCE_HOME -> StyleEnums.COLOR_SOURCE_HOME_SCREEN_WALLPAPER
+            ColorProviderUtil.COLOR_SOURCE_LOCK -> StyleEnums.COLOR_SOURCE_LOCK_SCREEN_WALLPAPER
             else -> StyleEnums.COLOR_SOURCE_UNSPECIFIED
         }
     }
@@ -86,7 +85,7 @@ class ColorOptionImpl(
 
         @ColorInt var darkColors: IntArray = intArrayOf()
 
-        @ColorSource var source: String? = null
+        @ColorProviderUtil.ColorSource var source: String? = null
         var isDefault = false
         @ColorInt var seedColor = 0
         @ThemeStyle.Type var style = ThemeStyle.TONAL_SPOT

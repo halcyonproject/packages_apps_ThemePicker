@@ -20,7 +20,6 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.database.ContentObserver
-import android.graphics.drawable.AdaptiveIconDrawable
 import android.net.Uri
 import android.stats.style.StyleEnums.APP_ICON_STYLE_THEMED
 import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
@@ -29,13 +28,10 @@ import com.android.customization.module.logging.ThemesUserEventLoggerImpl.Compan
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
-import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
-import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.module.InjectorProvider
-import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import com.android.wallpaper.util.PreviewUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -127,32 +123,12 @@ constructor(
             ThemePickerIconStyle.entries
                 .toList()
                 // Filter entries if themed icon is not available
-                .filter { isThemedIconAvailable || !it.getIsThemedIcon() }
+                .filter { isThemedIconAvailable || it != ThemePickerIconStyle.MONOCHROME }
                 .map { it.toIconStyleModel() }
         }
 
     private fun IconStyle.toIconStyleModel(): IconStyleModel {
-        return IconStyleModel(
-            iconStyle = this,
-            nameResId = this.nameResId,
-            icon = this.getIcon(),
-            isThemedIcon = this == ThemePickerIconStyle.MONOCHROME,
-            isExternalLink = false,
-        )
-    }
-
-    private fun IconStyle.getIcon(): Icon {
-        val previewIconPackageName = appContext.resources.getString(R.string.camera_package)
-        val appIconDrawable = ShapeIconViewBinder.loadAppIcon(appContext, previewIconPackageName)
-        return Icon.Loaded(
-            drawable =
-                ShapeTileDrawable(
-                    context = appContext,
-                    icon = appIconDrawable as? AdaptiveIconDrawable,
-                    isThemed = this == ThemePickerIconStyle.MONOCHROME,
-                ),
-            contentDescription = null,
-        )
+        return IconStyleModel(iconStyle = this, isExternalLink = false)
     }
 
     override val selectedIconStyle =
@@ -186,10 +162,10 @@ constructor(
         return isEnabled
     }
 
-    private fun getShouldShowAppLabels(uri: Uri): Boolean {
+    private fun getShouldShowAppLabels(previewUtils: PreviewUtils): Boolean {
         val cursor =
             contentResolver.query(
-                uri,
+                previewUtils.getUri(HIDE_APP_LABELS),
                 /* projection= */ null,
                 /* selection= */ null,
                 /* selectionArgs= */ null,
@@ -199,8 +175,7 @@ constructor(
         cursor?.use {
             if (cursor.moveToNext()) {
                 shouldHideLabels =
-                    (cursor.getInt(cursor.getColumnIndex(COL_SHOULD_HIDE_WORKSPACE_ITEM_LABELS)) ==
-                        ENABLED)
+                    (cursor.getInt(cursor.getColumnIndex(COL_HIDE_APP_NAMES)) == ENABLED)
             }
         }
         return !shouldHideLabels
@@ -236,7 +211,7 @@ constructor(
     }
 
     override suspend fun getIconStyleForLogging(): Int {
-        if (BaseFlags.get().isExtendibleThemeManager()) {
+        if (BaseFlags.get(appContext).isExtendibleThemeManager()) {
             val iconStyle = withTimeoutOrNull(TIMEOUT) { selectedIconStyle.first() }
             return iconStyle?.loggingId ?: APP_ICON_STYLE_UNSPECIFIED
         } else {
@@ -255,7 +230,7 @@ constructor(
                         val contentObserver =
                             object : ContentObserver(null) {
                                 override fun onChange(selfChange: Boolean) {
-                                    trySend(getShouldShowAppLabels(it.getUri(HIDE_APP_LABELS)))
+                                    trySend(getShouldShowAppLabels(it))
                                 }
                             }
                         contentResolver.registerContentObserver(
@@ -264,7 +239,7 @@ constructor(
                             contentObserver,
                         )
 
-                        trySend(getShouldShowAppLabels(it.getUri(HIDE_APP_LABELS)))
+                        trySend(getShouldShowAppLabels(it))
 
                         disposableHandle = DisposableHandle {
                             contentResolver.unregisterContentObserver(contentObserver)
@@ -282,7 +257,7 @@ constructor(
     override suspend fun setShouldShowAppLabels(shouldShowAppLabels: Boolean) {
         previewUtilsFlow.first()?.let {
             val values = ContentValues()
-            values.put(KEY_SHOULD_HIDE_WORKSPACE_ITEM_LABELS, !shouldShowAppLabels)
+            values.put(SET_HIDE_APP_LABELS, !shouldShowAppLabels)
             contentResolver.update(
                 it.getUri(HIDE_APP_LABELS),
                 values,
@@ -296,11 +271,12 @@ constructor(
         const val ICON_THEMED = "icon_themed"
         const val SET_ICON_THEMED = "set_icon_themed"
         const val COL_ICON_THEMED_VALUE = "boolean_value"
-        const val HIDE_APP_LABELS = "hide_app_labels"
-        // Key for applying the boolean to hide the workspace item labels
-        const val KEY_SHOULD_HIDE_WORKSPACE_ITEM_LABELS = "should_hide_workspace_item_labels"
-        // Key for querying the boolean to hide the workspace item labels
-        const val COL_SHOULD_HIDE_WORKSPACE_ITEM_LABELS = "should_hide_workspace_item_labels"
+        // String for building uri when querying and updating the boolean to hide the app names
+        private const val HIDE_APP_LABELS = "hide_app_labels"
+        // Key for applying the boolean to hide the app names on the home screen, to the system
+        private const val SET_HIDE_APP_LABELS = "set_workspace_items_label_hidden"
+        // Key for querying the boolean to hide the app names on the home screen
+        private const val COL_HIDE_APP_NAMES = "boolean_value"
         private const val ENABLED = 1
     }
 }

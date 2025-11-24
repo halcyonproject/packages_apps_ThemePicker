@@ -68,7 +68,7 @@ constructor(
     ): List<Pair<CustomizationOptionUtil.CustomizationOption, View>> {
         customizationOptionsData as ThemePickerCustomizationOptionsData
         val isKeyguardQuickAffordanceEnabled =
-            BaseFlags.get().isKeyguardQuickAffordanceEnabled(optionContainer.context)
+            BaseFlags.get(context).isKeyguardQuickAffordanceEnabled(optionContainer.context)
         val showPackEntry =
             Settings.Secure.getInt(
                 context.contentResolver,
@@ -86,7 +86,7 @@ constructor(
             LOCK_SCREEN ->
                 buildList {
                     addAll(defaultOptionEntries)
-                    if (BaseFlags.get().isPackThemeEnabled() && showPackEntry) {
+                    if (BaseFlags.get(context).isPackThemeEnabled() && showPackEntry) {
                         add(
                             PACK_THEME to
                                 layoutInflater.inflate(
@@ -134,7 +134,7 @@ constructor(
             HOME_SCREEN ->
                 buildList {
                     addAll(defaultOptionEntries)
-                    if (BaseFlags.get().shouldShowDesktopUi(optionContainer.context)) {
+                    if (BaseFlags.get(context).shouldShowDesktopUi(optionContainer.context)) {
                         add(
                             SCREEN_SAVER to
                                 layoutInflater.inflate(
@@ -144,7 +144,7 @@ constructor(
                                 )
                         )
                     }
-                    if (BaseFlags.get().isPackThemeEnabled() && showPackEntry) {
+                    if (BaseFlags.get(context).isPackThemeEnabled() && showPackEntry) {
                         add(
                             PACK_THEME to
                                 layoutInflater.inflate(
@@ -210,11 +210,11 @@ constructor(
                 bottomSheetContainer = bottomSheetContainer,
                 layoutInflater = layoutInflater,
             )
-        val isComposeRefactorEnabled = BaseFlags.get().isComposeRefactorEnabled()
-        val isColorPickerUpdateEnabled = BaseFlags.get().isColorPickerUpdateEnabled()
-        val isColorPickerComposeEnabled = BaseFlags.get().isColorPickerComposeEnabled()
+        val isComposeRefactorEnabled = BaseFlags.get(context).isComposeRefactorEnabled()
+        val isColorPickerUpdateEnabled = BaseFlags.get(context).isColorPickerUpdateEnabled()
+        val isColorPickerComposeEnabled = BaseFlags.get(context).isColorPickerComposeEnabled()
         val isKeyguardQuickAffordanceEnabled =
-            BaseFlags.get().isKeyguardQuickAffordanceEnabled(bottomSheetContainer.context)
+            BaseFlags.get(context).isKeyguardQuickAffordanceEnabled(bottomSheetContainer.context)
         return buildMap {
             putAll(map)
             put(

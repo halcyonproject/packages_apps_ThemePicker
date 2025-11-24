@@ -28,7 +28,7 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.customization.model.CustomizationManager;
 import com.android.customization.model.CustomizationOption;
-import com.android.customization.model.color.ColorOptionsProvider.ColorSource;
+import com.android.customization.model.color.ColorProviderUtil.ColorSource;
 import com.android.customization.module.logging.ThemesUserEventLogger;
 import com.android.themepicker.R;
 

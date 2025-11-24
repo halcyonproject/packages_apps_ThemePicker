@@ -22,7 +22,7 @@ import android.stats.style.StyleEnums
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.customization.model.color.ColorOption
-import com.android.customization.model.color.ColorOptionsProvider
+import com.android.customization.model.color.ColorProviderUtil
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
@@ -151,7 +151,7 @@ class ColorPickerViewModel2Test {
             repository.setOptions(
                 listOf(
                     repository.buildWallpaperOption(
-                        ColorOptionsProvider.COLOR_SOURCE_LOCK,
+                        ColorProviderUtil.COLOR_SOURCE_LOCK,
                         ThemeStyle.EXPRESSIVE,
                         121212,
                     )
@@ -184,7 +184,7 @@ class ColorPickerViewModel2Test {
             repository.setOptions(
                 listOf(
                     repository.buildWallpaperOption(
-                        ColorOptionsProvider.COLOR_SOURCE_LOCK,
+                        ColorProviderUtil.COLOR_SOURCE_LOCK,
                         ThemeStyle.EXPRESSIVE,
                         121212,
                     )
@@ -216,7 +216,7 @@ class ColorPickerViewModel2Test {
             repository.setOptions(
                 listOf(
                     repository.buildWallpaperOption(
-                        ColorOptionsProvider.COLOR_SOURCE_LOCK,
+                        ColorProviderUtil.COLOR_SOURCE_LOCK,
                         ThemeStyle.EXPRESSIVE,
                         121212,
                     )
@@ -401,24 +401,19 @@ class ColorPickerViewModel2Test {
         val wallpaperOptions =
             listOf(
                 repository.buildWallpaperOption(
-                    ColorOptionsProvider.COLOR_SOURCE_HOME,
+                    ColorProviderUtil.COLOR_SOURCE_HOME,
                     ThemeStyle.TONAL_SPOT,
                     1,
                 ),
                 repository.buildWallpaperOption(
-                    ColorOptionsProvider.COLOR_SOURCE_HOME,
+                    ColorProviderUtil.COLOR_SOURCE_HOME,
                     ThemeStyle.VIBRANT,
                     2,
                 ),
             )
         val presetOptions = listOf(repository.buildPresetOption(ThemeStyle.FRUIT_SALAD, 3))
         // Initially select the first wallpaper option (index 0).
-        repository.setOptions(
-            wallpaperOptions,
-            presetOptions,
-            ColorType.WALLPAPER_COLOR,
-            0,
-        )
+        repository.setOptions(wallpaperOptions, presetOptions, ColorType.WALLPAPER_COLOR, 0)
         return wallpaperOptions
     }
 
