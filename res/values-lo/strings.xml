@@ -64,6 +64,10 @@
     <string name="app_icons_shape" msgid="2539949450435849188">"ຮູບຮ່າງ"</string>
     <string name="app_icons_label" msgid="394863025501627247">"ປ້າຍກຳກັບ"</string>
     <string name="app_labels" msgid="4290052401987798752">"ປ້າຍກຳກັບແອັບ"</string>
+    <!-- no translation found for app_names (708691253698583169) -->
+    <skip />
+    <!-- no translation found for show_app_names (522703901790555973) -->
+    <skip />
     <string name="app_icons_style" msgid="993356162262531521">"ຮູບແບບ"</string>
     <string name="apply_theme_btn" msgid="6293081192321303991">"ນຳໃຊ້"</string>
     <string name="edit_custom_theme_lbl" msgid="5211377705710775224">"ແຕະເພື່ອແກ້ໄຂ"</string>

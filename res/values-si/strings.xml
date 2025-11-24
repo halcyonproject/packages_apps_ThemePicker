@@ -64,6 +64,10 @@
     <string name="app_icons_shape" msgid="2539949450435849188">"හැඩතල"</string>
     <string name="app_icons_label" msgid="394863025501627247">"ලේබලය"</string>
     <string name="app_labels" msgid="4290052401987798752">"යෙදුම් ලේබල"</string>
+    <!-- no translation found for app_names (708691253698583169) -->
+    <skip />
+    <!-- no translation found for show_app_names (522703901790555973) -->
+    <skip />
     <string name="app_icons_style" msgid="993356162262531521">"විලාසය"</string>
     <string name="apply_theme_btn" msgid="6293081192321303991">"යොදන්න"</string>
     <string name="edit_custom_theme_lbl" msgid="5211377705710775224">"සංස්කරණයට තට්ටු කරන්න"</string>
