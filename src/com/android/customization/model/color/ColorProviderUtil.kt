@@ -64,6 +64,8 @@ object ColorProviderUtil {
         index: Int,
         @ThemeStyle.Type style: Int,
         isDefault: Boolean,
+        getLightColorPreview: (ColorScheme) -> IntArray,
+        getDarkColorPreview: (ColorScheme) -> IntArray,
     ): ColorOptionImpl {
         val lightColorScheme = ColorScheme(colorInt, /* darkTheme= */ false, style)
         val darkColorScheme = ColorScheme(colorInt, /* darkTheme= */ true, style)
@@ -129,8 +131,8 @@ object ColorProviderUtil {
                     lightColors = getLightMonochromePreview(lightColorScheme)
                 }
                 else -> {
-                    darkColors = getDarkPresetColorPreview(darkColorScheme)
-                    lightColors = getLightPresetColorPreview(lightColorScheme)
+                    darkColors = getDarkOneOrTwoColorPreview(darkColorScheme)
+                    lightColors = getLightOneOrTwoColorPreview(lightColorScheme)
                 }
             }
         }
@@ -146,9 +148,9 @@ object ColorProviderUtil {
     ): IntArray {
         return if (colorSource == COLOR_SOURCE_HOME || colorSource == COLOR_SOURCE_LOCK) {
             if (darkTheme) {
-                getDarkColorPreview(colorScheme)
+                getDarkThreeColorPreview(colorScheme)
             } else {
-                getLightColorPreview(colorScheme)
+                getLightThreeColorPreview(colorScheme)
             }
         } else if (colorScheme.style == ThemeStyle.MONOCHROMATIC) {
             if (darkTheme) {
@@ -158,9 +160,9 @@ object ColorProviderUtil {
             }
         } else {
             if (darkTheme) {
-                getDarkPresetColorPreview(colorScheme)
+                getDarkOneOrTwoColorPreview(colorScheme)
             } else {
-                getLightPresetColorPreview(colorScheme)
+                getLightOneOrTwoColorPreview(colorScheme)
             }
         }
     }
@@ -173,7 +175,7 @@ object ColorProviderUtil {
      * LStar 85, and Tertiary LStar 70
      */
     @ColorInt
-    private fun getLightColorPreview(colorScheme: ColorScheme): IntArray {
+    fun getLightThreeColorPreview(colorScheme: ColorScheme): IntArray {
         return intArrayOf(
             setAlphaComponent(colorScheme.accent1.s600, ALPHA_MASK),
             setAlphaComponent(colorScheme.accent1.s600, ALPHA_MASK),
@@ -190,7 +192,7 @@ object ColorProviderUtil {
      * 35, and Tertiary LStar 70
      */
     @ColorInt
-    private fun getDarkColorPreview(colorScheme: ColorScheme): IntArray {
+    fun getDarkThreeColorPreview(colorScheme: ColorScheme): IntArray {
         return intArrayOf(
             setAlphaComponent(colorScheme.accent1.s200, ALPHA_MASK),
             setAlphaComponent(colorScheme.accent1.s200, ALPHA_MASK),
@@ -237,7 +239,7 @@ object ColorProviderUtil {
      * Returns the light theme contrast-adjusted preview of a preset ColorScheme, based on this
      * order: top left, top right, bottom left, bottom right
      */
-    private fun getDarkPresetColorPreview(colorScheme: ColorScheme): IntArray {
+    fun getDarkOneOrTwoColorPreview(colorScheme: ColorScheme): IntArray {
         val colors =
             when (colorScheme.style) {
                 ThemeStyle.FRUIT_SALAD ->
@@ -251,7 +253,7 @@ object ColorProviderUtil {
      * Returns the light theme contrast-adjusted preview of a preset ColorScheme, based on this
      * order: top left, top right, bottom left, bottom right
      */
-    private fun getLightPresetColorPreview(colorScheme: ColorScheme): IntArray {
+    fun getLightOneOrTwoColorPreview(colorScheme: ColorScheme): IntArray {
         val colors =
             when (colorScheme.style) {
                 ThemeStyle.FRUIT_SALAD ->
