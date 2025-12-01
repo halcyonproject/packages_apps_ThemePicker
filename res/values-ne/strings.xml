@@ -64,6 +64,8 @@
     <string name="app_icons_shape" msgid="2539949450435849188">"आकार"</string>
     <string name="app_icons_label" msgid="394863025501627247">"लेबल"</string>
     <string name="app_labels" msgid="4290052401987798752">"एपका लेबलहरू"</string>
+    <string name="app_names" msgid="708691253698583169">"नामहरू"</string>
+    <string name="show_app_names" msgid="522703901790555973">"एपका नामहरू देखाउनुहोस्"</string>
     <string name="app_icons_style" msgid="993356162262531521">"शैली"</string>
     <string name="apply_theme_btn" msgid="6293081192321303991">"लागू गर्नुहोस्"</string>
     <string name="edit_custom_theme_lbl" msgid="5211377705710775224">"सम्पादन गर्न ट्याप गर्नुहोस्"</string>
@@ -150,7 +152,7 @@
     <string name="keyguard_affordance_enablement_dialog_headline" msgid="365379085932610314">"सर्टकट सिर्जना गर्न सकिएन"</string>
     <string name="keyguard_affordance_enablement_dialog_action_template" msgid="8117011931337357438">"<xliff:g id="APPNAME">%1$s</xliff:g> खोल्नुहोस्"</string>
     <string name="keyguard_affordance_enablement_dialog_message" msgid="6136286758939253570">"<xliff:g id="APPNAME">%1$s</xliff:g> एपलाई सर्टकटका रूपमा हाल्न, निम्न कुरा सुनिश्चित गर्नुहोस्:"</string>
-    <string name="keyguard_affordance_enablement_dialog_dismiss_button" msgid="629754625264422508">"भयो"</string>
+    <string name="keyguard_affordance_enablement_dialog_dismiss_button" msgid="629754625264422508">"सम्पन्न भयो"</string>
     <string name="keyguard_quick_affordance_title" msgid="4242813186995735584">"सर्टकटहरू"</string>
     <string name="keyguard_quick_affordance_section_title" msgid="2806304242671717309">"सर्टकटहरू"</string>
     <string name="color_contrast_section_title" msgid="7194809124718896091">"कलर कन्ट्रास्ट"</string>

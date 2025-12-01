@@ -30,11 +30,17 @@ android_robolectric_test {
         "kotlinx_coroutines_test",
         "truth",
         "SystemUICustomizationTestUtils",
+        "ThemePickerLib",
         "ThemePickerApplicationLib",
         "mockito-robolectric-prebuilt",
         "mockito-kotlin2",
         "hilt_android",
         "hilt_android_testing",
+        "flag-junit",
+    ],
+
+    associates: [
+        "ThemePickerLib",
     ],
 
     libs: [
