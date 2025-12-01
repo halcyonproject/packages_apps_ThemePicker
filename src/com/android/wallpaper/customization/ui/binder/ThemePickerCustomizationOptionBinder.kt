@@ -382,20 +382,16 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                                 .collect { summary ->
                                     disposableHandle?.dispose()
                                     summary.iconShape?.let {
-                                        optionAppIconsIcon?.let { imageView ->
+                                        optionAppIcons?.let { view ->
                                             disposableHandle =
-                                                ShapeIconViewBinder
-                                                    .bindIconStyleAndShapePreviewIcon(
-                                                        view = imageView,
-                                                        icon =
-                                                            summary.iconStyleModel?.let { model ->
-                                                                iconStyleViewUtil.getIcon(model)
-                                                            },
-                                                        shapeIcon = summary.iconShape,
-                                                        colorUpdateViewModel = colorUpdateViewModel,
-                                                        shouldAnimateColor = isOnMainScreen,
-                                                        lifecycleOwner = lifecycleOwner,
-                                                    )
+                                                iconStyleViewUtil.bindShapeIconPreview(
+                                                    view = view,
+                                                    iconStyleModel = summary.iconStyleModel,
+                                                    shapeIcon = summary.iconShape,
+                                                    colorUpdateViewModel = colorUpdateViewModel,
+                                                    shouldAnimateColor = isOnMainScreen,
+                                                    lifecycleOwner = lifecycleOwner,
+                                                )
                                         }
                                     }
                                     optionAppIconsDescription?.let {

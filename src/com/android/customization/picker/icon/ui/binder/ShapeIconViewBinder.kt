@@ -37,42 +37,27 @@ object ShapeIconViewBinder {
         view.setImageDrawable(ShapeTileDrawable(view.context, shapeIcon.path))
     }
 
-    fun bindIconStyleAndShapePreviewIcon(
-        view: ImageView,
+    fun getShapeIconDrawable(
+        context: Context,
         icon: Icon?,
-        shapeIcon: ShapeIconViewModel? = null,
-        colorUpdateViewModel: ColorUpdateViewModel,
-        shouldAnimateColor: () -> Boolean,
-        lifecycleOwner: LifecycleOwner,
-    ): DisposableHandle? {
-        val iconDrawable = icon?.getDrawable(view.context)
-        val shapeIconDrawable =
-            if (iconDrawable is ShapeTileDrawable) {
-                ShapeTileDrawable(
-                    context = view.context,
-                    path = shapeIcon?.path,
-                    icon = iconDrawable.icon?.constantState?.newDrawable(),
-                    isThemed = iconDrawable.isThemed,
-                )
-            } else if (shapeIcon?.path != null) {
-                ShapeTileDrawable(
-                    context = view.context,
-                    path = shapeIcon.path,
-                    icon = iconDrawable,
-                    isThemed = false,
-                )
-            } else iconDrawable
-        view.setImageDrawable(shapeIconDrawable)
-        val disposableHandle =
-            if (shapeIconDrawable is ShapeTileDrawable && shapeIconDrawable.isThemed) {
-                bindPreviewIconColor(
-                    shapeTileDrawable = shapeIconDrawable,
-                    colorUpdateViewModel = colorUpdateViewModel,
-                    shouldAnimateColor = shouldAnimateColor,
-                    lifecycleOwner = lifecycleOwner,
-                )
-            } else null
-        return disposableHandle
+        shapeIcon: ShapeIconViewModel?,
+    ): Drawable? {
+        val iconDrawable = icon?.getDrawable(context)
+        return if (iconDrawable is ShapeTileDrawable) {
+            ShapeTileDrawable(
+                context = context,
+                path = shapeIcon?.path,
+                icon = iconDrawable.icon?.constantState?.newDrawable(),
+                isThemed = iconDrawable.isThemed,
+            )
+        } else if (shapeIcon?.path != null) {
+            ShapeTileDrawable(
+                context = context,
+                path = shapeIcon.path,
+                icon = iconDrawable,
+                isThemed = false,
+            )
+        } else iconDrawable
     }
 
     fun bindShapeAndThemedIconPreviewIcon(
