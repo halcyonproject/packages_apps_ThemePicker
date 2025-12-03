@@ -29,6 +29,7 @@ import com.android.wallpaper.module.PartnerProvider
 import com.android.wallpaper.module.WallpaperPicker2Injector
 import com.android.wallpaper.module.WallpaperPreferences
 import com.android.wallpaper.module.WallpaperRefresher
+import com.android.wallpaper.module.WallpaperStatusChecker
 import com.android.wallpaper.module.logging.UserEventLogger
 import com.android.wallpaper.network.Requester
 import com.android.wallpaper.picker.category.wrapper.WallpaperCategoryWrapper
@@ -66,6 +67,7 @@ constructor(
     defaultWallpaperCategoryWrapper: Lazy<WallpaperCategoryWrapper>,
     packageNotifier: Lazy<PackageStatusNotifier>,
     wallpaperRefresher: Lazy<WallpaperRefresher>,
+    wallpaperStatusChecker: Lazy<WallpaperStatusChecker>,
 ) :
     WallpaperPicker2Injector(
         mainScope,
@@ -82,6 +84,7 @@ constructor(
         defaultWallpaperCategoryWrapper,
         packageNotifier,
         wallpaperRefresher,
+        wallpaperStatusChecker,
     ),
     CustomizationInjector {
 
