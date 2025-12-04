@@ -77,10 +77,8 @@ constructor(@ApplicationContext private val context: Context) : IconStyleViewUti
         lifecycleOwner: LifecycleOwner,
     ): DisposableHandle? {
         val optionIcon = view.requireViewById<ImageView>(R.id.option_entry_icon)
-        val icon = iconStyleModel?.let { getIcon(it) }
-        optionIcon.setImageDrawable(
-            ShapeIconViewBinder.getShapeIconDrawable(view.context, icon, shapeIcon)
-        )
+        val icon = iconStyleModel?.let { getIcon(it, shapeIcon?.path) }
+        icon?.let { IconViewBinder.bind(optionIcon, icon) }
         return if (iconStyleModel != null && icon != null) {
             bindIconColors(
                 iconStyleModel,
@@ -115,15 +113,16 @@ constructor(@ApplicationContext private val context: Context) : IconStyleViewUti
         return disposableHandle
     }
 
-    override fun getIcon(iconStyleModel: IconStyleModel): Icon {
+    override fun getIcon(iconStyleModel: IconStyleModel?, shapePath: String?): Icon {
         val previewIconPackageName = context.resources.getString(R.string.camera_package)
         val appIconDrawable = ShapeIconViewBinder.loadAppIcon(context, previewIconPackageName)
         return Icon.Loaded(
             drawable =
                 ShapeTileDrawable(
                     context = context,
+                    path = shapePath,
                     icon = appIconDrawable as? AdaptiveIconDrawable,
-                    isThemed = iconStyleModel.iconStyle == ThemePickerIconStyle.MONOCHROME,
+                    isThemed = iconStyleModel?.iconStyle == ThemePickerIconStyle.MONOCHROME,
                 ),
             contentDescription = null,
         )

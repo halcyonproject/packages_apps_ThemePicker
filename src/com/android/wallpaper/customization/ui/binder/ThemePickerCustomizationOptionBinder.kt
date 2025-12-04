@@ -381,18 +381,16 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                             optionsViewModel.appIconPickerViewModel.iconStyleAndShapeSummary
                                 .collect { summary ->
                                     disposableHandle?.dispose()
-                                    summary.iconShape?.let {
-                                        optionAppIcons?.let { view ->
-                                            disposableHandle =
-                                                iconStyleViewUtil.bindShapeIconPreview(
-                                                    view = view,
-                                                    iconStyleModel = summary.iconStyleModel,
-                                                    shapeIcon = summary.iconShape,
-                                                    colorUpdateViewModel = colorUpdateViewModel,
-                                                    shouldAnimateColor = isOnMainScreen,
-                                                    lifecycleOwner = lifecycleOwner,
-                                                )
-                                        }
+                                    optionAppIcons?.let { view ->
+                                        disposableHandle =
+                                            iconStyleViewUtil.bindShapeIconPreview(
+                                                view = view,
+                                                iconStyleModel = summary.iconStyleModel,
+                                                shapeIcon = summary.iconShape,
+                                                colorUpdateViewModel = colorUpdateViewModel,
+                                                shouldAnimateColor = isOnMainScreen,
+                                                lifecycleOwner = lifecycleOwner,
+                                            )
                                     }
                                     optionAppIconsDescription?.let {
                                         TextViewBinder.bind(

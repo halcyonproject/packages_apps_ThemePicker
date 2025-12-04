@@ -66,7 +66,7 @@ class FakeIconStyleViewUtil @Inject constructor() : IconStyleViewUtil {
         TODO("Not yet implemented")
     }
 
-    override fun getIcon(iconStyleModel: IconStyleModel): Icon? {
+    override fun getIcon(iconStyleModel: IconStyleModel?, shapePath: String?): Icon? {
         TODO("Not yet implemented")
     }
 }
