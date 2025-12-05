@@ -337,7 +337,7 @@ object ClockFloatingSheetBinder {
                 R.dimen.clock_axis_control_slider_row_margin_vertical
             )
         lifecycleOwner.lifecycleScope.launch {
-            var currentTab: Tab = Tab.STYLE
+            var currentTab: Tab? = null
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.tabs.collect { tabAdapter.submitList(it) } }
 
@@ -379,11 +379,12 @@ object ClockFloatingSheetBinder {
                                     Tab.COLOR -> clockColorContentHeight
                                     Tab.SIZE -> clockSizeContentHeight
                                 }
-                            val currentContent: View =
+                            val currentContent: View? =
                                 when (currentTab) {
                                     Tab.STYLE -> clockStyleContent
                                     Tab.COLOR -> clockColorContent
                                     Tab.SIZE -> clockSizeContent
+                                    else -> null
                                 }
                             val selectedContent: View =
                                 when (selectedTab) {
