@@ -541,8 +541,6 @@ constructor(
                     }
                 },
             skipOnClickBinding = iconStyleModel.isExternalLink,
-            // Icon styles have custom color bindings, if any, and don't need the default binding.
-            skipForegroundColorBinding = true,
         )
     }
 

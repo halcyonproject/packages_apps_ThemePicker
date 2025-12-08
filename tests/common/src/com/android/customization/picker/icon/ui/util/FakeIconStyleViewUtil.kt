@@ -16,10 +16,15 @@
 
 package com.android.customization.picker.icon.ui.util
 
+import android.view.View
+import androidx.lifecycle.LifecycleOwner
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
+import com.android.customization.picker.icon.ui.viewmodel.ShapeIconViewModel
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
+import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.DisposableHandle
 
 /**
  * This is a fake [IconStyleViewUtil]. Only implement the function if it's actually called in a
@@ -30,7 +35,38 @@ class FakeIconStyleViewUtil @Inject constructor() : IconStyleViewUtil {
         TODO("Not yet implemented")
     }
 
-    override fun getIcon(iconStyleModel: IconStyleModel): Icon? {
+    override fun bindIconOptionView(
+        view: View,
+        iconStyleModel: IconStyleModel,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ): DisposableHandle? {
+        TODO("Not yet implemented")
+    }
+
+    override fun bindShapeIconPreview(
+        view: View,
+        iconStyleModel: IconStyleModel?,
+        shapeIcon: ShapeIconViewModel?,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ): DisposableHandle? {
+        TODO("Not yet implemented")
+    }
+
+    override fun bindIconColors(
+        iconStyleModel: IconStyleModel,
+        icon: Icon,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ): DisposableHandle? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getIcon(iconStyleModel: IconStyleModel?, shapePath: String?): Icon? {
         TODO("Not yet implemented")
     }
 }

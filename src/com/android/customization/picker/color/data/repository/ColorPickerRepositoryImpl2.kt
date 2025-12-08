@@ -16,6 +16,7 @@
  */
 package com.android.customization.picker.color.data.repository
 
+import android.app.ThemeManager
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.theming.ThemeStyle
@@ -32,6 +33,7 @@ import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.model.color.ColorProviderUtil
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
+import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.picker.customization.data.content.WallpaperClient
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
@@ -57,8 +59,19 @@ constructor(
     @BackgroundDispatcher scope: CoroutineScope,
     @BackgroundDispatcher backgroundDispatcher: CoroutineDispatcher,
     private val colorManager: ColorCustomizationManager,
+    private val themeManager: ThemeManager?,
     client: WallpaperClient,
+    baseFlags: BaseFlags,
 ) : ColorPickerRepository2 {
+
+    private val shouldUseThemeService =
+        baseFlags.isColorPickerUpdateEnabled() && themeManager != null
+
+    init {
+        if (shouldUseThemeService) {
+            Log.d(TAG, "Theme service is enabled")
+        }
+    }
 
     private val wallpaperColorsCallback: Flow<Pair<Screen, WallpaperColors?>> =
         callbackFlow {

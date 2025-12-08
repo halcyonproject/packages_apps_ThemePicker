@@ -18,16 +18,24 @@ package com.android.customization.picker.icon.ui.util
 
 import android.content.Context
 import android.graphics.drawable.AdaptiveIconDrawable
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.lifecycle.LifecycleOwner
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.customization.picker.icon.ui.binder.ShapeIconViewBinder
 import com.android.customization.picker.icon.ui.view.ShapeTileDrawable
+import com.android.customization.picker.icon.ui.viewmodel.ShapeIconViewModel
 import com.android.themepicker.R
+import com.android.wallpaper.picker.common.icon.ui.viewbinder.IconViewBinder
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
+import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
+import kotlinx.coroutines.DisposableHandle
 
 @ActivityScoped
 class ThemePickerIconStyleViewUtil
@@ -37,15 +45,84 @@ constructor(@ApplicationContext private val context: Context) : IconStyleViewUti
         return null
     }
 
-    override fun getIcon(iconStyleModel: IconStyleModel): Icon {
+    override fun bindIconOptionView(
+        view: View,
+        iconStyleModel: IconStyleModel,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ): DisposableHandle? {
+        val optionIcon = view.requireViewById<ViewGroup>(R.id.option_icon)
+        val buttonIcon = view.requireViewById<ViewGroup>(R.id.button_icon)
+        val icon = getIcon(iconStyleModel)
+        optionIcon.visibility = View.VISIBLE
+        buttonIcon.visibility = View.GONE
+        val foregroundView = view.requireViewById<ImageView>(R.id.app_icon)
+        IconViewBinder.bind(foregroundView, icon)
+        return bindIconColors(
+            iconStyleModel,
+            icon,
+            colorUpdateViewModel,
+            shouldAnimateColor,
+            lifecycleOwner,
+        )
+    }
+
+    override fun bindShapeIconPreview(
+        view: View,
+        iconStyleModel: IconStyleModel?,
+        shapeIcon: ShapeIconViewModel?,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ): DisposableHandle? {
+        val optionIcon = view.requireViewById<ImageView>(R.id.option_entry_icon)
+        val icon = iconStyleModel?.let { getIcon(it, shapeIcon?.path) }
+        icon?.let { IconViewBinder.bind(optionIcon, icon) }
+        return if (iconStyleModel != null && icon != null) {
+            bindIconColors(
+                iconStyleModel,
+                icon,
+                colorUpdateViewModel,
+                shouldAnimateColor,
+                lifecycleOwner,
+            )
+        } else null
+    }
+
+    override fun bindIconColors(
+        iconStyleModel: IconStyleModel,
+        icon: Icon,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ): DisposableHandle? {
+        var disposableHandle: DisposableHandle? = null
+        // If the icon is a themed icon, bind its foreground and background color
+        if (iconStyleModel.iconStyle == ThemePickerIconStyle.MONOCHROME) {
+            ((icon as? Icon.Loaded)?.drawable as? ShapeTileDrawable)?.let {
+                disposableHandle =
+                    ShapeIconViewBinder.bindPreviewIconColor(
+                        shapeTileDrawable = it,
+                        colorUpdateViewModel = colorUpdateViewModel,
+                        shouldAnimateColor = shouldAnimateColor,
+                        lifecycleOwner = lifecycleOwner,
+                    )
+            }
+        }
+        return disposableHandle
+    }
+
+    override fun getIcon(iconStyleModel: IconStyleModel?, shapePath: String?): Icon {
         val previewIconPackageName = context.resources.getString(R.string.camera_package)
         val appIconDrawable = ShapeIconViewBinder.loadAppIcon(context, previewIconPackageName)
         return Icon.Loaded(
             drawable =
                 ShapeTileDrawable(
                     context = context,
+                    path = shapePath,
                     icon = appIconDrawable as? AdaptiveIconDrawable,
-                    isThemed = iconStyleModel.iconStyle == ThemePickerIconStyle.MONOCHROME,
+                    isThemed = iconStyleModel?.iconStyle == ThemePickerIconStyle.MONOCHROME,
                 ),
             contentDescription = null,
         )

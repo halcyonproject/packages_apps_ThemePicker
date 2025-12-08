@@ -61,5 +61,10 @@
             android:id="@+id/option_entry_icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/downloading_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
