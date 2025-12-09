@@ -16,6 +16,11 @@
 
 package com.android.customization.picker.color.ui.compose
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation.Horizontal
@@ -31,11 +36,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +80,26 @@ fun ColorFloatingSheet(
     val darkModeState by isDarkMode.collectAsStateWithLifecycle(initialValue = false)
     val previewingColorOptionState by
         previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
+    val lazyListState = rememberLazyListState()
+    val textResId by remember {
+        derivedStateOf {
+            val firstVisibleIndex = lazyListState.firstVisibleItemIndex
+            var startIdx = 0
+            var endIdx = 0
+            for (entries in colorOptionState.entries) {
+                endIdx += entries.value.size
+                if (firstVisibleIndex in startIdx..<endIdx) {
+                    return@derivedStateOf when (entries.key) {
+                        ColorType.WALLPAPER_COLOR -> R.string.wallpaper_color_tab
+                        ColorType.PRESET_COLOR -> R.string.preset_color_tab
+                    }
+                } else {
+                    startIdx = endIdx
+                }
+            }
+            return@derivedStateOf R.string.wallpaper_color_tab
+        }
+    }
 
     // TODO (b/391927276): figure out how to animate color scheme changes
     PlatformTheme {
@@ -92,15 +120,25 @@ fun ColorFloatingSheet(
                         .drawBehind { drawRect(colorScheme.surfaceBright) }
             ) {
                 Column(modifier = Modifier.padding(vertical = 20.dp)) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                        text = stringResource(R.string.wallpaper_color_tab),
-                        color = colorScheme.onSurface,
-                    )
+                    AnimatedContent(
+                        targetState = textResId,
+                        transitionSpec = {
+                            fadeIn(
+                                animationSpec = tween(durationMillis = 200, delayMillis = 200)
+                            ) togetherWith fadeOut(animationSpec = tween(durationMillis = 200))
+                        },
+                    ) { text ->
+                        Text(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            text = stringResource(text),
+                            color = colorScheme.onSurface,
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     LazyRow(
+                        state = lazyListState,
                         verticalAlignment = Alignment.CenterVertically,
                         contentPadding = PaddingValues(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.spacedBy(2.dp),
