@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2022 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2022 The Android Open Source Project
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -17,19 +16,22 @@
     package="com.android.wallpaper">
 
     <application>
+        <activity
+            android:name="com.android.wallpaper.picker.PreviewActivity"
+            android:resizeableActivity="false"></activity>
+
+        <activity
+            android:name="com.android.wallpaper.picker.preview.ui.WallpaperPreviewActivity"
+            android:resizeableActivity="false"></activity>
+
         <uses-library android:name="android.test.runner" />
-
-        <activity android:name="com.android.wallpaper.picker.PreviewActivity"
-            android:resizeableActivity="false">
-        </activity>
-
-        <activity android:name="com.android.wallpaper.picker.preview.ui.WallpaperPreviewActivity"
-            android:resizeableActivity="false">
-        </activity>
     </application>
 
-    <instrumentation android:name="com.android.wallpaper.CustomTestRunner"
-        android:targetPackage="com.android.wallpaper"
-        android:label="Tests for ThemePicker" />
+    <instrumentation
+        android:name="com.android.wallpaper.CustomTestRunner"
+        android:label="Tests for ThemePicker"
+        android:targetPackage="com.android.wallpaper" />
+
+    <uses-permission android:name="android.permission.CUSTOMIZE_SYSTEM_UI" />
 
 </manifest>
