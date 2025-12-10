@@ -58,20 +58,20 @@ fun ColorPreviewTheme(scheme: DynamicScheme?, content: @Composable () -> Unit) {
     if (scheme == null) {
         return content()
     }
-
-    val colorTransitionData = updateTransitionData(scheme)
+    val colorScheme = remember(scheme) { getColorScheme(scheme) }
+    val colorTransitionData = updateTransitionData(colorScheme)
 
     // Done at the root so that the whole content tree will receive the LocalAnimatedColorScheme.
-    CompositionLocalProvider(
-        value = LocalAnimatedColorScheme provides colorTransitionData,
-        content = content,
-    )
+    MaterialTheme(colorScheme = colorScheme) {
+        CompositionLocalProvider(
+            value = LocalAnimatedColorScheme provides colorTransitionData,
+            content = content,
+        )
+    }
 }
 
 @Composable
-fun updateTransitionData(scheme: DynamicScheme?): ColorTransitionData {
-    val colorState = remember(scheme) { scheme?.let { s: DynamicScheme -> getColorScheme(s) } }
-    val colorScheme = colorState ?: MaterialTheme.colorScheme
+fun updateTransitionData(colorScheme: ColorScheme): ColorTransitionData {
     val transition = updateTransition(colorScheme)
     val primary = transition.animateThemeColor { state -> state.primary }
     val surfaceBright = transition.animateThemeColor { state -> state.surfaceBright }

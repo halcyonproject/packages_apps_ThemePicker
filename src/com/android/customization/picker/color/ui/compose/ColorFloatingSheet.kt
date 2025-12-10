@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +40,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -54,32 +59,38 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.compose.animation.bounceable
 import com.android.compose.theme.PlatformTheme
-import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
+import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel2
+import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
 import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import kotlin.math.ceil
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
 fun ColorFloatingSheet(
-    isDarkMode: Flow<Boolean>,
-    colorOptions: Flow<Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>>,
-    previewingColorOption: Flow<ColorOption?>,
+    darkModeViewModel: DarkModeViewModel,
+    colorPickerViewModel: ColorPickerViewModel2,
     modifier: Modifier = Modifier,
 ) {
-    val colorOptionState by colorOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val darkModeState by isDarkMode.collectAsStateWithLifecycle(initialValue = false)
+    val colorOptionState by
+        colorPickerViewModel.allColorOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
     val previewingColorOptionState by
-        previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
+        colorPickerViewModel.previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
+    val previewingDarkModeState by
+        darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
+    val toggleDarkMode by
+        darkModeViewModel.toggleDarkMode.collectAsStateWithLifecycle(initialValue = {})
+    val isDarkModeEnabled by
+        darkModeViewModel.isEnabled.collectAsStateWithLifecycle(initialValue = false)
     val lazyListState = rememberLazyListState()
     val textResId by remember {
         derivedStateOf {
@@ -101,12 +112,11 @@ fun ColorFloatingSheet(
         }
     }
 
-    // TODO (b/391927276): figure out how to animate color scheme changes
     PlatformTheme {
         // Set color scheme when wallpaper bitmap is selected or changed.
         val scheme =
             previewingColorOptionState?.let {
-                ColorScheme(it.seedColor, darkModeState, it.style).materialScheme
+                ColorScheme(it.seedColor, previewingDarkModeState, it.style).materialScheme
             }
 
         ColorPreviewTheme(scheme) {
@@ -132,6 +142,7 @@ fun ColorFloatingSheet(
                             modifier = Modifier.padding(horizontal = 20.dp),
                             text = stringResource(text),
                             color = colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
                         )
                     }
 
@@ -150,7 +161,7 @@ fun ColorFloatingSheet(
                                 }
                                 itemsIndexed(colorList) { idx, option ->
                                     ColorOptionIcon(
-                                        isDarkMode = darkModeState,
+                                        isDarkMode = previewingDarkModeState,
                                         optionItem = option,
                                         modifier =
                                             Modifier.size(
@@ -172,6 +183,42 @@ fun ColorFloatingSheet(
                                 }
                             }
                         }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.mode_title),
+                            color = colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+
+                        Switch(
+                            checked = previewingDarkModeState,
+                            onCheckedChange = { toggleDarkMode() },
+                            enabled = isDarkModeEnabled,
+                            thumbContent =
+                                if (previewingDarkModeState) {
+                                    {
+                                        Icon(
+                                            painter =
+                                                painterResource(
+                                                    com.android.wallpaper.R.drawable
+                                                        .ic_check_wallpaper
+                                                ),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                } else {
+                                    null
+                                },
+                        )
                     }
                 }
             }
