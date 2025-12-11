@@ -257,9 +257,9 @@ constructor(
     override suspend fun setShouldShowAppLabels(shouldShowAppLabels: Boolean) {
         previewUtilsFlow.first()?.let {
             val values = ContentValues()
-            values.put(SET_HIDE_APP_LABELS, !shouldShowAppLabels)
+            values.put(HIDE_APP_LABELS, !shouldShowAppLabels)
             contentResolver.update(
-                it.getUri(HIDE_APP_LABELS),
+                it.getUri(SET_HIDE_APP_LABELS),
                 values,
                 /* where= */ null,
                 /* selectionArgs= */ null,
