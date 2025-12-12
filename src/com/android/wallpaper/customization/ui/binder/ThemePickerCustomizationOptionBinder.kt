@@ -681,9 +681,8 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 ?.let {
                     (it as ComposeView).setContent {
                         ColorFloatingSheet(
-                            optionsViewModel.darkModeViewModel.previewingIsDarkMode,
-                            optionsViewModel.colorPickerViewModel2.allColorOptions,
-                            optionsViewModel.colorPickerViewModel2.previewingColorOption,
+                            optionsViewModel.darkModeViewModel,
+                            optionsViewModel.colorPickerViewModel2,
                         )
                     }
                 }
