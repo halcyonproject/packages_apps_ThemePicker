@@ -17,6 +17,9 @@
 package com.android.customization.picker.icon.ui.viewmodel
 
 import android.content.Context
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
+import android.platform.test.flag.junit.SetFlagsRule
 import android.stats.style.StyleEnums.APP_ICON_STYLE_THEMED
 import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
 import androidx.test.filters.SmallTest
@@ -59,6 +62,7 @@ import org.robolectric.RobolectricTestRunner
 class AppIconPickerViewModelTest {
 
     @get:Rule var hiltRule = HiltAndroidRule(this)
+    @get:Rule val setFlagsRule = SetFlagsRule()
     @Inject lateinit var testScope: TestScope
     @Inject lateinit var interactor: AppIconInteractor
     @Inject lateinit var iconStyleRepository: FakeIconStyleRepository
@@ -476,6 +480,7 @@ class AppIconPickerViewModelTest {
         }
 
     @Test
+    @DisableFlags(com.android.systemui.shared.Flags.FLAG_WORKSPACE_ITEMS_LABEL_HIDDEN)
     fun tabs_shapeAndStyleAvailable() =
         testScope.runTest {
             val tabs = collectLastValue(underTest.tabs)
@@ -487,6 +492,20 @@ class AppIconPickerViewModelTest {
         }
 
     @Test
+    @EnableFlags(com.android.systemui.shared.Flags.FLAG_WORKSPACE_ITEMS_LABEL_HIDDEN)
+    fun tabs_shapeAndStyleAvailableAndHideLabelFlagEnabled() =
+        testScope.runTest {
+            val tabs = collectLastValue(underTest.tabs)
+
+            val resultTabs = checkNotNull(tabs())
+            assertThat(resultTabs).hasSize(3)
+            assertThat(resultTabs[0].isSelected).isTrue()
+            assertThat(resultTabs[1].isSelected).isFalse()
+            assertThat(resultTabs[2].isSelected).isFalse()
+        }
+
+    @Test
+    @DisableFlags(com.android.systemui.shared.Flags.FLAG_WORKSPACE_ITEMS_LABEL_HIDDEN)
     fun tabs_styleNotAvailable() =
         testScope.runTest {
             val tabs = collectLastValue(underTest.tabs)
@@ -499,6 +518,22 @@ class AppIconPickerViewModelTest {
         }
 
     @Test
+    @EnableFlags(com.android.systemui.shared.Flags.FLAG_WORKSPACE_ITEMS_LABEL_HIDDEN)
+    fun tabs_styleNotAvailableAndHideLabelFlagEnabled() =
+        testScope.runTest {
+            val tabs = collectLastValue(underTest.tabs)
+            iconStyleRepository.setIsCustomizationAvailable(false)
+
+            val resultTabs = checkNotNull(tabs())
+            assertThat(resultTabs).hasSize(2)
+            assertThat(resultTabs[0].isSelected).isTrue()
+            assertThat(resultTabs[0].text).isEqualTo(appContext.getString(R.string.app_icons_shape))
+            assertThat(resultTabs[1].isSelected).isFalse()
+            assertThat(resultTabs[1].text).isEqualTo(appContext.getString(R.string.app_names))
+        }
+
+    @Test
+    @DisableFlags(com.android.systemui.shared.Flags.FLAG_WORKSPACE_ITEMS_LABEL_HIDDEN)
     fun tabs_shapeNotAvailable() =
         testScope.runTest {
             val tabs = collectLastValue(underTest.tabs)
@@ -508,6 +543,21 @@ class AppIconPickerViewModelTest {
             assertThat(resultTabs).hasSize(1)
             assertThat(resultTabs[0].isSelected).isTrue()
             assertThat(resultTabs[0].text).isEqualTo(appContext.getString(R.string.app_icons_style))
+        }
+
+    @Test
+    @EnableFlags(com.android.systemui.shared.Flags.FLAG_WORKSPACE_ITEMS_LABEL_HIDDEN)
+    fun tabs_shapeNotAvailableAndHideLabelFlagEnabled() =
+        testScope.runTest {
+            val tabs = collectLastValue(underTest.tabs)
+            shapeManager.setShapeOptions(emptyList())
+
+            val resultTabs = checkNotNull(tabs())
+            assertThat(resultTabs).hasSize(2)
+            assertThat(resultTabs[0].isSelected).isTrue()
+            assertThat(resultTabs[0].text).isEqualTo(appContext.getString(R.string.app_icons_style))
+            assertThat(resultTabs[1].isSelected).isFalse()
+            assertThat(resultTabs[1].text).isEqualTo(appContext.getString(R.string.app_names))
         }
 
     @Test
