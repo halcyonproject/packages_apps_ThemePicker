@@ -17,6 +17,7 @@
 package com.android.customization.picker.clock.ui.viewmodel
 
 import android.content.Context
+import android.stats.style.StyleEnums
 import androidx.core.graphics.ColorUtils
 import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
@@ -377,6 +378,47 @@ class ClockPickerViewModelTest {
             .isEqualTo(IndexedStyle(groupIndex = 1, presetIndex = 0, style = expectedResult))
     }
 
+    @Test
+    fun onClockFaceClicked_isNull_whenOnlyOnePresetGroup() = runTest {
+        val clockStyleOptions = collectLastValue(underTest.clockStyleOptions)
+        // Advance CLOCKS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from clockStyleOptions
+        advanceTimeBy(ClockPickerViewModel.CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
+        val onClockOption1Clicked =
+            clockStyleOptions()?.get(1)?.onClicked?.let { collectLastValue(it) }
+        checkNotNull(onClockOption1Clicked)
+
+        // Select a clock with only one preset group
+        onClockOption1Clicked()?.invoke()
+        // Advance CLOCKS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from clockStyleOptions
+        advanceTimeBy(ClockPickerViewModel.CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
+
+        val onClockFaceClicked = collectLastValue(underTest.onClockFaceClicked)
+        assertThat(onClockFaceClicked()).isNull()
+    }
+
+    @Test
+    fun onClockFaceClicked_isNotNull_whenMultiplePresetGroups() = runTest {
+        // Default clock has multiple preset groups
+        val onClockFaceClicked = collectLastValue(underTest.onClockFaceClicked)
+        assertThat(onClockFaceClicked()).isNotNull()
+    }
+
+    @Test
+    fun showClockFacePresetGroupIndexUpdateToast_emitsGroupIndex() = runTest {
+        val toastMessages = collectLastValue(underTest.showClockFacePresetGroupIndexUpdateToast)
+        val onClockFaceClicked = collectLastValue(underTest.onClockFaceClicked)
+
+        // Initial state, should not emit
+        assertThat(toastMessages()).isNull()
+
+        // Click to cycle through preset groups
+        onClockFaceClicked()?.invoke() // group 1
+        assertThat(toastMessages()).isEqualTo(1)
+
+        onClockFaceClicked()?.invoke() // group 0
+        assertThat(toastMessages()).isEqualTo(0)
+    }
+
     //// Clock size
     @Test
     fun previewingClockSize_whenCallingOnClockSizeSwitchChecked() = runTest {
@@ -498,6 +540,32 @@ class ClockPickerViewModelTest {
     }
 
     @Test
+    fun previewingSeedColor_nullWhenDefaultIsSelected() = runTest {
+        val previewingSeedColor = collectLastValue(underTest.previewingSeedColor)
+        val clockColorOptions = collectLastValue(underTest.clockColorOptions)
+        val onApply = collectLastValue(underTest.onApply)
+        // Advance COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from
+        // clockColorOptions
+        advanceTimeBy(ClockPickerViewModel.COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS)
+        val option1OnClicked = collectLastValue(clockColorOptions()!![1].onClicked)
+        option1OnClicked()?.invoke()
+        // Advance COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from
+        // clockColorOptions
+        advanceTimeBy(ClockPickerViewModel.COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS)
+        onApply()?.invoke()
+        // Advance COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from
+        // clockColorOptions
+        advanceTimeBy(ClockPickerViewModel.COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS)
+        val option0OnClicked = collectLastValue(clockColorOptions()!![0].onClicked)
+        option0OnClicked()?.invoke()
+        // Advance COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from
+        // clockColorOptions
+        advanceTimeBy(ClockPickerViewModel.COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS)
+
+        assertThat(previewingSeedColor()).isNull()
+    }
+
+    @Test
     fun clockColorOptions_whenClickOnColorOptions() = runTest {
         val clockColorOptions = collectLastValue(underTest.clockColorOptions)
         // Advance COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from
@@ -608,7 +676,7 @@ class ClockPickerViewModelTest {
     }
 
     @Test
-    fun apply_notNullWhenSliderProgressChanged() = runTest {
+    fun onApply_notNullWhenSliderProgressChanged() = runTest {
         val onApply = collectLastValue(underTest.onApply)
 
         underTest.onSliderTouchUpProgressChanged(87)
@@ -617,13 +685,105 @@ class ClockPickerViewModelTest {
     }
 
     @Test
-    fun apply_nullAfterApplyingSliderProgress() = runTest {
+    fun onApply_nullAfterApplyingSliderProgress() = runTest {
         val onApply = collectLastValue(underTest.onApply)
 
         underTest.onSliderTouchUpProgressChanged(87)
         onApply()?.invoke()
 
         assertThat(onApply()).isNull()
+    }
+
+    @Test
+    fun onApply_logsClockApplied() = runTest {
+        val onApply = collectLastValue(underTest.onApply)
+        val clockStyleOptions = collectLastValue(underTest.clockStyleOptions)
+        // Advance CLOCKS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from clockStyleOptions
+        advanceTimeBy(ClockPickerViewModel.CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
+
+        val option1OnClicked = collectLastValue(clockStyleOptions()!![1].onClicked)
+        option1OnClicked()?.invoke()
+        onApply()?.invoke()
+
+        assertThat(logger.clockId).isEqualTo(FakeClockPickerRepository.CLOCK_ID_1)
+    }
+
+    @Test
+    fun onApply_logsClockSizeApplied() = runTest {
+        val onApply = collectLastValue(underTest.onApply)
+        val onClockSizeSwitchCheckedChange =
+            collectLastValue(underTest.onClockSizeSwitchCheckedChange)
+
+        onClockSizeSwitchCheckedChange()?.invoke()
+        onApply()?.invoke()
+
+        assertThat(logger.clockSize).isEqualTo(StyleEnums.CLOCK_SIZE_SMALL)
+    }
+
+    @Test
+    fun onApply_logsClockColorApplied() = runTest {
+        val onApply = collectLastValue(underTest.onApply)
+        val clockColorOptions = collectLastValue(underTest.clockColorOptions)
+        // Advance COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS since there is a delay from
+        // clockColorOptions
+        advanceTimeBy(ClockPickerViewModel.COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS)
+        val option1OnClicked = collectLastValue(clockColorOptions()!![1].onClicked)
+
+        option1OnClicked()?.invoke()
+        onApply()?.invoke()
+
+        assertThat(logger.clockSeedColor).isEqualTo(colorMap.values.first().color)
+    }
+
+    @Test
+    fun resetPreview_resetsStateFlows() = runTest {
+        val previewingClock = collectLastValue(underTest.previewingClock)
+        val previewingClockPresetIndexedStyle =
+            collectLastValue(underTest.previewingClockPresetIndexedStyle)
+        val previewingSeedColor = collectLastValue(underTest.previewingSeedColor)
+        val previewingColorSliderProgress =
+            collectLastValue(underTest.previewingColorSliderProgress)
+        val previewingClockSize = collectLastValue(underTest.previewingClockSize)
+
+        // Modify some values
+        val clockStyleOptions = collectLastValue(underTest.clockStyleOptions)
+        advanceTimeBy(ClockPickerViewModel.CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
+        val option1OnClicked = collectLastValue(clockStyleOptions()!![1].onClicked)
+        option1OnClicked()?.invoke()
+        underTest.onSliderTouchUpProgressChanged(87)
+        val onClockSizeSwitchCheckedChange =
+            collectLastValue(underTest.onClockSizeSwitchCheckedChange)
+        onClockSizeSwitchCheckedChange()?.invoke()
+        val axisPresetsSliderViewModel = collectLastValue(underTest.axisPresetsSliderViewModel)
+        axisPresetsSliderViewModel()?.onSliderStopTrackingTouch?.invoke(1F)
+
+        // Reset
+        underTest.resetPreview()
+        advanceTimeBy(ClockPickerViewModel.CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
+
+        // Assert values are reset to initial state
+        assertThat(previewingClock()?.clockId).isEqualTo(FakeClockPickerRepository.CLOCK_ID_0)
+        assertThat(previewingClockPresetIndexedStyle())
+            .isEqualTo(FakeClockPickerRepository.fakeClocks[0].axisPresetConfig?.current)
+        assertThat(previewingSeedColor()).isEqualTo(null)
+        assertThat(previewingColorSliderProgress())
+            .isEqualTo(ClockMetadataModel.DEFAULT_COLOR_TONE_PROGRESS)
+        assertThat(previewingClockSize()).isEqualTo(ClockSize.DYNAMIC)
+    }
+
+    @Test
+    fun resetPreview_resetsSelectedTab() = runTest {
+        val selectedTab = collectLastValue(underTest.selectedTab)
+
+        // Change tab
+        val tabs = collectLastValue(underTest.tabs)
+        tabs()?.get(1)?.onClick?.invoke() // Color tab
+        assertThat(selectedTab()).isEqualTo(Tab.COLOR)
+
+        // Reset
+        underTest.resetPreview()
+
+        assertThat(selectedTab()).isEqualTo(Tab.STYLE)
     }
 
     private fun blendColorWithTone(color: Int, colorTone: Double): Int {
