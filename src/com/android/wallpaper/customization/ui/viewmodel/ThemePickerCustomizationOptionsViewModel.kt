@@ -306,6 +306,16 @@ constructor(
         )
     }
 
+    val shouldShowToolbar =
+        combine(selectedOption, colorPickerViewModel2.currentScreen) {
+            selectedOption,
+            colorPickerScreen ->
+            val isInColorVariantPicker =
+                selectedOption == COLORS &&
+                    colorPickerScreen == ColorPickerViewModel2.Screen.VARIANT_PICKER
+            !isInColorVariantPicker
+        }
+
     @ViewModelScoped
     @AssistedFactory
     interface Factory : CustomizationOptionsViewModelFactory {
