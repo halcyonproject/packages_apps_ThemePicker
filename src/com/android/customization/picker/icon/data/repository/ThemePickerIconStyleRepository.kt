@@ -257,7 +257,7 @@ constructor(
     override suspend fun setShouldShowAppLabels(shouldShowAppLabels: Boolean) {
         previewUtilsFlow.first()?.let {
             val values = ContentValues()
-            values.put(HIDE_APP_LABELS, !shouldShowAppLabels)
+            values.put(COL_HIDE_APP_NAMES, !shouldShowAppLabels)
             contentResolver.update(
                 it.getUri(SET_HIDE_APP_LABELS),
                 values,
@@ -272,7 +272,7 @@ constructor(
         const val SET_ICON_THEMED = "set_icon_themed"
         const val COL_ICON_THEMED_VALUE = "boolean_value"
         // String for building uri when querying and updating the boolean to hide the app names
-        private const val HIDE_APP_LABELS = "hide_app_labels"
+        private const val HIDE_APP_LABELS = "workspace_items_label_hidden"
         // Key for applying the boolean to hide the app names on the home screen, to the system
         private const val SET_HIDE_APP_LABELS = "set_workspace_items_label_hidden"
         // Key for querying the boolean to hide the app names on the home screen
