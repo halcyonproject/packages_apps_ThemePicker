@@ -413,14 +413,16 @@ constructor(
             previewingClockColorId,
             previewingColorSliderProgress,
         ) { seedColor, clockColorId, colorSliderProgress ->
-            val clockColorViewModel =
-                if (clockColorId == DEFAULT_CLOCK_COLOR_ID) null else colorMap[clockColorId]
-            clockColorViewModel?.let {
-                blendColorWithTone(
-                    color = clockColorViewModel.color,
-                    colorTone = clockColorViewModel.getColorTone(colorSliderProgress),
-                )
-            } ?: seedColor // Fallback to current clock seed color if clockColorViewModel is null
+            if (clockColorId == DEFAULT_CLOCK_COLOR_ID) {
+                null
+            } else {
+                colorMap[clockColorId]?.let { clockColorViewModel ->
+                    blendColorWithTone(
+                        color = clockColorViewModel.color,
+                        colorTone = clockColorViewModel.getColorTone(colorSliderProgress),
+                    )
+                } ?: seedColor // Fallback to current clock seed color if clockColorViewModel null
+            }
         }
 
     val clockColorOptions: Flow<List<OptionItemViewModel2<ColorOptionIconViewModel>>> =

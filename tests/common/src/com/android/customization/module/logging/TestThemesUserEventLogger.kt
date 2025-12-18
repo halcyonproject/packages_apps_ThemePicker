@@ -27,7 +27,10 @@ import javax.inject.Singleton
 @Singleton
 class TestThemesUserEventLogger @Inject constructor() :
     TestUserEventLogger(), ThemesUserEventLogger {
-    @ClockSize private var clockSize: Int = StyleEnums.CLOCK_SIZE_UNSPECIFIED
+    @ClockSize
+    var clockSize: Int = StyleEnums.CLOCK_SIZE_UNSPECIFIED
+        private set
+
     @ColorSource
     var themeColorSource: Int = StyleEnums.COLOR_SOURCE_UNSPECIFIED
         private set
@@ -52,6 +55,12 @@ class TestThemesUserEventLogger @Inject constructor() :
     var shapeId: String? = null
         private set
 
+    var clockId: String? = null
+        private set
+
+    var clockSeedColor: Int? = null
+        private set
+
     override fun logThemeColorApplied(@ColorSource source: Int, style: Int, seedColor: Int) {
         this.themeColorSource = source
         this.themeColorStyle = style
@@ -60,9 +69,13 @@ class TestThemesUserEventLogger @Inject constructor() :
 
     override fun logGridApplied(grid: GridOptionModel) {}
 
-    override fun logClockApplied(clockId: String, useClockCustomization: Boolean) {}
+    override fun logClockApplied(clockId: String, useClockCustomization: Boolean) {
+        this.clockId = clockId
+    }
 
-    override fun logClockColorApplied(seedColor: Int) {}
+    override fun logClockColorApplied(seedColor: Int) {
+        this.clockSeedColor = seedColor
+    }
 
     override fun logClockSizeApplied(@ClockSize clockSize: Int) {
         this.clockSize = clockSize
