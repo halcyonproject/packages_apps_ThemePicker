@@ -633,6 +633,20 @@
     -->
     <string name="content_description_expressive_color_option">Primary expressive theme</string>
 
+    <!-- Content description for a color variant editor apply button. The editor provides different
+     color scheme options for theming the device based on a user-selected color seed.
+
+     [CHAR LIMIT=NONE]
+     -->
+    <string name="color_variant_editor_apply">Apply theme style change</string>
+
+    <!-- Content description for a color variant editor revert button. The editor provides different
+     color scheme options for theming the device based on a user-selected color seed.
+
+     [CHAR LIMIT=NONE]
+     -->
+    <string name="color_variant_editor_revert">Undo theme style change</string>
+
     <!--
     Accessibility string for a button that allows the user to select the default color for their
     lock screen clock on the device. This is shown next to other buttons that allow the user to
