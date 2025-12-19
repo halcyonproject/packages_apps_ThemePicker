@@ -16,9 +16,14 @@
 
 package com.android.wallpaper.customization.ui.binder
 
-import android.widget.FrameLayout
+import android.view.View.MeasureSpec
+import android.view.ViewGroup.LayoutParams
+import android.widget.LinearLayout
 import android.widget.Toolbar
+import androidx.core.animation.Animator
+import androidx.core.animation.ValueAnimator
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.doOnLayout
 import androidx.core.view.isInvisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -26,6 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.themepicker.R as ThemePickerR
 import com.android.wallpaper.R
+import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_ICONS
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.COLORS
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.GRID
@@ -49,26 +55,28 @@ import kotlinx.coroutines.launch
 @Singleton
 class ThemePickerToolbarBinder
 @Inject
-constructor(private val defaultToolbarBinder: DefaultToolbarBinder) : ToolbarBinder {
+constructor(
+    private val defaultToolbarBinder: DefaultToolbarBinder,
+    private val baseFlags: BaseFlags,
+) : ToolbarBinder {
 
     override fun bind(
-        navButton: FrameLayout,
-        toolbar: Toolbar,
-        applyButton: ApplyButton,
+        toolbarContainer: LinearLayout,
         viewModel: CustomizationOptionsViewModel,
         colorUpdateViewModel: ColorUpdateViewModel,
         lifecycleOwner: LifecycleOwner,
         onNavBack: () -> Unit,
     ) {
         defaultToolbarBinder.bind(
-            navButton,
-            toolbar,
-            applyButton,
+            toolbarContainer,
             viewModel,
             colorUpdateViewModel,
             lifecycleOwner,
             onNavBack,
         )
+
+        val toolbar: Toolbar = toolbarContainer.requireViewById(R.id.toolbar)
+        val applyButton: ApplyButton = toolbarContainer.requireViewById(R.id.apply_button)
 
         if (viewModel !is ThemePickerCustomizationOptionsViewModel) {
             throw IllegalArgumentException(
@@ -132,6 +140,77 @@ constructor(private val defaultToolbarBinder: DefaultToolbarBinder) : ToolbarBin
                                 else -> R.string.app_name
                             }
                         toolbar.title = toolbar.resources.getString(stringResId)
+                    }
+                }
+
+                if (baseFlags.isColorPickerUpdateEnabled()) {
+                    launch {
+                        var valueAnimator: ValueAnimator? = null
+                        var isInitialValue = true
+                        viewModel.shouldShowToolbar.collect { shouldShowToolbar ->
+                            toolbarContainer.doOnLayout {
+                                valueAnimator?.cancel()
+                                val initialHeight = toolbarContainer.measuredHeight
+                                val targetHeight =
+                                    if (shouldShowToolbar) {
+                                        toolbarContainer.measure(
+                                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                                        )
+                                        toolbarContainer.measuredHeight
+                                    } else {
+                                        0
+                                    }
+                                val setFinalHeight = {
+                                    if (shouldShowToolbar) {
+                                        toolbarContainer.layoutParams.height =
+                                            LayoutParams.WRAP_CONTENT
+                                    } else {
+                                        toolbarContainer.layoutParams.height = 0
+                                    }
+                                }
+
+                                // Skip animation for the first emitted value to avoid jank on start
+                                if (isInitialValue) {
+                                    setFinalHeight()
+                                    isInitialValue = false
+                                } else if (initialHeight != targetHeight) {
+                                    valueAnimator =
+                                        ValueAnimator.ofInt(initialHeight, targetHeight).apply {
+                                            addUpdateListener { animation ->
+                                                toolbarContainer.layoutParams.height =
+                                                    (animation as ValueAnimator).animatedValue
+                                                        as Int
+                                            }
+                                            addListener(
+                                                object : Animator.AnimatorListener {
+                                                    override fun onAnimationStart(
+                                                        animation: Animator
+                                                    ) {}
+
+                                                    override fun onAnimationEnd(
+                                                        animation: Animator
+                                                    ) {
+                                                        setFinalHeight()
+                                                    }
+
+                                                    override fun onAnimationCancel(
+                                                        animation: Animator
+                                                    ) {
+                                                        setFinalHeight()
+                                                    }
+
+                                                    override fun onAnimationRepeat(
+                                                        animation: Animator
+                                                    ) {}
+                                                }
+                                            )
+                                            duration = ANIMATION_DURATION
+                                            start()
+                                        }
+                                }
+                            }
+                        }
                     }
                 }
             }
