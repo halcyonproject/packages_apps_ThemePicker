@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -64,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.compose.animation.bounceable
 import com.android.compose.theme.PlatformTheme
+import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel2
@@ -72,6 +74,7 @@ import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import kotlin.math.ceil
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,11 +83,12 @@ fun ColorFloatingSheet(
     colorPickerViewModel: ColorPickerViewModel2,
     modifier: Modifier = Modifier,
 ) {
-    val previewingColorOptionState by
+    val previewingColorOptionState: ColorOption? by
         colorPickerViewModel.previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
-    val previewingDarkModeState by
+    val previewingDarkModeState: Boolean by
         darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
-    val screen by colorPickerViewModel.currentScreen.collectAsStateWithLifecycle()
+    val screen: ColorPickerViewModel2.Screen by
+        colorPickerViewModel.currentScreen.collectAsStateWithLifecycle()
 
     PlatformTheme {
         val scheme =
@@ -125,17 +129,17 @@ fun ColorFloatingSheetLanding(
     darkModeViewModel: DarkModeViewModel,
     modifier: Modifier,
 ) {
-    val colorScheme = LocalAnimatedColorScheme.current
-    val colorOptionState by
+    val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
+    val colorOptionState: Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>> by
         colorPickerViewModel.allColorOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val previewingDarkModeState by
+    val previewingDarkModeState: Boolean by
         darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
-    val toggleDarkMode by
+    val toggleDarkMode: () -> Unit by
         darkModeViewModel.toggleDarkMode.collectAsStateWithLifecycle(initialValue = {})
-    val isDarkModeEnabled by
+    val isDarkModeEnabled: Boolean by
         darkModeViewModel.isEnabled.collectAsStateWithLifecycle(initialValue = false)
-    val lazyListState = rememberLazyListState()
-    val textResId by remember {
+    val lazyListState: LazyListState = rememberLazyListState()
+    val textResId: Int by remember {
         derivedStateOf {
             val firstVisibleIndex = lazyListState.firstVisibleItemIndex
             var startIdx = 0
@@ -259,7 +263,7 @@ fun ColorFloatingSheetLanding(
 
 @Composable
 fun OptionListGroupDivider(modifier: Modifier = Modifier) {
-    val colorScheme = LocalAnimatedColorScheme.current
+    val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
     Box(
         modifier =
             modifier.width(12.dp).height(28.dp).padding(horizontal = 5.dp).drawBehind {
@@ -278,11 +282,12 @@ fun ColorSeedOption(
     navigateToVariantPicker: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = LocalAnimatedColorScheme.current
-    val coroutineScope = rememberCoroutineScope()
-    val colorIcon = optionItem.payload
-    val onClickState by optionItem.onClicked.collectAsStateWithLifecycle(initialValue = null)
-    val isSelectedState by optionItem.isSelected.collectAsStateWithLifecycle()
+    val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val colorIcon: ColorOptionIconViewModel? = optionItem.payload
+    val onClickState: (() -> Unit)? by
+        optionItem.onClicked.collectAsStateWithLifecycle(initialValue = null)
+    val isSelectedState: Boolean by optionItem.isSelected.collectAsStateWithLifecycle()
 
     Box(modifier = modifier) {
         ColorOption(

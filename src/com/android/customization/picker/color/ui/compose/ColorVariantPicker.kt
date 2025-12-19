@@ -35,6 +35,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -49,8 +50,8 @@ import com.android.themepicker.R
 
 @Composable
 fun ColorVariantPicker(navigateToLanding: () -> Unit, modifier: Modifier = Modifier) {
-    val colorScheme = LocalAnimatedColorScheme.current
-    val selectedIdx = remember { mutableStateOf(0) }
+    val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
+    val selectedIdx: MutableState<Int> = remember { mutableStateOf(0) }
 
     // Handle back navigation when color variant picker is active.
     BackHandler { navigateToLanding() }
@@ -132,7 +133,7 @@ fun ColorVariantPicker(navigateToLanding: () -> Unit, modifier: Modifier = Modif
 
 @Composable
 fun ColorStyleOption(modifier: Modifier, isSelected: Boolean, onClick: () -> Unit) {
-    val colorScheme = LocalAnimatedColorScheme.current
+    val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
     ColorOption(modifier = modifier, isSelected = isSelected, onClick = onClick) {
         drawRect(color = colorScheme.primary)
     }
