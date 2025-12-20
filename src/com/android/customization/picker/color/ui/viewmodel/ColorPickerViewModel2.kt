@@ -218,8 +218,20 @@ constructor(
             allColorOptions: Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>,
             selectedColorTypeIdOrNull ->
             val selectedColorTypeId = selectedColorTypeIdOrNull ?: ColorType.WALLPAPER_COLOR
-            allColorOptions[selectedColorTypeId]!!
+            allColorOptions[selectedColorTypeId] ?: emptyList()
         }
+
+    enum class Screen {
+        LANDING,
+        VARIANT_PICKER,
+    }
+
+    private val _currentScreen = MutableStateFlow(Screen.LANDING)
+    val currentScreen = _currentScreen.asStateFlow()
+
+    fun setScreen(screen: Screen) {
+        _currentScreen.value = screen
+    }
 
     @ViewModelScoped
     @AssistedFactory
