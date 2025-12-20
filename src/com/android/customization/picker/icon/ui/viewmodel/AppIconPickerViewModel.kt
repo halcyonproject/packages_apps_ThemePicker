@@ -528,7 +528,7 @@ constructor(
             text = text,
             isSelected = isSelected,
             onClicked =
-                if (iconStyleModel.isExternalLink) {
+                if (iconStyleModel.isExternalLink || !iconStyleModel.isEnabled) {
                     // A button is not selectable.
                     flowOf(null)
                 } else {
@@ -540,6 +540,7 @@ constructor(
                         }
                     }
                 },
+            isEnabled = iconStyleModel.isEnabled,
             skipOnClickBinding = iconStyleModel.isExternalLink,
         )
     }
