@@ -26,7 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.customization.picker.color.ui.view.ColorOptionIconView2
+import com.android.customization.picker.color.ui.view.ColorOptionIconView
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.customization.picker.mode.ui.binder.DarkModeBinder
 import com.android.themepicker.R
@@ -165,15 +165,15 @@ object ColorsFloatingSheetBinder {
         lifecycleOwner: LifecycleOwner,
     ): OptionItemAdapter2<ColorOptionIconViewModel> =
         OptionItemAdapter2(
-            layoutResourceId = R.layout.color_option2,
+            layoutResourceId = R.layout.color_option,
             lifecycleOwner = lifecycleOwner,
             bindPayload = { itemView: View, colorIcon: ColorOptionIconViewModel ->
                 val colorOptionIconView =
-                    itemView.requireViewById<ColorOptionIconView2>(
+                    itemView.requireViewById<ColorOptionIconView>(
                         com.android.wallpaper.R.id.background
                     )
                 val binding =
-                    ColorOptionIconBinder2.bind(
+                    ColorOptionIconBinder.bind(
                         view = colorOptionIconView,
                         viewModel = colorIcon,
                         colorUpdateViewModel = colorUpdateViewModel,

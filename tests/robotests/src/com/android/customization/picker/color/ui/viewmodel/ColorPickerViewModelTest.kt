@@ -24,8 +24,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorProviderUtil
 import com.android.customization.module.logging.TestThemesUserEventLogger
-import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
-import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
+import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
+import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.mode.data.repository.DarkModeStateRepository
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
@@ -59,18 +59,18 @@ import org.robolectric.RobolectricTestRunner
 @OptIn(ExperimentalCoroutinesApi::class)
 @SmallTest
 @RunWith(RobolectricTestRunner::class)
-class ColorPickerViewModel2Test {
+class ColorPickerViewModelTest {
     @get:Rule var hiltRule = HiltAndroidRule(this)
 
     private val logger = TestThemesUserEventLogger()
-    private lateinit var underTest: ColorPickerViewModel2
+    private lateinit var underTest: ColorPickerViewModel
     private lateinit var colorUpdateViewModel: ColorUpdateViewModel
 
     private lateinit var context: Context
     private lateinit var testScope: TestScope
 
-    @Inject lateinit var repository: FakeColorPickerRepository2
-    @Inject lateinit var interactor: ColorPickerInteractor2
+    @Inject lateinit var repository: FakeColorPickerRepository
+    @Inject lateinit var interactor: ColorPickerInteractor
     @Inject lateinit var darkModeStateRepository: DarkModeStateRepository
 
     @Before
@@ -86,7 +86,7 @@ class ColorPickerViewModel2Test {
             ColorUpdateViewModel(context, RetainedLifecycleImpl(), darkModeStateRepository)
 
         underTest =
-            ColorPickerViewModel2(
+            ColorPickerViewModel(
                 context = context,
                 interactor = interactor,
                 logger = logger,
@@ -139,7 +139,7 @@ class ColorPickerViewModel2Test {
 
             assertThat(job.isActive).isTrue()
 
-            advanceTimeBy(ColorPickerViewModel2.COLOR_UPDATE_TIMEOUT_MILLIS)
+            advanceTimeBy(ColorPickerViewModel.COLOR_UPDATE_TIMEOUT_MILLIS)
             runCurrent()
 
             assertThat(job.isActive).isFalse()

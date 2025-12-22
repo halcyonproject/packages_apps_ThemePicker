@@ -17,13 +17,13 @@
 package com.android.customization.picker.color.domain.interactor
 
 import com.android.customization.model.color.ColorOption
-import com.android.customization.picker.color.data.repository.ColorPickerRepository2
+import com.android.customization.picker.color.data.repository.ColorPickerRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /** Single entry-point for all application state and business logic related to system color. */
 @Singleton
-class ColorPickerInteractor2 @Inject constructor(private val repository: ColorPickerRepository2) {
+class ColorPickerInteractor @Inject constructor(private val repository: ColorPickerRepository) {
     val selectedColorOption = repository.selectedColorOption
 
     /** List of wallpaper and preset color options on the device, categorized by Color Type */

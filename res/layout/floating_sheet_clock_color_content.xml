@@ -58,7 +58,7 @@
         It's critical for any TextViews inside the included layout to have text.
         -->
         <include
-            layout="@layout/color_option2"
+            layout="@layout/color_option"
             android:visibility="invisible" />
 
         <androidx.recyclerview.widget.RecyclerView
