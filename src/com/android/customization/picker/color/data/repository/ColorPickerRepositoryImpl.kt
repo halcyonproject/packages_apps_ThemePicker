@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 @Singleton
-class ColorPickerRepositoryImpl2
+class ColorPickerRepositoryImpl
 @Inject
 constructor(
     @BackgroundDispatcher scope: CoroutineScope,
@@ -62,7 +62,7 @@ constructor(
     private val themeManager: ThemeManager?,
     client: WallpaperClient,
     baseFlags: BaseFlags,
-) : ColorPickerRepository2 {
+) : ColorPickerRepository {
 
     private val shouldUseThemeService =
         baseFlags.isColorPickerUpdateEnabled() && themeManager != null
@@ -229,6 +229,6 @@ constructor(
     }
 
     companion object {
-        private const val TAG = "ColorPickerRepositoryImpl2"
+        private const val TAG = "ColorPickerRepositoryImpl"
     }
 }

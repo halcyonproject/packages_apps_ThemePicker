@@ -37,8 +37,8 @@ import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockFloatingSheetHeightsViewModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.ClockStyleModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.Tab
-import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder2
-import com.android.customization.picker.color.ui.view.ColorOptionIconView2
+import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder
+import com.android.customization.picker.color.ui.view.ColorOptionIconView
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.customization.picker.common.ui.view.SingleRowListItemSpacing
 import com.android.themepicker.R
@@ -632,13 +632,13 @@ object ClockFloatingSheetBinder {
         lifecycleOwner: LifecycleOwner,
     ): OptionItemAdapter2<ColorOptionIconViewModel> =
         OptionItemAdapter2(
-            layoutResourceId = R.layout.color_option2,
+            layoutResourceId = R.layout.color_option,
             lifecycleOwner = lifecycleOwner,
             bindPayload = { itemView: View, colorIcon: ColorOptionIconViewModel ->
-                val colorOptionIconView: ColorOptionIconView2 =
+                val colorOptionIconView: ColorOptionIconView =
                     itemView.requireViewById(com.android.wallpaper.R.id.background)
                 val binding =
-                    ColorOptionIconBinder2.bind(
+                    ColorOptionIconBinder.bind(
                         view = colorOptionIconView,
                         viewModel = colorIcon,
                         colorUpdateViewModel = colorUpdateViewModel,

@@ -46,7 +46,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.android.customization.picker.color.ui.view.ColorOptionIconView2
+        <com.android.customization.picker.color.ui.view.ColorOptionIconView
             android:id="@+id/option_entry_icon"
             android:layout_width="@dimen/customization_option_entry_color_icon_size"
             android:layout_height="@dimen/customization_option_entry_color_icon_size"

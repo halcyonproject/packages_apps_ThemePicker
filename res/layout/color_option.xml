@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 <!-- Content description is set programmatically on the parent FrameLayout -->
-<com.android.customization.picker.color.ui.view.ColorOptionIconView2
+<com.android.customization.picker.color.ui.view.ColorOptionIconView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@id/background"
     android:layout_width="@dimen/floating_sheet_color_option_size"

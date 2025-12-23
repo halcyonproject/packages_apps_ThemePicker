@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @Singleton
-class FakeColorPickerRepository2 @Inject constructor() : ColorPickerRepository2 {
+class FakeColorPickerRepository @Inject constructor() : ColorPickerRepository {
 
     private val _selectedColorOption = MutableStateFlow<ColorOption?>(null)
     override val selectedColorOption = _selectedColorOption.asStateFlow()

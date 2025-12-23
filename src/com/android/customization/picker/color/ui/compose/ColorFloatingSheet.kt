@@ -68,7 +68,7 @@ import com.android.compose.theme.PlatformTheme
 import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
-import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel2
+import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
 import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
@@ -80,14 +80,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun ColorFloatingSheet(
     darkModeViewModel: DarkModeViewModel,
-    colorPickerViewModel: ColorPickerViewModel2,
+    colorPickerViewModel: ColorPickerViewModel,
     modifier: Modifier = Modifier,
 ) {
     val previewingColorOptionState: ColorOption? by
         colorPickerViewModel.previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
     val previewingDarkModeState: Boolean by
         darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
-    val screen: ColorPickerViewModel2.Screen by
+    val screen: ColorPickerViewModel.Screen by
         colorPickerViewModel.currentScreen.collectAsStateWithLifecycle()
 
     PlatformTheme {
@@ -104,16 +104,16 @@ fun ColorFloatingSheet(
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
             ) { value ->
                 when (value) {
-                    ColorPickerViewModel2.Screen.LANDING ->
+                    ColorPickerViewModel.Screen.LANDING ->
                         ColorFloatingSheetLanding(
                             colorPickerViewModel = colorPickerViewModel,
                             darkModeViewModel = darkModeViewModel,
                             modifier = modifier,
                         )
-                    ColorPickerViewModel2.Screen.VARIANT_PICKER ->
+                    ColorPickerViewModel.Screen.VARIANT_PICKER ->
                         ColorVariantPicker(
                             navigateToLanding = {
-                                colorPickerViewModel.setScreen(ColorPickerViewModel2.Screen.LANDING)
+                                colorPickerViewModel.setScreen(ColorPickerViewModel.Screen.LANDING)
                             },
                             modifier = modifier,
                         )
@@ -125,7 +125,7 @@ fun ColorFloatingSheet(
 
 @Composable
 fun ColorFloatingSheetLanding(
-    colorPickerViewModel: ColorPickerViewModel2,
+    colorPickerViewModel: ColorPickerViewModel,
     darkModeViewModel: DarkModeViewModel,
     modifier: Modifier,
 ) {
@@ -202,7 +202,7 @@ fun ColorFloatingSheetLanding(
                             optionItem = option,
                             navigateToVariantPicker = {
                                 colorPickerViewModel.setScreen(
-                                    ColorPickerViewModel2.Screen.VARIANT_PICKER
+                                    ColorPickerViewModel.Screen.VARIANT_PICKER
                                 )
                             },
                             modifier =

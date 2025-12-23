@@ -18,13 +18,13 @@
 package com.android.customization.picker.color.ui.binder
 
 import androidx.lifecycle.LifecycleOwner
-import com.android.customization.picker.color.ui.view.ColorOptionIconView2
+import com.android.customization.picker.color.ui.view.ColorOptionIconView
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.wallpaper.picker.customization.ui.binder.ColorUpdateBinder
 import com.android.wallpaper.picker.customization.ui.binder.DarkModeUpdateBinder
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
 
-object ColorOptionIconBinder2 {
+object ColorOptionIconBinder {
 
     interface Binding {
         /** Destroys the color update binding, in spite of lifecycle state. */
@@ -32,7 +32,7 @@ object ColorOptionIconBinder2 {
     }
 
     fun bind(
-        view: ColorOptionIconView2,
+        view: ColorOptionIconView,
         viewModel: ColorOptionIconViewModel,
         colorUpdateViewModel: ColorUpdateViewModel,
         shouldAnimateColor: () -> Boolean,

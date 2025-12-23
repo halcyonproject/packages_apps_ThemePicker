@@ -41,10 +41,10 @@ import com.android.customization.picker.clock.ui.binder.ClockFloatingSheetBinder
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView.Companion.addClockViews
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
-import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder2
+import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder
 import com.android.customization.picker.color.ui.binder.ColorsFloatingSheetBinder
 import com.android.customization.picker.color.ui.compose.ColorFloatingSheet
-import com.android.customization.picker.color.ui.view.ColorOptionIconView2
+import com.android.customization.picker.color.ui.view.ColorOptionIconView
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.customization.picker.grid.ui.binder.GridFloatingSheetBinder
 import com.android.customization.picker.icon.ui.binder.AppIconFloatingSheetBinder
@@ -261,7 +261,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     .first { it.first == ThemePickerHomeCustomizationOption.COLORS }
                     .second
             } else null
-        val optionColorsIcon: ColorOptionIconView2? =
+        val optionColorsIcon: ColorOptionIconView? =
             optionColors?.requireViewById(R.id.option_entry_icon)
 
         val optionAppIcons: View? =
@@ -472,14 +472,14 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
                 if (customizationOptionsData.isColorCustomizationAvailable) {
                     launch {
-                        var binding: ColorOptionIconBinder2.Binding? = null
+                        var binding: ColorOptionIconBinder.Binding? = null
                         optionsViewModel.colorPickerViewModel2.selectedColorOption.collect {
                             colorOption ->
                             (colorOption as? ColorOptionImpl)?.let {
                                 optionColorsIcon?.let {
                                     binding?.destroy()
                                     binding =
-                                        ColorOptionIconBinder2.bind(
+                                        ColorOptionIconBinder.bind(
                                             view = optionColorsIcon,
                                             viewModel =
                                                 ColorOptionIconViewModel.fromColorOption(

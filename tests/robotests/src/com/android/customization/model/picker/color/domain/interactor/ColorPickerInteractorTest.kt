@@ -19,8 +19,8 @@ package com.android.customization.model.picker.color.domain.interactor
 import android.content.Context
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
-import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
+import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
+import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
@@ -32,17 +32,17 @@ import org.robolectric.RobolectricTestRunner
 
 @SmallTest
 @RunWith(RobolectricTestRunner::class)
-class ColorPickerInteractor2Test {
-    private lateinit var underTest: ColorPickerInteractor2
-    private lateinit var repository: FakeColorPickerRepository2
+class ColorPickerInteractorTest {
+    private lateinit var underTest: ColorPickerInteractor
+    private lateinit var repository: FakeColorPickerRepository
 
     private lateinit var context: Context
 
     @Before
     fun setUp() {
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        repository = FakeColorPickerRepository2()
-        underTest = ColorPickerInteractor2(repository = repository)
+        repository = FakeColorPickerRepository()
+        underTest = ColorPickerInteractor(repository = repository)
         repository.setOptions(4, 4, ColorType.WALLPAPER_COLOR, 0)
     }
 
