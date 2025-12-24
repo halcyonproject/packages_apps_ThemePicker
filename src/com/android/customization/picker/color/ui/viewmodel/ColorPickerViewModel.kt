@@ -20,7 +20,7 @@ import android.util.Log
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.module.logging.ThemesUserEventLogger
-import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
+import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.themepicker.R
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
@@ -48,12 +48,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
 /** Models UI state for a color picker experience. */
-class ColorPickerViewModel2
+class ColorPickerViewModel
 @AssistedInject
 constructor(
     @ApplicationContext context: Context,
     private val colorUpdateViewModel: ColorUpdateViewModel,
-    private val interactor: ColorPickerInteractor2,
+    private val interactor: ColorPickerInteractor,
     private val logger: ThemesUserEventLogger,
     @Assisted private val viewModelScope: CoroutineScope,
 ) {
@@ -236,11 +236,11 @@ constructor(
     @ViewModelScoped
     @AssistedFactory
     interface Factory {
-        fun create(viewModelScope: CoroutineScope): ColorPickerViewModel2
+        fun create(viewModelScope: CoroutineScope): ColorPickerViewModel
     }
 
     companion object {
-        const val TAG = "ColorPickerViewModel2"
+        const val TAG = "ColorPickerViewModel"
         const val COLOR_UPDATE_TIMEOUT_MILLIS = 3000L
     }
 }

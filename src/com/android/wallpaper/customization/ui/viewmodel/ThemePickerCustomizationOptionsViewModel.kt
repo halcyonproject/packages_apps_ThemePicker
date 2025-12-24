@@ -20,7 +20,7 @@ import android.content.Context
 import android.view.accessibility.AccessibilityManager
 import com.android.customization.packtheme.ui.viewmodel.PackThemeViewModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel
-import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel2
+import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.grid.ui.viewmodel.GridPickerViewModel
 import com.android.customization.picker.icon.ui.viewmodel.AppIconPickerViewModel
 import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
@@ -67,7 +67,7 @@ constructor(
     @ApplicationContext private val appContext: Context,
     defaultCustomizationOptionsViewModelFactory: DefaultCustomizationOptionsViewModel.Factory,
     keyguardQuickAffordancePickerViewModel2Factory: KeyguardQuickAffordancePickerViewModel2.Factory,
-    colorPickerViewModel2Factory: ColorPickerViewModel2.Factory,
+    colorPickerViewModelFactory: ColorPickerViewModel.Factory,
     clockPickerViewModelFactory: ClockPickerViewModel.Factory,
     gridPickerViewModelFactory: GridPickerViewModel.Factory,
     appIconPickerViewModelFactory: AppIconPickerViewModel.Factory,
@@ -95,7 +95,7 @@ constructor(
             viewModelScope = viewModelScope,
             initialDeepLinkShortcutSlotId = initialDeepLinkShortcutSlotId,
         )
-    val colorPickerViewModel2 = colorPickerViewModel2Factory.create(viewModelScope = viewModelScope)
+    val colorPickerViewModel2 = colorPickerViewModelFactory.create(viewModelScope = viewModelScope)
     val gridPickerViewModel = gridPickerViewModelFactory.create(viewModelScope = viewModelScope)
     val appIconPickerViewModel =
         appIconPickerViewModelFactory.create(viewModelScope = viewModelScope)
@@ -312,7 +312,7 @@ constructor(
             colorPickerScreen ->
             val isInColorVariantPicker =
                 selectedOption == COLORS &&
-                    colorPickerScreen == ColorPickerViewModel2.Screen.VARIANT_PICKER
+                    colorPickerScreen == ColorPickerViewModel.Screen.VARIANT_PICKER
             !isInColorVariantPicker
         }
 

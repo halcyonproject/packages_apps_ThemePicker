@@ -26,8 +26,8 @@ import com.android.customization.picker.clock.domain.interactor.ClockPickerInter
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.Tab
-import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
-import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
+import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
+import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.systemui.plugins.keyguard.ui.clocks.AxisPresetConfig.IndexedStyle
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.themepicker.R
@@ -84,8 +84,8 @@ class ClockPickerViewModelTest {
                 repository = repository,
                 CustomizationRuntimeValuesRepository(customizationProviderClient),
             )
-        val colorPickerRepository = FakeColorPickerRepository2()
-        val colorPickerInteractor = ColorPickerInteractor2(repository = colorPickerRepository)
+        val colorPickerRepository = FakeColorPickerRepository()
+        val colorPickerInteractor = ColorPickerInteractor(repository = colorPickerRepository)
         colorMap = ClockColorViewModel.getPresetColorMap(context.resources)
         underTest =
             ClockPickerViewModel(

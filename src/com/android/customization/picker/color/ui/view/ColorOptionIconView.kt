@@ -29,7 +29,7 @@ import com.android.wallpaper.picker.option.ui.view.OptionItemBackground
 /**
  * Draw a color option icon, which is a quadrant circle that can show at most 4 different colors.
  */
-class ColorOptionIconView2(context: Context, attrs: AttributeSet) :
+class ColorOptionIconView(context: Context, attrs: AttributeSet) :
     OptionItemBackground(context, attrs) {
 
     private val paint = Paint().apply { style = Paint.Style.FILL }

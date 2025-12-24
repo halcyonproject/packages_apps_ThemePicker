@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.Flow
  * Abstracts access to application state related to functionality for selecting, picking, or setting
  * system color.
  */
-interface ColorPickerRepository2 {
+interface ColorPickerRepository {
     /** List of wallpaper and preset color options on the device, categorized by Color Type */
     val colorOptions: Flow<Map<ColorType, List<ColorOption>>>
 
