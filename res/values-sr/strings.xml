@@ -171,10 +171,8 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"Примарна неутрална тема"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"Примарна интензивна тема"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"Примарна експресивна тема"</string>
-    <!-- no translation found for color_variant_editor_apply (6735218825751029812) -->
-    <skip />
-    <!-- no translation found for color_variant_editor_revert (1786509144393262567) -->
-    <skip />
+    <string name="color_variant_editor_apply" msgid="6735218825751029812">"Примени промену стила теме"</string>
+    <string name="color_variant_editor_revert" msgid="1786509144393262567">"Опозови промену стила теме"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Подразумевана опција боје"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Опција боје <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Превуците налево да бисте одабрали други бројчаник"</string>

@@ -171,10 +171,8 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"പ്രാഥമിക ന്യൂട്രൽ തീം"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"പ്രാഥമിക വൈബ്രന്റ് തീം"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"പ്രാഥമിക എക്‌സ്‌പ്രസീവ് തീം"</string>
-    <!-- no translation found for color_variant_editor_apply (6735218825751029812) -->
-    <skip />
-    <!-- no translation found for color_variant_editor_revert (1786509144393262567) -->
-    <skip />
+    <string name="color_variant_editor_apply" msgid="6735218825751029812">"തീം സ്റ്റൈലിലെ മാറ്റം ബാധകമാക്കുക"</string>
+    <string name="color_variant_editor_revert" msgid="1786509144393262567">"തീം സ്റ്റൈലിലെ മാറ്റം പഴയപടിയാക്കുക"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ഡിഫോൾട്ട് വർണ്ണ ഓപ്‌ഷൻ"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"വർണ്ണ ഓപ്‌ഷൻ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"മറ്റൊരു ക്ലോക്ക് ഫേസ് തിരഞ്ഞെടുക്കാൻ ഇടതുഭാഗത്തേക്ക് സ്വൈപ്പ് ചെയ്യുക"</string>
