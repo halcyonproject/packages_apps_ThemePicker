@@ -171,10 +171,8 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"기본 보통 테마"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"기본 활기 테마"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"기본 표현 테마"</string>
-    <!-- no translation found for color_variant_editor_apply (6735218825751029812) -->
-    <skip />
-    <!-- no translation found for color_variant_editor_revert (1786509144393262567) -->
-    <skip />
+    <string name="color_variant_editor_apply" msgid="6735218825751029812">"테마 스타일 변경 적용"</string>
+    <string name="color_variant_editor_revert" msgid="1786509144393262567">"테마 스타일 변경 실행취소"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"기본 색상 옵션"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"<xliff:g id="ID_1">%1$d</xliff:g> 색상 옵션"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"왼쪽으로 스와이프하여 다른 시계 페이스 선택"</string>

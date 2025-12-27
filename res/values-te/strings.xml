@@ -171,10 +171,8 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"ప్రాథమిక న్యూట్రల్ రూపం"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"ప్రాథమిక వైబ్రెంట్ రూపం"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"ప్రాథమిక ఎక్స్‌ప్రెషిప్ రూపం"</string>
-    <!-- no translation found for color_variant_editor_apply (6735218825751029812) -->
-    <skip />
-    <!-- no translation found for color_variant_editor_revert (1786509144393262567) -->
-    <skip />
+    <string name="color_variant_editor_apply" msgid="6735218825751029812">"థీమ్ స్టయిల్ మార్పును వర్తింపజేయండి"</string>
+    <string name="color_variant_editor_revert" msgid="1786509144393262567">"థీమ్ స్టయిల్ మార్పును రద్దు చేయండి"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ఆటోమేటిక్ సెట్టింగ్ రంగు ఆప్షన్"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"రంగు ఆప్షన్ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"వేరొక గడియార ముఖాన్ని ఎంచుకోవడానికి ఎడమ వైపునకు స్వైప్ చేయండి"</string>
