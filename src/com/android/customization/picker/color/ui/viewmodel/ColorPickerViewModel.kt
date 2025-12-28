@@ -180,27 +180,30 @@ constructor(
                 } else {
                     {
                         coroutineScope {
-                            launch {
-                                val success = interactor.select(it)
-                                if (success) {
-                                    logger.logThemeColorApplied(
-                                        it.sourceForLogging,
-                                        it.styleForLogging,
-                                        it.seedColor,
-                                    )
+                            val waitForColorUpdateJob = launch {
+                                // Suspend until first color update, or time out after 3 seconds
+                                try {
+                                    withTimeout(COLOR_UPDATE_TIMEOUT_MILLIS) {
+                                        colorUpdateViewModel.systemColorsUpdatedNoReplay
+                                            .take(1)
+                                            .collect {
+                                                return@collect
+                                            }
+                                    }
+                                } catch (e: TimeoutCancellationException) {
+                                    Log.w(TAG, "Timed out waiting for color update", e)
                                 }
                             }
-                            // Suspend until first color update, or time out after 3 seconds
-                            try {
-                                withTimeout(COLOR_UPDATE_TIMEOUT_MILLIS) {
-                                    colorUpdateViewModel.systemColorsUpdatedNoReplay
-                                        .take(1)
-                                        .collect {
-                                            return@collect
-                                        }
-                                }
-                            } catch (e: TimeoutCancellationException) {
-                                Log.w(TAG, "Timed out waiting for color update", e)
+                            val success = interactor.select(it)
+                            if (success) {
+                                logger.logThemeColorApplied(
+                                    it.sourceForLogging,
+                                    it.styleForLogging,
+                                    it.seedColor,
+                                )
+                                waitForColorUpdateJob.join()
+                            } else {
+                                waitForColorUpdateJob.cancel()
                             }
                         }
                     }

@@ -140,29 +140,31 @@ class ColorCustomizationManagerTest {
 
     private fun getPresetColorOption(index: Int): ColorOptionImpl {
         return ColorOptionImpl(
-            "fake color",
-            mapOf("fake_package" to "fake_color"),
-            /* isDefault= */ false,
-            COLOR_SOURCE_PRESET,
-            12345,
-            ThemeStyle.TONAL_SPOT,
-            index,
-            ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-            ColorType.PRESET_COLOR,
+            title = "fake color",
+            source = COLOR_SOURCE_PRESET,
+            seedColor = 12345,
+            style = ThemeStyle.TONAL_SPOT,
+            isThemeServiceEnabled = false,
+            overlayPackages = mapOf("fake_package" to "fake_color"),
+            isDefault = false,
+            index = index,
+            previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+            type = ColorType.PRESET_COLOR,
         )
     }
 
     private fun getWallpaperColorOption(index: Int): ColorOptionImpl {
         return ColorOptionImpl(
-            "fake color",
-            mapOf("fake_package" to "fake_color"),
-            /* isDefault= */ false,
-            COLOR_SOURCE_HOME,
-            12345,
-            ThemeStyle.TONAL_SPOT,
-            index,
-            ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-            ColorType.WALLPAPER_COLOR,
+            title = "fake color",
+            source = COLOR_SOURCE_HOME,
+            seedColor = 12345,
+            style = ThemeStyle.TONAL_SPOT,
+            isThemeServiceEnabled = false,
+            overlayPackages = mapOf("fake_package" to "fake_color"),
+            isDefault = false,
+            index = index,
+            previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+            type = ColorType.WALLPAPER_COLOR,
         )
     }
 

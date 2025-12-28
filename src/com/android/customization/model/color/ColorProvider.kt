@@ -27,6 +27,8 @@ import com.android.customization.model.ResourceConstants.COLOR_BUNDLE_MAIN_COLOR
 import com.android.customization.model.ResourceConstants.COLOR_BUNDLE_NAME_PREFIX
 import com.android.customization.model.ResourceConstants.COLOR_BUNDLE_STYLE_PREFIX
 import com.android.customization.model.ResourcesApkProvider
+import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_HOME
+import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_PRESET
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
 import com.android.wallpaper.config.BaseFlags
@@ -73,6 +75,30 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
         return monetEnabled && resourcesApkProvider.isAvailable && colorsAvailable
     }
 
+    suspend fun fetchThemeServiceCompatibleOptions(
+        homeWallpaperColors: WallpaperColors?
+    ): List<ColorOption> {
+        if (!isThemeServiceEnabled)
+            throw IllegalStateException(
+                "fetchThemeServiceCompatibleOptions should not be used when theme service flag is off"
+            )
+        val wallpaperColorsChanged = this.homeWallpaperColors != homeWallpaperColors
+        if (wallpaperColorsChanged) {
+            loadWallpaperOptions(
+                homeWallpaperColors = homeWallpaperColors,
+                isUsingThemeService = true,
+            )
+            this.homeWallpaperColors = homeWallpaperColors
+        }
+
+        loaderJob?.join()
+        if (presetColorBundles == null) {
+            loaderJob = scope.launch { loadPresetOptions(isUsingThemeService = true) }
+        }
+        loaderJob?.join()
+        return buildFinalList()
+    }
+
     fun fetch(
         callback: OptionsFetchedListener<ColorOption>?,
         reload: Boolean,
@@ -104,12 +130,18 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
         }
     }
 
-    private fun loadWallpaperOptions(homeWallpaperColors: WallpaperColors?) {
+    private fun loadWallpaperOptions(
+        homeWallpaperColors: WallpaperColors?,
+        isUsingThemeService: Boolean = false,
+    ) {
         if (homeWallpaperColors == null) return
 
         wallpaperColorBundles =
             if (isColorPickerUpdateEnabled) {
-                buildColorSeedOptions(wallpaperColors = homeWallpaperColors)
+                buildColorSeedOptions(
+                    wallpaperColors = homeWallpaperColors,
+                    isUsingThemeService = isUsingThemeService,
+                )
             } else {
                 buildColorAndStyleOptions(wallpaperColors = homeWallpaperColors)
             }
@@ -141,29 +173,41 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
         return bundles
     }
 
-    private fun buildColorSeedOptions(wallpaperColors: WallpaperColors): MutableList<ColorOption> {
+    private fun buildColorSeedOptions(
+        wallpaperColors: WallpaperColors,
+        isUsingThemeService: Boolean,
+    ): MutableList<ColorOption> {
         val bundles: MutableList<ColorOption> = ArrayList()
         val seedColors = ColorScheme.getSeedColors(wallpaperColors)
         for ((i, colorInt) in seedColors.take(MAX_SEED_COLORS).withIndex()) {
             // TODO (b/441279631): enable updating color titles
             val colorOption =
-                ColorProviderUtil.buildBundle(
-                    context = context,
-                    colorInt = colorInt,
-                    // Color option index value starts from 1.
-                    index = i + 1,
-                    style = ThemeStyle.TONAL_SPOT,
-                    // The first seed color is the default.
-                    isDefault = i == 0,
-                    isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
-                    isThemeServiceEnabled = isThemeServiceEnabled,
-                )
+                if (isUsingThemeService) {
+                    ColorOptionImpl.buildSimplifiedOption(
+                        title = "",
+                        source = COLOR_SOURCE_HOME,
+                        seedColor = colorInt,
+                        style = ThemeStyle.TONAL_SPOT,
+                    )
+                } else {
+                    ColorProviderUtil.buildBundle(
+                        context = context,
+                        colorInt = colorInt,
+                        // Color option index value starts from 1.
+                        index = i + 1,
+                        style = ThemeStyle.TONAL_SPOT,
+                        // The first seed color is the default.
+                        isDefault = i == 0,
+                        isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
+                        isThemeServiceEnabled = isThemeServiceEnabled,
+                    )
+                }
             bundles.add(colorOption)
         }
         return bundles
     }
 
-    private suspend fun loadPresetOptions() =
+    private suspend fun loadPresetOptions(isUsingThemeService: Boolean = false) =
         withContext(Dispatchers.IO) {
             val bundles: MutableList<ColorOption> = ArrayList()
 
@@ -205,13 +249,22 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                     monochromeBundleName = bundleName
                 }
                 bundles.add(
-                    ColorProviderUtil.buildPreset(
-                        title = title,
-                        color = color,
-                        // Color option index value starts from 1.
-                        index = i + 1,
-                        style = style,
-                    )
+                    if (isUsingThemeService) {
+                        ColorOptionImpl.buildSimplifiedOption(
+                            title = title,
+                            source = COLOR_SOURCE_PRESET,
+                            seedColor = color,
+                            style = style,
+                        )
+                    } else {
+                        ColorProviderUtil.buildPreset(
+                            title = title,
+                            color = color,
+                            // Color option index value starts from 1.
+                            index = i + 1,
+                            style = style,
+                        )
+                    }
                 )
             }
             if (!hasMonochrome) {

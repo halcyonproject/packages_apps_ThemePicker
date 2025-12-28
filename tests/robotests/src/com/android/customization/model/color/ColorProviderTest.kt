@@ -258,6 +258,34 @@ class ColorProviderTest {
     }
 
     @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun fetchThemeServiceCompatibleOptions_wallpaperColors() = runTest {
+        val wallpaperColors =
+            WallpaperColors(Color.valueOf(Color.RED), Color.valueOf(Color.YELLOW), null)
+        `when`(resourcesApkProvider.isAvailable).thenReturn(true)
+        `when`(resourcesApkProvider.getItemsFromStub(ResourceConstants.COLOR_BUNDLES_ARRAY_NAME))
+            .thenReturn(emptyArray())
+
+        val wallpaperOptions =
+            colorProvider.fetchThemeServiceCompatibleOptions(homeWallpaperColors = wallpaperColors)
+
+        // Flag isColorPickerUpdateEnabled is on, so we would expect 1 option for each seed.
+        assertThat(wallpaperOptions).isNotNull()
+        assertThat(wallpaperOptions).hasSize(2)
+        assertThat(wallpaperOptions[0].seedColor).isEqualTo(Color.RED)
+        assertThat(wallpaperOptions[1].seedColor).isEqualTo(Color.YELLOW)
+        // packagesByCategory is not used in Theme Service
+        assertThat(wallpaperOptions[0].packagesByCategory).isEmpty()
+        assertThat(wallpaperOptions[1].packagesByCategory).isEmpty()
+        // index is not used in Theme Service
+        assertThat(wallpaperOptions[0].index).isEqualTo(-1)
+        assertThat(wallpaperOptions[1].index).isEqualTo(-1)
+        // isDefault is not used in Theme Service
+        assertThat(wallpaperOptions[0].isDefault).isEqualTo(false)
+        assertThat(wallpaperOptions[1].isDefault).isEqualTo(false)
+    }
+
+    @Test
     @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun fetch_presetColors_updateFlagOff() = fetch_presetColors()
 
@@ -390,5 +418,56 @@ class ColorProviderTest {
             }
         assertThat(wallpaperOptions).isNotNull()
         assertThat(wallpaperOptions!!).hasSize(1)
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun fetchThemeServiceCompatibleOptions_presetColors() = runTest {
+        val bundleNames = arrayOf("preset_1", "preset_2")
+        `when`(resourcesApkProvider.isAvailable).thenReturn(true)
+        `when`(resourcesApkProvider.getItemsFromStub(ResourceConstants.COLOR_BUNDLES_ARRAY_NAME))
+            .thenReturn(bundleNames)
+        `when`(
+                resourcesApkProvider.getItemStringFromStub(
+                    ResourceConstants.COLOR_BUNDLE_NAME_PREFIX,
+                    "preset_1",
+                )
+            )
+            .thenReturn("Preset 1")
+        `when`(
+                resourcesApkProvider.getItemColorFromStub(
+                    ResourceConstants.COLOR_BUNDLE_MAIN_COLOR_PREFIX,
+                    "preset_1",
+                )
+            )
+            .thenReturn(Color.BLUE)
+        `when`(
+                resourcesApkProvider.getItemStringFromStub(
+                    ResourceConstants.COLOR_BUNDLE_NAME_PREFIX,
+                    "preset_2",
+                )
+            )
+            .thenReturn("Preset 2")
+        `when`(
+                resourcesApkProvider.getItemColorFromStub(
+                    ResourceConstants.COLOR_BUNDLE_MAIN_COLOR_PREFIX,
+                    "preset_2",
+                )
+            )
+            .thenReturn(Color.GREEN)
+
+        val presetOptions =
+            colorProvider.fetchThemeServiceCompatibleOptions(homeWallpaperColors = null)
+
+        assertThat(presetOptions).isNotNull()
+        assertThat(presetOptions).hasSize(2)
+        assertThat(presetOptions[0].title).isEqualTo("Preset 1")
+        assertThat(presetOptions[1].title).isEqualTo("Preset 2")
+        // packagesByCategory is not used in Theme Service
+        assertThat(presetOptions[0].packagesByCategory).isEmpty()
+        assertThat(presetOptions[1].packagesByCategory).isEmpty()
+        // index is not used in Theme Service
+        assertThat(presetOptions[0].index).isEqualTo(-1)
+        assertThat(presetOptions[1].index).isEqualTo(-1)
     }
 }
