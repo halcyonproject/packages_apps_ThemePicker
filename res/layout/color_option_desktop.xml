@@ -18,11 +18,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.android.customization.picker.color.ui.view.ColorOptionIconView2
+    <com.android.customization.picker.color.ui.view.ColorOptionIconView
         android:layout_width="@dimen/floating_sheet_color_option_size"
         android:layout_height="@dimen/floating_sheet_color_option_size"/>
 
-    <com.android.customization.picker.color.ui.view.ColorOptionIconView2
+    <com.android.customization.picker.color.ui.view.ColorOptionIconView
         android:layout_width="@dimen/floating_sheet_color_option_size"
         android:layout_height="@dimen/floating_sheet_color_option_size"/>
 </LinearLayout>
