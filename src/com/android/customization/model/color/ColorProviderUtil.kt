@@ -57,26 +57,51 @@ object ColorProviderUtil {
     @StringDef(COLOR_SOURCE_PRESET, COLOR_SOURCE_HOME, COLOR_SOURCE_LOCK)
     annotation class ColorSource
 
-    /** Builds a [ColorOptionImpl] for a wallpaper-based color with a specified color and style */
+    /**
+     * Builds a [ColorOptionImpl] for a wallpaper-based color with a specified color and style.
+     *
+     * @param isDefault Whether the colorInt provided is the primary seed of the WallpaperColors it
+     *   is generated from.
+     * @param isColorPickerUpdateEnabled Whether the Color Picker update flag is enabled. When the
+     *   flag is enabled, the color option preview is generated differently.
+     * @param isThemeServiceEnabled Whether the Theme Service flag is enabled. When the Theme
+     *   Service flag is enabled, the system palette will always be set in the package. Otherwise,
+     *   the system palette is not set for the default seed.
+     */
     fun buildBundle(
         context: Context,
         colorInt: Int,
         index: Int,
         @ThemeStyle.Type style: Int,
         isDefault: Boolean,
-        getLightColorPreview: (ColorScheme) -> IntArray,
-        getDarkColorPreview: (ColorScheme) -> IntArray,
+        isColorPickerUpdateEnabled: Boolean,
+        isThemeServiceEnabled: Boolean,
     ): ColorOptionImpl {
         val lightColorScheme = ColorScheme(colorInt, /* darkTheme= */ false, style)
         val darkColorScheme = ColorScheme(colorInt, /* darkTheme= */ true, style)
         val builder = ColorOptionImpl.Builder()
-        builder.lightColors = getLightColorPreview(lightColorScheme)
-        builder.darkColors = getDarkColorPreview(darkColorScheme)
+        builder.source = COLOR_SOURCE_HOME
+        builder.style = style
         builder.seedColor = colorInt
-        builder.addOverlayPackage(
-            OVERLAY_CATEGORY_SYSTEM_PALETTE,
-            if (isDefault) "" else toColorString(colorInt),
-        )
+        builder.lightColors =
+            getColorPreview(
+                colorScheme = lightColorScheme,
+                colorSource = builder.source,
+                darkTheme = false,
+                isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
+            )
+        builder.darkColors =
+            getColorPreview(
+                colorScheme = darkColorScheme,
+                colorSource = builder.source,
+                darkTheme = true,
+                isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
+            )
+        builder.isThemeServiceEnabled = isThemeServiceEnabled
+        // Always set system palette color if theme service is enabled
+        if (!isDefault || isThemeServiceEnabled) {
+            builder.addOverlayPackage(OVERLAY_CATEGORY_SYSTEM_PALETTE, toColorString(colorInt))
+        }
         builder.title =
             when (style) {
                 ThemeStyle.TONAL_SPOT ->
@@ -89,8 +114,6 @@ object ColorProviderUtil {
                     context.getString(R.string.content_description_expressive_color_option)
                 else -> context.getString(R.string.content_description_dynamic_color_option)
             }
-        builder.source = COLOR_SOURCE_HOME
-        builder.style = style
         builder.index = index
         builder.isDefault = isDefault
         builder.type = ColorType.WALLPAPER_COLOR
@@ -125,16 +148,18 @@ object ColorProviderUtil {
             lightColorScheme = ColorScheme(color, /* darkTheme= */ false, style)
             darkColorScheme = ColorScheme(color, /* darkTheme= */ true, style)
 
-            when (style) {
-                ThemeStyle.MONOCHROMATIC -> {
-                    darkColors = getDarkMonochromePreview(darkColorScheme)
-                    lightColors = getLightMonochromePreview(lightColorScheme)
-                }
-                else -> {
-                    darkColors = getDarkOneOrTwoColorPreview(darkColorScheme)
-                    lightColors = getLightOneOrTwoColorPreview(lightColorScheme)
-                }
-            }
+            lightColors =
+                getColorPreview(
+                    colorScheme = lightColorScheme,
+                    colorSource = builder.source,
+                    darkTheme = false,
+                )
+            darkColors =
+                getColorPreview(
+                    colorScheme = darkColorScheme,
+                    colorSource = builder.source,
+                    darkTheme = true,
+                )
         }
         builder.lightColors = lightColors
         builder.darkColors = darkColors
@@ -145,8 +170,12 @@ object ColorProviderUtil {
         colorScheme: ColorScheme,
         colorSource: String?,
         darkTheme: Boolean,
+        isColorPickerUpdateEnabled: Boolean = false,
     ): IntArray {
-        return if (colorSource == COLOR_SOURCE_HOME || colorSource == COLOR_SOURCE_LOCK) {
+        return if (
+            !isColorPickerUpdateEnabled && colorSource == COLOR_SOURCE_HOME ||
+                colorSource == COLOR_SOURCE_LOCK
+        ) {
             if (darkTheme) {
                 getDarkThreeColorPreview(colorScheme)
             } else {
