@@ -62,6 +62,7 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
         }
 
     private val isColorPickerUpdateEnabled = BaseFlags.get(context).isColorPickerUpdateEnabled()
+    private val isThemeServiceEnabled = BaseFlags.get(context).isThemeServiceEnabled()
 
     private var colorsAvailable = true
     private var presetColorBundles: List<ColorOption>? = null
@@ -131,8 +132,8 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                         style = style,
                         // The first seed color is the default.
                         isDefault = i == 0,
-                        getLightColorPreview = ColorProviderUtil::getLightThreeColorPreview,
-                        getDarkColorPreview = ColorProviderUtil::getDarkThreeColorPreview,
+                        isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
+                        isThemeServiceEnabled = isThemeServiceEnabled,
                     )
                 bundles.add(colorOption)
             }
@@ -154,8 +155,8 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                     style = ThemeStyle.TONAL_SPOT,
                     // The first seed color is the default.
                     isDefault = i == 0,
-                    getLightColorPreview = ColorProviderUtil::getLightOneOrTwoColorPreview,
-                    getDarkColorPreview = ColorProviderUtil::getDarkOneOrTwoColorPreview,
+                    isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
+                    isThemeServiceEnabled = isThemeServiceEnabled,
                 )
             bundles.add(colorOption)
         }

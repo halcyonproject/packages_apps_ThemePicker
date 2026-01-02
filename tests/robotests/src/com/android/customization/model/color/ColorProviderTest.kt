@@ -21,10 +21,12 @@ import android.graphics.Color
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.flag.junit.SetFlagsRule
+import android.server.Flags.FLAG_ENABLE_THEME_SERVICE
 import androidx.concurrent.futures.await
 import androidx.test.core.app.ApplicationProvider
 import com.android.customization.model.CustomizationManager
 import com.android.customization.model.ResourceConstants
+import com.android.customization.model.ResourceConstants.OVERLAY_CATEGORY_SYSTEM_PALETTE
 import com.android.customization.model.ResourcesApkProvider
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.wallpaper.Flags.FLAG_COLOR_PICKER_UPDATE_FLAG
@@ -91,7 +93,7 @@ class ColorProviderTest {
         listener =
             object : CustomizationManager.OptionsFetchedListener<ColorOption> {
                 override fun onOptionsLoaded(options: MutableList<ColorOption>?) {
-                    optionsResult.set(options)
+                    options?.let { optionsResult.set(it) }
                 }
 
                 override fun onError(throwable: Throwable?) {
@@ -108,11 +110,13 @@ class ColorProviderTest {
 
     @Test
     @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_nullWallpaperColors_flagOff() = fetch_nullWallpaperColors_noWallpaperColorOptions()
+    fun fetch_nullWallpaperColors_updateFlagOff() =
+        fetch_nullWallpaperColors_noWallpaperColorOptions()
 
     @Test
     @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_nullWallpaperColors_flagOn() = fetch_nullWallpaperColors_noWallpaperColorOptions()
+    fun fetch_nullWallpaperColors_updateFlagOn() =
+        fetch_nullWallpaperColors_noWallpaperColorOptions()
 
     private fun fetch_nullWallpaperColors_noWallpaperColorOptions() = runTest {
         `when`(resourcesApkProvider.isAvailable).thenReturn(true)
@@ -125,8 +129,8 @@ class ColorProviderTest {
     }
 
     @Test
-    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_withWallpaperColors_generatesWallpaperColorOptions() = runTest {
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun fetch_wallpaperColors_generatesWallpaperColorOptions() = runTest {
         val wallpaperColors =
             WallpaperColors(Color.valueOf(Color.RED), Color.valueOf(Color.YELLOW), null)
         `when`(resourcesApkProvider.isAvailable).thenReturn(true)
@@ -136,25 +140,33 @@ class ColorProviderTest {
         colorProvider.fetch(listener, reload = true, homeWallpaperColors = wallpaperColors)
 
         val wallpaperOptions = optionsResult.await()?.filter { it.source == "home_wallpaper" }
-        // Flag isColorPickerUpdateEnabled is false, so we expect 4 options each seed, 1 per style.
+        // Flag isColorPickerUpdateEnabled is off, so we expect 4 options each seed, 1 per style.
         assertThat(wallpaperOptions).isNotNull()
         assertThat(wallpaperOptions!!).hasSize(8)
+        // The index should be based on the color seed, starting with 1
         assertThat(wallpaperOptions[0].index).isEqualTo(1)
-        assertThat(wallpaperOptions[0].isDefault).isEqualTo(true)
         assertThat(wallpaperOptions[1].index).isEqualTo(1)
-        assertThat(wallpaperOptions[1].isDefault).isEqualTo(true)
         assertThat(wallpaperOptions[2].index).isEqualTo(1)
         assertThat(wallpaperOptions[3].index).isEqualTo(1)
         assertThat(wallpaperOptions[4].index).isEqualTo(2)
-        assertThat(wallpaperOptions[4].isDefault).isEqualTo(false)
         assertThat(wallpaperOptions[5].index).isEqualTo(2)
         assertThat(wallpaperOptions[6].index).isEqualTo(2)
         assertThat(wallpaperOptions[7].index).isEqualTo(2)
+        // Color options that are based on the first color seed should be set to default
+        assertThat(wallpaperOptions[0].isDefault).isEqualTo(true)
+        assertThat(wallpaperOptions[1].isDefault).isEqualTo(true)
+        assertThat(wallpaperOptions[4].isDefault).isEqualTo(false)
+        // Flag enableThemeService is off, so default seed package should not contain system_palette
+        assertThat(wallpaperOptions[0].packagesByCategory).isEmpty()
+        assertThat(wallpaperOptions[1].packagesByCategory).isEmpty()
+        assertThat(wallpaperOptions[4].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
     }
 
     @Test
-    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_withWallpaperColors_colorPickerUpdateEnabled_generatesSeedColorOptions() = runTest {
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    fun fetch_wallpaperColors_themeServiceEnabled_packageIncludesColorSeed() = runTest {
         val wallpaperColors =
             WallpaperColors(Color.valueOf(Color.RED), Color.valueOf(Color.YELLOW), null)
         `when`(resourcesApkProvider.isAvailable).thenReturn(true)
@@ -164,24 +176,96 @@ class ColorProviderTest {
         colorProvider.fetch(listener, reload = true, homeWallpaperColors = wallpaperColors)
 
         val wallpaperOptions = optionsResult.await()?.filter { it.source == "home_wallpaper" }
-        // Flag isColorPickerUpdateEnabled is true, so we would expect 1 option for each seed.
+        // Flag isColorPickerUpdateEnabled is off, so we expect 4 options each seed, 1 per style.
+        assertThat(wallpaperOptions).isNotNull()
+        assertThat(wallpaperOptions!!).hasSize(8)
+        // The index should be based on the color seed, starting with 1
+        assertThat(wallpaperOptions[0].index).isEqualTo(1)
+        assertThat(wallpaperOptions[1].index).isEqualTo(1)
+        assertThat(wallpaperOptions[2].index).isEqualTo(1)
+        assertThat(wallpaperOptions[3].index).isEqualTo(1)
+        assertThat(wallpaperOptions[4].index).isEqualTo(2)
+        assertThat(wallpaperOptions[5].index).isEqualTo(2)
+        assertThat(wallpaperOptions[6].index).isEqualTo(2)
+        assertThat(wallpaperOptions[7].index).isEqualTo(2)
+        // Color options that are based on the first color seed should be set to default
+        assertThat(wallpaperOptions[0].isDefault).isEqualTo(true)
+        assertThat(wallpaperOptions[1].isDefault).isEqualTo(true)
+        assertThat(wallpaperOptions[4].isDefault).isEqualTo(false)
+        // Flag enableThemeService is on, so packagesByCategory should always contain system_palette
+        assertThat(wallpaperOptions[0].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
+        assertThat(wallpaperOptions[1].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
+        assertThat(wallpaperOptions[4].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    @DisableFlags(FLAG_ENABLE_THEME_SERVICE)
+    fun fetch_wallpaperColors_colorPickerUpdateEnabled_generatesSeedColorOptions() = runTest {
+        val wallpaperColors =
+            WallpaperColors(Color.valueOf(Color.RED), Color.valueOf(Color.YELLOW), null)
+        `when`(resourcesApkProvider.isAvailable).thenReturn(true)
+        `when`(resourcesApkProvider.getItemsFromStub(ResourceConstants.COLOR_BUNDLES_ARRAY_NAME))
+            .thenReturn(emptyArray())
+
+        colorProvider.fetch(listener, reload = true, homeWallpaperColors = wallpaperColors)
+
+        val wallpaperOptions = optionsResult.await()?.filter { it.source == "home_wallpaper" }
+        // Flag isColorPickerUpdateEnabled is on, so we would expect 1 option for each seed.
         assertThat(wallpaperOptions).isNotNull()
         assertThat(wallpaperOptions!!).hasSize(2)
+        // The index should be based on the color seed, starting with 1
         assertThat(wallpaperOptions[0].index).isEqualTo(1)
-        assertThat(wallpaperOptions[0].isDefault).isEqualTo(true)
         assertThat(wallpaperOptions[1].index).isEqualTo(2)
+        // Color options that are based on the first color seed should be set to default
+        assertThat(wallpaperOptions[0].isDefault).isEqualTo(true)
         assertThat(wallpaperOptions[1].isDefault).isEqualTo(false)
+        // Flag enableThemeService is off, so default seed package should not contain system_palette
+        assertThat(wallpaperOptions[0].packagesByCategory).isEmpty()
+        assertThat(wallpaperOptions[1].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun fetch_wallpaperColors_updateAndThemeServiceEnabled_packageIncludesColorSeed() = runTest {
+        val wallpaperColors =
+            WallpaperColors(Color.valueOf(Color.RED), Color.valueOf(Color.YELLOW), null)
+        `when`(resourcesApkProvider.isAvailable).thenReturn(true)
+        `when`(resourcesApkProvider.getItemsFromStub(ResourceConstants.COLOR_BUNDLES_ARRAY_NAME))
+            .thenReturn(emptyArray())
+
+        colorProvider.fetch(listener, reload = true, homeWallpaperColors = wallpaperColors)
+
+        val wallpaperOptions = optionsResult.await()?.filter { it.source == "home_wallpaper" }
+        // Flag isColorPickerUpdateEnabled is on, so we would expect 1 option for each seed.
+        assertThat(wallpaperOptions).isNotNull()
+        assertThat(wallpaperOptions!!).hasSize(2)
+        // The index should be based on the color seed, starting with 1
+        assertThat(wallpaperOptions[0].index).isEqualTo(1)
+        assertThat(wallpaperOptions[1].index).isEqualTo(2)
+        // Color options that are based on the first color seed should be set to default
+        assertThat(wallpaperOptions[0].isDefault).isEqualTo(true)
+        assertThat(wallpaperOptions[1].isDefault).isEqualTo(false)
+        // Flag enableThemeService is on, so packagesByCategory should always contain system_palette
+        assertThat(wallpaperOptions[0].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
+        assertThat(wallpaperOptions[1].packagesByCategory)
+            .containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
     }
 
     @Test
     @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_loadsPresetColors_flagOff() = fetch_loadsPresetColors()
+    fun fetch_presetColors_updateFlagOff() = fetch_presetColors()
 
     @Test
     @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_loadsPresetColors_flagOn() = fetch_loadsPresetColors()
+    fun fetch_presetColors_updateFlagOn() = fetch_presetColors()
 
-    private fun fetch_loadsPresetColors() = runTest {
+    private fun fetch_presetColors() = runTest {
         val bundleNames = arrayOf("preset_1", "preset_2")
         `when`(resourcesApkProvider.isAvailable).thenReturn(true)
         `when`(resourcesApkProvider.getItemsFromStub(ResourceConstants.COLOR_BUNDLES_ARRAY_NAME))
@@ -229,7 +313,7 @@ class ColorProviderTest {
 
     @Test
     @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_withMonochromePreset_insertsMonochromeWallpaperOption() = runTest {
+    fun fetch_presetColors_updateFlagOff_insertsMonochromeWallpaperOption() = runTest {
         val wallpaperColors = WallpaperColors(Color.valueOf(Color.RED), null, null)
         val bundleNames = arrayOf("monochrome")
         `when`(resourcesApkProvider.isAvailable).thenReturn(true)
@@ -270,7 +354,7 @@ class ColorProviderTest {
 
     @Test
     @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun fetch_withMonochromePreset_doesNotInsertMonochromeWallpaperOption() = runTest {
+    fun fetch_presetColors_updateFlagOn_doesNotInsertMonochromeWallpaperOption() = runTest {
         val wallpaperColors = WallpaperColors(Color.valueOf(Color.RED), null, null)
         val bundleNames = arrayOf("monochrome")
         `when`(resourcesApkProvider.isAvailable).thenReturn(true)

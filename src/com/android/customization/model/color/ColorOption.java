@@ -63,14 +63,18 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
     private CharSequence mContentDescription;
     private final @ColorInt int mSeedColor;
 
+    private final boolean mIsThemeServiceEnabled;
+
     protected ColorOption(String title, Map<String, String> overlayPackages, boolean isDefault,
-            int seedColor, @ThemeStyle.Type Integer style, int index) {
+            int seedColor, @ThemeStyle.Type Integer style, int index,
+            boolean isThemeServiceEnabled) {
         mTitle = title;
         mIsDefault = isDefault;
         mSeedColor = seedColor;
         mStyle = style;
         mIndex = index;
         mPackagesByCategory = Collections.unmodifiableMap(removeNullValues(overlayPackages));
+        mIsThemeServiceEnabled = isThemeServiceEnabled;
     }
 
     @Override
@@ -161,7 +165,7 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
      */
     public JSONObject getJsonPackages(boolean insertTimestamp) {
         JSONObject json;
-        if (isDefault()) {
+        if (isDefault() && !mIsThemeServiceEnabled) {
             json = new JSONObject();
         } else {
             json = new JSONObject(mPackagesByCategory);
