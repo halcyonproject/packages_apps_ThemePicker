@@ -58,15 +58,19 @@ object ColorProviderUtil {
     annotation class ColorSource
 
     /**
-     * Builds a [ColorOptionImpl] for a wallpaper-based color with a specified color and style.
+     * Builds a [ColorOptionImpl] for a wallpaper-based color with a specified color and style. Only
+     * use this when Theme Service cannot be used. Otherwise use
+     * [ColorOptionImpl.buildSimplifiedOption].
      *
      * @param isDefault Whether the colorInt provided is the primary seed of the WallpaperColors it
      *   is generated from.
      * @param isColorPickerUpdateEnabled Whether the Color Picker update flag is enabled. When the
      *   flag is enabled, the color option preview is generated differently.
-     * @param isThemeServiceEnabled Whether the Theme Service flag is enabled. When the Theme
-     *   Service flag is enabled, the system palette will always be set in the package. Otherwise,
-     *   the system palette is not set for the default seed.
+     * @param isThemeServiceEnabled Whether the Theme Service flag is enabled. It may be the case
+     *   that the Theme Service flag is on, but Theme Service is not in use in the
+     *   ColorPickerRepositoryImpl. When the Theme Service flag is enabled, the system palette will
+     *   always be set in the package. Otherwise, the system palette is not set for the default
+     *   seed.
      */
     fun buildBundle(
         context: Context,
@@ -120,7 +124,10 @@ object ColorProviderUtil {
         return builder.build()
     }
 
-    /** Builds a [ColorOptionImpl] for a preset color with a specified color and style */
+    /**
+     * Builds a [ColorOptionImpl] for a preset color with a specified color and style Only use this
+     * when Theme Service cannot be used. Otherwise use [ColorOptionImpl.buildSimplifiedOption]
+     */
     fun buildPreset(
         title: String,
         color: Int,

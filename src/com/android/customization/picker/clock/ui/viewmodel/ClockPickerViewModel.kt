@@ -479,34 +479,13 @@ constructor(
     private suspend fun ColorOption.toOptionItemViewModel(
         context: Context
     ): OptionItemViewModel2<ColorOptionIconViewModel> {
-        val lightThemeColors =
-            (this as ColorOptionImpl)
-                .previewInfo
-                .resolveColors(
-                    /** darkTheme= */
-                    false
-                )
-        val darkThemeColors =
-            this.previewInfo.resolveColors(
-                /** darkTheme= */
-                true
-            )
+        this as ColorOptionImpl
         val isSelectedFlow =
             previewingClockColorId.map { it == DEFAULT_CLOCK_COLOR_ID }.stateIn(viewModelScope)
         val key = "${this.type}::${this.style}::${this.serializedPackages}"
         return OptionItemViewModel2<ColorOptionIconViewModel>(
             key = MutableStateFlow(key) as StateFlow<String>,
-            payload =
-                ColorOptionIconViewModel(
-                    lightThemeColor0 = lightThemeColors[0],
-                    lightThemeColor1 = lightThemeColors[1],
-                    lightThemeColor2 = lightThemeColors[2],
-                    lightThemeColor3 = lightThemeColors[3],
-                    darkThemeColor0 = darkThemeColors[0],
-                    darkThemeColor1 = darkThemeColors[1],
-                    darkThemeColor2 = darkThemeColors[2],
-                    darkThemeColor3 = darkThemeColors[3],
-                ),
+            payload = ColorOptionIconViewModel.fromColorOption(this),
             text = Text.Loaded(context.getString(R.string.default_theme_title)),
             isTextUserVisible = true,
             isSelected = isSelectedFlow,
