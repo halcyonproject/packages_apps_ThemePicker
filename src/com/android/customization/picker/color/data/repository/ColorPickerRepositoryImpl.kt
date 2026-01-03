@@ -16,9 +16,14 @@
  */
 package com.android.customization.picker.color.data.repository
 
+import android.Manifest.permission
 import android.app.ThemeManager
 import android.app.WallpaperColors
 import android.app.WallpaperManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.content.theming.IThemeSettingsCallback
+import android.content.theming.ThemeSettings
 import android.content.theming.ThemeStyle
 import android.graphics.Color
 import android.os.Handler
@@ -30,13 +35,17 @@ import com.android.customization.model.ResourceConstants
 import com.android.customization.model.color.ColorCustomizationManager
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
+import com.android.customization.model.color.ColorProvider
 import com.android.customization.model.color.ColorProviderUtil
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
+import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.picker.customization.data.content.WallpaperClient
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
@@ -56,6 +65,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 class ColorPickerRepositoryImpl
 @Inject
 constructor(
+    @ApplicationContext appContext: Context,
     @BackgroundDispatcher scope: CoroutineScope,
     @BackgroundDispatcher backgroundDispatcher: CoroutineDispatcher,
     private val colorManager: ColorCustomizationManager,
@@ -64,12 +74,18 @@ constructor(
     baseFlags: BaseFlags,
 ) : ColorPickerRepository {
 
+    // ThemeManager is only non-null when theme service flag is enabled
     private val shouldUseThemeService =
-        baseFlags.isColorPickerUpdateEnabled() && themeManager != null
+        baseFlags.isColorPickerUpdateEnabled() &&
+            themeManager != null &&
+            appContext.checkSelfPermission(permission.UPDATE_THEME_SETTINGS) ==
+                PackageManager.PERMISSION_GRANTED
+    private val colorProvider =
+        ColorProvider(appContext, appContext.getString(R.string.themes_stub_package))
 
     init {
         if (shouldUseThemeService) {
-            Log.d(TAG, "Theme service is enabled")
+            Log.d(TAG, "Using theme service")
         }
     }
 
@@ -101,46 +117,64 @@ constructor(
             .map { (_, colors) -> colors }
 
     override val colorOptions: Flow<Map<ColorType, List<ColorOption>>> =
-        combine(homeWallpaperColors, lockWallpaperColors) { homeColors, lockColors ->
-                suspendCancellableCoroutine { continuation ->
-                    colorManager.setWallpaperColors(homeColors, lockColors)
-                    colorManager.fetchOptions(
-                        object : CustomizationManager.OptionsFetchedListener<ColorOption> {
-                            override fun onOptionsLoaded(options: MutableList<ColorOption>?) {
-                                val wallpaperColorOptions: MutableList<ColorOption> =
-                                    mutableListOf()
-                                val presetColorOptions: MutableList<ColorOption> = mutableListOf()
-                                options?.forEach { option ->
-                                    when ((option as ColorOptionImpl).type) {
-                                        ColorType.WALLPAPER_COLOR ->
-                                            wallpaperColorOptions.add(option)
-                                        ColorType.PRESET_COLOR -> presetColorOptions.add(option)
+        if (shouldUseThemeService) {
+            homeWallpaperColors
+                .map { homeColors ->
+                    colorProvider.fetchThemeServiceCompatibleOptions(homeColors).groupBy { option ->
+                        when (option.source) {
+                            ColorProviderUtil.COLOR_SOURCE_HOME -> ColorType.WALLPAPER_COLOR
+                            ColorProviderUtil.COLOR_SOURCE_PRESET -> ColorType.PRESET_COLOR
+                            else -> ColorType.PRESET_COLOR
+                        }
+                    }
+                }
+                // Fetching from color provider is time consuming. Start collecting Lazily to make
+                // sure color options are pre-populated and not re-fetched each time when entering
+                // the color floating sheet.
+                .shareIn(scope = scope, started = SharingStarted.Lazily, replay = 1)
+        } else {
+            combine(homeWallpaperColors, lockWallpaperColors) { homeColors, lockColors ->
+                    suspendCancellableCoroutine { continuation ->
+                        colorManager.setWallpaperColors(homeColors, lockColors)
+                        colorManager.fetchOptions(
+                            object : CustomizationManager.OptionsFetchedListener<ColorOption> {
+                                override fun onOptionsLoaded(options: MutableList<ColorOption>?) {
+                                    val wallpaperColorOptions: MutableList<ColorOption> =
+                                        mutableListOf()
+                                    val presetColorOptions: MutableList<ColorOption> =
+                                        mutableListOf()
+                                    options?.forEach { option ->
+                                        when ((option as ColorOptionImpl).type) {
+                                            ColorType.WALLPAPER_COLOR ->
+                                                wallpaperColorOptions.add(option)
+                                            ColorType.PRESET_COLOR -> presetColorOptions.add(option)
+                                        }
                                     }
-                                }
-                                continuation.resumeWith(
-                                    Result.success(
-                                        mapOf(
-                                            ColorType.WALLPAPER_COLOR to wallpaperColorOptions,
-                                            ColorType.PRESET_COLOR to presetColorOptions,
+                                    continuation.resumeWith(
+                                        Result.success(
+                                            mapOf(
+                                                ColorType.WALLPAPER_COLOR to wallpaperColorOptions,
+                                                ColorType.PRESET_COLOR to presetColorOptions,
+                                            )
                                         )
                                     )
-                                )
-                            }
+                                }
 
-                            override fun onError(throwable: Throwable?) {
-                                Log.e(TAG, "Error loading theme bundles", throwable)
-                                continuation.resumeWith(
-                                    Result.failure(
-                                        throwable ?: Throwable("Error loading theme bundles")
+                                override fun onError(throwable: Throwable?) {
+                                    Log.e(TAG, "Error loading theme bundles", throwable)
+                                    continuation.resumeWith(
+                                        Result.failure(
+                                            throwable ?: Throwable("Error loading theme bundles")
+                                        )
                                     )
-                                )
-                            }
-                        },
-                        /* reload= */ false,
-                    )
+                                }
+                            },
+                            /* reload= */ false,
+                        )
+                    }
                 }
-            }
-            .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
+                .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
+        }
 
     private val settingsChanged =
         callbackFlow {
@@ -153,15 +187,50 @@ constructor(
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
 
     override val selectedColorOption =
-        combine(colorOptions, settingsChanged) { options, _ ->
-                options.forEach { (_, optionsByType) ->
-                    optionsByType.forEach {
-                        if (it.isActive(colorManager)) {
-                            return@combine it
+        if (shouldUseThemeService) {
+                callbackFlow {
+                    trySend(
+                        themeManager!!.themeSettingsOrDefault.let {
+                            ColorOptionImpl.buildSimplifiedOption(
+                                title = null,
+                                source = it.colorSource(),
+                                seedColor = it.systemPalette().toArgb(),
+                                style = it.themeStyle(),
+                            )
+                        }
+                    )
+                    val callback =
+                        object : IThemeSettingsCallback.Stub() {
+                            override fun onSettingsChanged(
+                                oldSettings: ThemeSettings?,
+                                newSettings: ThemeSettings?,
+                            ) {
+                                newSettings?.let {
+                                    trySend(
+                                        ColorOptionImpl.buildSimplifiedOption(
+                                            title = null,
+                                            source = it.colorSource(),
+                                            seedColor = it.systemPalette().toArgb(),
+                                            style = it.themeStyle(),
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    themeManager.registerThemeSettingsCallback(callback)
+                    awaitClose { themeManager.unregisterThemeSettingsCallback(callback) }
+                }
+            } else {
+                combine(colorOptions, settingsChanged) { options, _ ->
+                    options.forEach { (_, optionsByType) ->
+                        optionsByType.forEach {
+                            if (it.isActive(colorManager)) {
+                                return@combine it
+                            }
                         }
                     }
+                    return@combine getSettingsColorOption()
                 }
-                return@combine getSettingsColorOption()
             }
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
 
@@ -177,8 +246,13 @@ constructor(
             builder.addOverlayPackage(overlay.key, overlay.value)
         }
         val seedColorStr = overlays[ResourceConstants.OVERLAY_CATEGORY_SYSTEM_PALETTE]
-        if (seedColorStr != null && !seedColorStr.startsWith("#")) {
-            val seedColorInt = "#$seedColorStr".toColorInt()
+        if (!seedColorStr.isNullOrEmpty()) {
+            val seedColorInt =
+                if (!seedColorStr.startsWith("#")) {
+                    "#$seedColorStr".toColorInt()
+                } else {
+                    seedColorStr.toColorInt()
+                }
             builder.lightColors =
                 ColorProviderUtil.getColorPreview(
                     ColorScheme(seedColorInt, /* darkTheme= */ false, style),
@@ -211,20 +285,39 @@ constructor(
     }
 
     override suspend fun select(colorOption: ColorOption): Boolean {
-        return suspendCancellableCoroutine { continuation ->
-            colorManager.apply(
-                colorOption,
-                object : CustomizationManager.Callback {
-                    override fun onSuccess() {
-                        continuation.resumeWith(Result.success(true))
-                    }
+        // TODO (b/461547295): setting color using Theme Service is failing
+        if (shouldUseThemeService) {
+            val settings =
+                ThemeSettings.Builder()
+                    .setSystemPalette(Color.valueOf(colorOption.seedColor))
+                    .setThemeStyle(colorOption.style)
+                    .setColorSource(colorOption.source)
+                    .setAppliedTimestamp(Instant.now())
+                    .build()
+            Log.d(TAG, "Applying theme using theme service: $settings")
+            val success = themeManager!!.updateThemeSettings(settings)
+            if (!success) {
+                Log.w(TAG, "Failed to apply theme using theme service")
+            }
+            return success
+        } else {
+            // TODO (b/461547295): system colors update incorrectly when setting wallpaper colors
+            //  directly to secure settings with Theme Service flag on
+            return suspendCancellableCoroutine { continuation ->
+                colorManager.apply(
+                    colorOption,
+                    object : CustomizationManager.Callback {
+                        override fun onSuccess() {
+                            continuation.resumeWith(Result.success(true))
+                        }
 
-                    override fun onError(throwable: Throwable?) {
-                        Log.w(TAG, "Apply theme with error", throwable)
-                        continuation.resumeWith(Result.success(false))
-                    }
-                },
-            )
+                        override fun onError(throwable: Throwable?) {
+                            Log.w(TAG, "Apply theme with error", throwable)
+                            continuation.resumeWith(Result.success(false))
+                        }
+                    },
+                )
+            }
         }
     }
 

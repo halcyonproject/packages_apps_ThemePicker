@@ -85,16 +85,22 @@ fun ColorFloatingSheet(
 ) {
     val previewingColorOptionState: ColorOption? by
         colorPickerViewModel.previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
-    val previewingDarkModeState: Boolean by
+    val previewingIsDarkModeState: Boolean by
         darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
     val screen: ColorPickerViewModel.Screen by
         colorPickerViewModel.currentScreen.collectAsStateWithLifecycle()
+    val toggleIsDarkMode: () -> Unit by
+        darkModeViewModel.toggleDarkMode.collectAsStateWithLifecycle(initialValue = {})
+    val isDarkModeToggleEnabled: Boolean by
+        darkModeViewModel.isEnabled.collectAsStateWithLifecycle(initialValue = false)
+    val allColorOptions: Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>> by
+        colorPickerViewModel.allColorOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
 
     PlatformTheme {
         val scheme =
-            remember(previewingColorOptionState, previewingDarkModeState) {
+            remember(previewingColorOptionState, previewingIsDarkModeState) {
                 previewingColorOptionState?.let {
-                    ColorScheme(it.seedColor, previewingDarkModeState, it.style).materialScheme
+                    ColorScheme(it.seedColor, previewingIsDarkModeState, it.style).materialScheme
                 }
             }
 
@@ -106,8 +112,15 @@ fun ColorFloatingSheet(
                 when (value) {
                     ColorPickerViewModel.Screen.LANDING ->
                         ColorFloatingSheetLanding(
-                            colorPickerViewModel = colorPickerViewModel,
-                            darkModeViewModel = darkModeViewModel,
+                            isDarkMode = previewingIsDarkModeState,
+                            toggleIsDarkMode = toggleIsDarkMode,
+                            isDarkModeToggleEnabled = isDarkModeToggleEnabled,
+                            allColorOptions = allColorOptions,
+                            navigateToVariantPicker = {
+                                colorPickerViewModel.setScreen(
+                                    ColorPickerViewModel.Screen.VARIANT_PICKER
+                                )
+                            },
                             modifier = modifier,
                         )
                     ColorPickerViewModel.Screen.VARIANT_PICKER ->
@@ -125,26 +138,21 @@ fun ColorFloatingSheet(
 
 @Composable
 fun ColorFloatingSheetLanding(
-    colorPickerViewModel: ColorPickerViewModel,
-    darkModeViewModel: DarkModeViewModel,
+    isDarkMode: Boolean,
+    toggleIsDarkMode: () -> Unit,
+    isDarkModeToggleEnabled: Boolean,
+    allColorOptions: Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>,
+    navigateToVariantPicker: () -> Unit,
     modifier: Modifier,
 ) {
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
-    val colorOptionState: Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>> by
-        colorPickerViewModel.allColorOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
-    val previewingDarkModeState: Boolean by
-        darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
-    val toggleDarkMode: () -> Unit by
-        darkModeViewModel.toggleDarkMode.collectAsStateWithLifecycle(initialValue = {})
-    val isDarkModeEnabled: Boolean by
-        darkModeViewModel.isEnabled.collectAsStateWithLifecycle(initialValue = false)
     val lazyListState: LazyListState = rememberLazyListState()
     val textResId: Int by remember {
         derivedStateOf {
             val firstVisibleIndex = lazyListState.firstVisibleItemIndex
             var startIdx = 0
             var endIdx = 0
-            for (entries in colorOptionState.entries) {
+            for (entries in allColorOptions.entries) {
                 endIdx += entries.value.size
                 if (firstVisibleIndex in startIdx..<endIdx) {
                     return@derivedStateOf when (entries.key) {
@@ -192,19 +200,15 @@ fun ColorFloatingSheetLanding(
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                colorOptionState.values.forEachIndexed { colorTypeIdx, colorList ->
+                allColorOptions.values.forEachIndexed { colorTypeIdx, colorList ->
                     if (colorTypeIdx != 0 && colorList.isNotEmpty()) {
                         item { OptionListGroupDivider() }
                     }
                     itemsIndexed(colorList) { idx, option ->
                         ColorSeedOption(
-                            isDarkMode = previewingDarkModeState,
+                            isDarkMode = isDarkMode,
                             optionItem = option,
-                            navigateToVariantPicker = {
-                                colorPickerViewModel.setScreen(
-                                    ColorPickerViewModel.Screen.VARIANT_PICKER
-                                )
-                            },
+                            navigateToVariantPicker = navigateToVariantPicker,
                             modifier =
                                 Modifier.size(
                                         dimensionResource(R.dimen.floating_sheet_color_option_size)
@@ -237,11 +241,11 @@ fun ColorFloatingSheetLanding(
                 )
 
                 Switch(
-                    checked = previewingDarkModeState,
-                    onCheckedChange = { toggleDarkMode() },
-                    enabled = isDarkModeEnabled,
+                    checked = isDarkMode,
+                    onCheckedChange = { toggleIsDarkMode() },
+                    enabled = isDarkModeToggleEnabled,
                     thumbContent =
-                        if (previewingDarkModeState) {
+                        if (isDarkMode) {
                             {
                                 Icon(
                                     painter =

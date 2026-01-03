@@ -51,15 +51,16 @@ class ColorOptionTest {
     private fun testColorOptionSource(source: String) {
         val colorOption: ColorOption =
             ColorOptionImpl(
-                "fake color",
-                mapOf("fake_package" to "fake_color"),
-                false,
-                source,
-                12345,
-                ThemeStyle.TONAL_SPOT,
-                /* index= */ 0,
-                ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-                ColorType.WALLPAPER_COLOR,
+                title = "fake color",
+                source = source,
+                seedColor = 12345,
+                style = ThemeStyle.TONAL_SPOT,
+                isThemeServiceEnabled = false,
+                overlayPackages = mapOf("fake_package" to "fake_color"),
+                isDefault = false,
+                index = 0,
+                previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+                type = ColorType.WALLPAPER_COLOR,
             )
         assertThat(colorOption.source).isEqualTo(source)
     }
@@ -75,15 +76,16 @@ class ColorOptionTest {
     private fun testColorOptionStyle(@ThemeStyle.Type style: Int) {
         val colorOption: ColorOption =
             ColorOptionImpl(
-                "fake color",
-                mapOf("fake_package" to "fake_color"),
-                /* isDefault= */ false,
-                "fake_source",
-                12345,
-                style,
-                0,
-                ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-                ColorType.WALLPAPER_COLOR,
+                title = "fake color",
+                source = "fake_source",
+                seedColor = 12345,
+                style = style,
+                isThemeServiceEnabled = false,
+                overlayPackages = mapOf("fake_package" to "fake_color"),
+                isDefault = false,
+                index = 0,
+                previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+                type = ColorType.WALLPAPER_COLOR,
             )
         assertThat(colorOption.style).isEqualTo(style)
     }
@@ -99,15 +101,16 @@ class ColorOptionTest {
     private fun testColorOptionIndex(index: Int) {
         val colorOption: ColorOption =
             ColorOptionImpl(
-                "fake color",
-                mapOf("fake_package" to "fake_color"),
-                /* isDefault= */ false,
-                "fake_source",
-                12345,
-                ThemeStyle.TONAL_SPOT,
-                index,
-                ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-                ColorType.WALLPAPER_COLOR,
+                title = "fake color",
+                source = "fake_source",
+                seedColor = 12345,
+                style = ThemeStyle.TONAL_SPOT,
+                isThemeServiceEnabled = false,
+                overlayPackages = mapOf("fake_package" to "fake_color"),
+                isDefault = false,
+                index = index,
+                previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+                type = ColorType.WALLPAPER_COLOR,
             )
         assertThat(colorOption.index).isEqualTo(index)
     }
@@ -122,15 +125,16 @@ class ColorOptionTest {
     private fun testColorOptionSeed(seedColor: Int) {
         val colorOption: ColorOption =
             ColorOptionImpl(
-                "fake color",
-                mapOf("fake_package" to "fake_color"),
-                /* isDefault= */ false,
-                "fake_source",
-                seedColor,
-                ThemeStyle.TONAL_SPOT,
-                0,
-                ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-                ColorType.WALLPAPER_COLOR,
+                title = "fake color",
+                source = "fake_source",
+                seedColor = seedColor,
+                style = ThemeStyle.TONAL_SPOT,
+                isThemeServiceEnabled = false,
+                overlayPackages = mapOf("fake_package" to "fake_color"),
+                isDefault = false,
+                index = 0,
+                previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+                type = ColorType.WALLPAPER_COLOR,
             )
         assertThat(colorOption.seedColor).isEqualTo(seedColor)
     }
@@ -147,15 +151,16 @@ class ColorOptionTest {
             }
         `when`(manager.currentOverlays).thenReturn(overlays)
         return ColorOptionImpl(
-            "seed",
-            overlays,
-            isDefault,
-            source,
-            12345,
-            ThemeStyle.TONAL_SPOT,
-            /* index= */ 0,
-            ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
-            ColorType.WALLPAPER_COLOR,
+            title = "fake color",
+            source = source,
+            seedColor = 12345,
+            style = ThemeStyle.TONAL_SPOT,
+            isThemeServiceEnabled = false,
+            overlayPackages = overlays,
+            isDefault = isDefault,
+            index = 0,
+            previewInfo = ColorOptionImpl.PreviewInfo(intArrayOf(0), intArrayOf(0)),
+            type = ColorType.WALLPAPER_COLOR,
         )
     }
 

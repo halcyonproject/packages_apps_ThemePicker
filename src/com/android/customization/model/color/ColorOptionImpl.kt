@@ -22,22 +22,23 @@ import android.stats.style.StyleEnums
 import android.view.View
 import androidx.annotation.ColorInt
 import com.android.customization.picker.color.shared.model.ColorType
+import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
 
 /**
  * Represents a color option in the revamped UI, it can be used for both wallpaper and preset colors
  */
-class ColorOptionImpl(
+open class ColorOptionImpl(
     title: String?,
-    overlayPackages: Map<String, String?>,
-    isDefault: Boolean,
     private val source: String?,
     seedColor: Int,
     @ThemeStyle.Type style: Int,
-    index: Int,
-    private val previewInfo: PreviewInfo,
-    val type: ColorType,
     isThemeServiceEnabled: Boolean = false,
+    overlayPackages: Map<String, String?> = emptyMap(),
+    isDefault: Boolean = false,
+    index: Int = -1,
+    private val previewInfo: PreviewInfo = PreviewInfo(intArrayOf(), intArrayOf()),
+    val type: ColorType = ColorType.WALLPAPER_COLOR,
 ) : ColorOption(title, overlayPackages, isDefault, seedColor, style, index, isThemeServiceEnabled) {
 
     class PreviewInfo(@ColorInt val lightColors: IntArray, @ColorInt val darkColors: IntArray) :
@@ -79,6 +80,52 @@ class ColorOptionImpl(
 
     override fun getStyleForLogging(): Int = ThemeStyle.toString(style).hashCode()
 
+    companion object {
+        /**
+         * Use this to build a simplified color option for use with Theme Service. It creates an
+         * instance of [ColorOptionImpl] for backwards code compatibility.
+         */
+        // TODO (b/440146498): after fully deprecating ColorCustomizationManager, simplify this
+        //  to output a standalone data class without dependence on ColorOptionImpl
+        fun buildSimplifiedOption(
+            title: String?,
+            source: String?,
+            seedColor: Int,
+            @ThemeStyle.Type style: Int,
+        ): ColorOptionImpl {
+            val lightColors =
+                ColorProviderUtil.getColorPreview(
+                    colorScheme = ColorScheme(seedColor, /* darkTheme= */ false, style),
+                    colorSource = source,
+                    darkTheme = false,
+                    isColorPickerUpdateEnabled = true,
+                )
+            val darkColors =
+                ColorProviderUtil.getColorPreview(
+                    colorScheme = ColorScheme(seedColor, /* darkTheme= */ true, style),
+                    colorSource = source,
+                    darkTheme = true,
+                    isColorPickerUpdateEnabled = true,
+                )
+            return object :
+                ColorOptionImpl(
+                    title = title,
+                    source = source,
+                    seedColor = seedColor,
+                    style = style,
+                    previewInfo = PreviewInfo(lightColors, darkColors),
+                    isThemeServiceEnabled = true,
+                ) {
+                override fun isEquivalent(other: ColorOption?): Boolean {
+                    return other is ColorOptionImpl &&
+                        this.source == other.source &&
+                        this.seedColor == other.seedColor &&
+                        this.style == other.style
+                }
+            }
+        }
+    }
+
     class Builder {
         var title: String? = null
 
@@ -97,16 +144,16 @@ class ColorOptionImpl(
 
         fun build(): ColorOptionImpl {
             return ColorOptionImpl(
-                title,
-                packages,
-                isDefault,
-                source,
-                seedColor,
-                style,
-                index,
-                createPreviewInfo(),
-                type,
-                isThemeServiceEnabled,
+                title = title,
+                source = source,
+                seedColor = seedColor,
+                style = style,
+                isThemeServiceEnabled = isThemeServiceEnabled,
+                overlayPackages = packages,
+                isDefault = isDefault,
+                index = index,
+                previewInfo = createPreviewInfo(),
+                type = type,
             )
         }
 
