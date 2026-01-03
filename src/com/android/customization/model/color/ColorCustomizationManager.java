@@ -182,14 +182,23 @@ public class ColorCustomizationManager implements CustomizationManager<ColorOpti
                     overlaysJson.remove(OVERLAY_COLOR_BOTH);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.w(TAG, "Failed to create theme overlay JSON", e);
             }
-            boolean allApplied = overlaysJson != null && Settings.Secure.putString(
+
+            Log.d(TAG, "Applying theme directly to secure settings: " + overlaysJson);
+            boolean overlayIsNull = overlaysJson == null;
+            boolean allApplied = !overlayIsNull && Settings.Secure.putString(
                     mContentResolver, ResourceConstants.THEME_SETTING, overlaysJson.toString());
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (allApplied) {
                     callback.onSuccess();
                 } else {
+                    if (overlayIsNull) {
+                        Log.w(TAG, "Failed to apply theme to secure settings, overlay JSON is "
+                                + "null");
+                    } else {
+                        Log.w(TAG, "Failed to apply theme to secure settings, putString failed");
+                    }
                     callback.onError(null);
                 }
             });
