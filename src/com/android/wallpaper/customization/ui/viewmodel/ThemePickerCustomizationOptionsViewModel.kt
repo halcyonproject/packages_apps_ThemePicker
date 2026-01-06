@@ -137,7 +137,9 @@ constructor(
         defaultCustomizationOptionsViewModel.discardChangesDialogViewModel
 
     override fun handleBackPressed(): Boolean {
-        if (applyButtonState.value == APPLY_BUTTON_ENABLED) {
+        // Note we need to check isApplyInProgress since applyButtonState is a state flow that the
+        // downstream value is calculated asynchronously and may not be up to date.
+        if (applyButtonState.value == APPLY_BUTTON_ENABLED && !isApplyInProgress.value) {
             defaultCustomizationOptionsViewModel.showDiscardChangesDialogViewModel(
                 // Hide the picker's clock when we start the transition back to the primary screen.
                 onDiscard = { clockPickerViewModel.setShowPickerClockControllerView(false) }

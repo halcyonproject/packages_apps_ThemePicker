@@ -416,10 +416,10 @@ constructor(
                 overridingShapeKey != null && overridingShapeKey != selectedShape.key.value
             val styleNeedsUpdate =
                 overridingIconStyle != null && overridingIconStyle != currentIconStyle
-            val shouldShowAppLabelsNeedsUpdated =
+            val showAppLabelsNeedsUpdate =
                 overridingShouldShowAppLabels != null &&
                     overridingShouldShowAppLabels != shouldShowAppLabels
-            if (shapeNeedsUpdate || styleNeedsUpdate || shouldShowAppLabelsNeedsUpdated) {
+            if (shapeNeedsUpdate || styleNeedsUpdate || showAppLabelsNeedsUpdate) {
                 {
                     if (shapeNeedsUpdate) {
                         overridingShapeKey?.let {
@@ -459,7 +459,7 @@ constructor(
                             } catch (_: CancellationException) {}
                         }
                     }
-                    if (shouldShowAppLabelsNeedsUpdated) {
+                    if (showAppLabelsNeedsUpdate) {
                         overridingShouldShowAppLabels?.let {
                             interactor.applyShouldShowAppLabels(it)
                         }
@@ -474,12 +474,14 @@ constructor(
         overridingShapeKey.value = null
         overridingIsThemedIconEnabled.value = null
         overridingShouldShowAppLabels.value = null
+        _selectedTab.value = Tab.STYLE
     }
 
     fun resetPreview2() {
         overridingShapeKey.value = null
         overridingIconStyle.value = null
         overridingShouldShowAppLabels.value = null
+        _selectedTab.value = Tab.STYLE
     }
 
     private fun toShapeOptionItemViewModel(
