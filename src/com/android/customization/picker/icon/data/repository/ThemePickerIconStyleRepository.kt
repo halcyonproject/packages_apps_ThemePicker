@@ -234,7 +234,7 @@ constructor(
                                 }
                             }
                         contentResolver.registerContentObserver(
-                            it.getUri(HIDE_APP_LABELS),
+                            it.getUri(SET_HIDE_APP_LABELS),
                             /* notifyForDescendants= */ true,
                             contentObserver,
                         )
