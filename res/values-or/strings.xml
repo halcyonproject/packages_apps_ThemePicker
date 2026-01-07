@@ -118,7 +118,7 @@
     <string name="use_style_instead_title" msgid="1578754995763917502">"ଏହା ପରିବର୍ତ୍ତେ <xliff:g id="ID_1">%1$s</xliff:g> ବ୍ୟବହାର କରିବେ?"</string>
     <string name="use_style_instead_body" msgid="3051937045807471496">"ଆପଣ ବଛିଥିବା ଉପାଦାନଗୁଡ଼ିକ <xliff:g id="ID_1">%1$s</xliff:g> ଶୈଳୀ ସହ ମେଳ ହେଉଛି। ଏହା ପରିବର୍ତ୍ତେ ଆପଣ <xliff:g id="ID_2">%1$s</xliff:g>କୁ ବ୍ୟବହାର କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?"</string>
     <string name="use_style_button" msgid="1754493078383627019">"<xliff:g id="ID_1">%1$s</xliff:g> ବ୍ୟବହାର କରନ୍ତୁ"</string>
-    <string name="no_thanks" msgid="7286616980115687627">"ନାହିଁ, ଥାଉ"</string>
+    <string name="no_thanks" msgid="7286616980115687627">"ନା, ଧନ୍ୟବାଦ"</string>
     <string name="clock_preview_content_description" msgid="5460561185905717460">"<xliff:g id="ID_1">%1$s</xliff:g> ଘଣ୍ଟାର ପୂର୍ବାବଲୋକନ"</string>
     <string name="something_went_wrong" msgid="529840112449799117">"ଓହୋଃ, କିଛି ଭୁଲ ହୋଇଗଲା।"</string>
     <string name="theme_preview_icons_section_title" msgid="7064768910744000643">"ରଙ୍ଗ / ଆଇକନଗୁଡ଼ିକ"</string>
