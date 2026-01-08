@@ -94,6 +94,8 @@ import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import com.android.wallpaper.util.CurrentWallpaperModelUtilsHelper
+import com.android.wallpaper.util.DefaultCurrentWallpaperModelUtilsHelper
 
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [ThemePickerAppModule::class])
@@ -214,6 +216,12 @@ abstract class ThemePickerTestModule {
     abstract fun bindWallpaperModelFactory(
         impl: DefaultWallpaperModelFactory
     ): WallpaperModelFactory
+
+    @Binds
+    @Singleton
+    abstract fun bindCurrentWallpaperModelUtilsHelper(
+        impl: DefaultCurrentWallpaperModelUtilsHelper
+    ): CurrentWallpaperModelUtilsHelper
 
     @Binds
     @Singleton

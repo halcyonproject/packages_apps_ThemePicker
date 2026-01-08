@@ -86,6 +86,8 @@ import com.android.wallpaper.picker.wallpapers.data.repository.DefaultRotationIn
 import com.android.wallpaper.picker.wallpapers.data.repository.RotationInitializerFactory
 import com.android.wallpaper.settings.data.repository.SecureSettingsRepositoryImpl
 import com.android.wallpaper.settings.data.repository.SystemSettingsRepositoryImpl
+import com.android.wallpaper.util.CurrentWallpaperModelUtilsHelper
+import com.android.wallpaper.util.DefaultCurrentWallpaperModelUtilsHelper
 import com.android.wallpaper.util.converter.DefaultWallpaperModelFactory
 import com.android.wallpaper.util.converter.WallpaperModelFactory
 import dagger.Binds
@@ -229,6 +231,12 @@ abstract class ThemePickerAppModule {
     abstract fun bindWallpaperModelFactory(
         impl: DefaultWallpaperModelFactory
     ): WallpaperModelFactory
+
+    @Binds
+    @Singleton
+    abstract fun bindCurrentWallpaperModelUtilsHelper(
+        impl: DefaultCurrentWallpaperModelUtilsHelper
+    ): CurrentWallpaperModelUtilsHelper
 
     @Binds
     @Singleton
