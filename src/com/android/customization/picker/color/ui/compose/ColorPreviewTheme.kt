@@ -40,8 +40,11 @@ interface CustomColorScheme {
     val primary: Color
     val onPrimary: Color
     val onPrimaryFixedVariant: Color
+    val secondaryFixedDim: Color
     val secondaryContainer: Color
     val onSecondaryContainer: Color
+    val tertiary: Color
+    val tertiaryFixed: Color
     val surfaceBright: Color
     val onSurface: Color
     val onSurfaceVariant: Color
@@ -52,8 +55,11 @@ val defaultCustomColorScheme =
         override val primary: Color = Color.Transparent
         override val onPrimary: Color = Color.Transparent
         override val onPrimaryFixedVariant: Color = Color.Transparent
+        override val secondaryFixedDim: Color = Color.Transparent
         override val secondaryContainer: Color = Color.Transparent
         override val onSecondaryContainer: Color = Color.Transparent
+        override val tertiary: Color = Color.Transparent
+        override val tertiaryFixed: Color = Color.Transparent
         override val surfaceBright: Color = Color.Transparent
         override val onSurface: Color = Color.Transparent
         override val onSurfaceVariant: Color = Color.Transparent
@@ -85,7 +91,10 @@ fun updateTransitionData(colorScheme: ColorScheme): CustomColorScheme {
     val onPrimary = transition.animateThemeColor { state -> state.onPrimary }
     val onPrimaryFixedVariant =
         transition.animateThemeColor { state -> state.onPrimaryFixedVariant }
+    val secondaryFixedDim = transition.animateThemeColor { state -> state.secondaryFixedDim }
     val secondaryContainer = transition.animateThemeColor { state -> state.secondaryContainer }
+    val tertiary = transition.animateThemeColor { state -> state.tertiary }
+    val tertiaryFixed = transition.animateThemeColor { state -> state.tertiaryFixed }
     val onSecondaryContainer = transition.animateThemeColor { state -> state.onSecondaryContainer }
     val surfaceBright = transition.animateThemeColor { state -> state.surfaceBright }
     val onSurface = transition.animateThemeColor { state -> state.onSurface }
@@ -95,8 +104,11 @@ fun updateTransitionData(colorScheme: ColorScheme): CustomColorScheme {
             override val primary: Color by primary
             override val onPrimary: Color by onPrimary
             override val onPrimaryFixedVariant: Color by onPrimaryFixedVariant
+            override val secondaryFixedDim: Color by secondaryFixedDim
             override val secondaryContainer: Color by secondaryContainer
             override val onSecondaryContainer: Color by onSecondaryContainer
+            override val tertiary: Color by tertiary
+            override val tertiaryFixed: Color by tertiaryFixed
             override val surfaceBright: Color by surfaceBright
             override val onSurface: Color by onSurface
             override val onSurfaceVariant: Color by onSurfaceVariant
