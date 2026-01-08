@@ -31,6 +31,7 @@ import com.android.customization.picker.color.domain.interactor.ColorPickerInter
 import com.android.systemui.plugins.keyguard.ui.clocks.AxisPresetConfig.IndexedStyle
 import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
 import com.android.themepicker.R
+import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.data.repository.CustomizationRuntimeValuesRepository
@@ -84,7 +85,7 @@ class ClockPickerViewModelTest {
                 repository = repository,
                 CustomizationRuntimeValuesRepository(customizationProviderClient),
             )
-        val colorPickerRepository = FakeColorPickerRepository()
+        val colorPickerRepository = FakeColorPickerRepository(baseFlags = BaseFlags.get(context))
         val colorPickerInteractor = ColorPickerInteractor(repository = colorPickerRepository)
         colorMap = ClockColorViewModel.getPresetColorMap(context.resources)
         underTest =

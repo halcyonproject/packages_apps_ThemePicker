@@ -199,18 +199,19 @@ constructor(
 
                             launch {
                                 combine(
-                                        viewModel.colorPickerViewModel2.overridingColorOption,
+                                        viewModel.colorPickerViewModel2.previewingColorOption,
+                                        viewModel.colorPickerViewModel2.previewingStyle,
                                         viewModel.darkModeViewModel.overridingIsDarkMode,
-                                        ::Pair,
+                                        ::Triple,
                                     )
-                                    .collect { (colorOption, darkMode) ->
+                                    .collect { (colorOption, style, darkMode) ->
                                         val bundle =
                                             Bundle().apply {
                                                 if (colorOption != null) {
                                                     val (ids, colors) =
                                                         materialColorsGenerator.generate(
                                                             colorOption.seedColor,
-                                                            colorOption.style,
+                                                            style ?: colorOption.style,
                                                             darkMode,
                                                         )
                                                     putIntArray(KEY_COLOR_RESOURCE_IDS, ids)

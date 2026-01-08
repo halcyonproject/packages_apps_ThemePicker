@@ -49,10 +49,6 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
 
     private var loaderJob: Job? = null
     internal open val monetEnabled = ColorUtils.isMonetEnabled(context)
-    // TODO(b/202145216): Use style method to fetch the list of style.
-    @ThemeStyle.Type
-    private var styleList =
-        arrayOf(ThemeStyle.TONAL_SPOT, ThemeStyle.SPRITZ, ThemeStyle.VIBRANT, ThemeStyle.EXPRESSIVE)
 
     private var monochromeBundleName: String? = null
 
@@ -70,6 +66,9 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
     private var presetColorBundles: List<ColorOption>? = null
     private var wallpaperColorBundles: List<ColorOption>? = null
     private var homeWallpaperColors: WallpaperColors? = null
+
+    @ThemeStyle.Type
+    val styleList: List<Int> = ColorProviderUtil.getStyleList(isColorPickerUpdateEnabled)
 
     fun isAvailable(): Boolean {
         return monetEnabled && resourcesApkProvider.isAvailable && colorsAvailable
@@ -183,11 +182,11 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
             // TODO (b/441279631): enable updating color titles
             val colorOption =
                 if (isUsingThemeService) {
-                    ColorOptionImpl.buildSimplifiedOption(
+                    ColorOptionImpl.buildSimplifiedSeedOption(
                         title = "",
                         source = COLOR_SOURCE_HOME,
                         seedColor = colorInt,
-                        style = ThemeStyle.TONAL_SPOT,
+                        defaultStyle = ThemeStyle.TONAL_SPOT,
                     )
                 } else {
                     ColorProviderUtil.buildBundle(
@@ -250,11 +249,11 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                 }
                 bundles.add(
                     if (isUsingThemeService) {
-                        ColorOptionImpl.buildSimplifiedOption(
+                        ColorOptionImpl.buildSimplifiedSeedOption(
                             title = title,
                             source = COLOR_SOURCE_PRESET,
                             seedColor = color,
-                            style = style,
+                            defaultStyle = style,
                         )
                     } else {
                         ColorProviderUtil.buildPreset(
@@ -263,6 +262,7 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                             // Color option index value starts from 1.
                             index = i + 1,
                             style = style,
+                            isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
                         )
                     }
                 )
@@ -300,6 +300,7 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                         index = -1,
                         style = ThemeStyle.MONOCHROMATIC,
                         type = ColorType.WALLPAPER_COLOR,
+                        isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
                     ),
                 )
             }

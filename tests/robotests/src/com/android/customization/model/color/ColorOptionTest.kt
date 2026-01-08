@@ -17,11 +17,15 @@ package com.android.customization.model.color
 
 import android.content.theming.ThemeStyle
 import android.graphics.Color
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
+import android.platform.test.flag.junit.SetFlagsRule
 import com.android.customization.model.ResourceConstants.OVERLAY_CATEGORY_SYSTEM_PALETTE
 import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_HOME
 import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_LOCK
 import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_PRESET
 import com.android.customization.picker.color.shared.model.ColorType
+import com.android.wallpaper.Flags.FLAG_COLOR_PICKER_UPDATE_FLAG
 import com.google.common.truth.Truth.assertThat
 import org.json.JSONObject
 import org.junit.Rule
@@ -37,6 +41,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class ColorOptionTest {
 
+    @get:Rule val setFlagsRule = SetFlagsRule()
     @get:Rule val rule: MockitoRule = MockitoJUnit.rule()
 
     @Mock private lateinit var manager: ColorCustomizationManager
@@ -142,6 +147,8 @@ class ColorOptionTest {
     private fun setUpWallpaperColorOption(
         isDefault: Boolean,
         source: String = "some_source",
+        @ThemeStyle.Type style: Int = ThemeStyle.TONAL_SPOT,
+        isColorPickerUpdateEnabled: Boolean = false,
     ): ColorOptionImpl {
         val overlays =
             if (isDefault) {
@@ -154,8 +161,9 @@ class ColorOptionTest {
             title = "fake color",
             source = source,
             seedColor = 12345,
-            style = ThemeStyle.TONAL_SPOT,
+            style = style,
             isThemeServiceEnabled = false,
+            isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
             overlayPackages = overlays,
             isDefault = isDefault,
             index = 0,
@@ -167,7 +175,7 @@ class ColorOptionTest {
     @Test
     fun wallpaperColorOption_isActive_notDefault_SourceSet() {
         val source = "some_source"
-        val colorOption = setUpWallpaperColorOption(false, source)
+        val colorOption = setUpWallpaperColorOption(isDefault = false, source = source)
         `when`(manager.currentColorSource).thenReturn(source)
 
         assertThat(colorOption.isActive(manager)).isTrue()
@@ -175,7 +183,7 @@ class ColorOptionTest {
 
     @Test
     fun wallpaperColorOption_isActive_notDefault_NoSource() {
-        val colorOption = setUpWallpaperColorOption(false)
+        val colorOption = setUpWallpaperColorOption(isDefault = false)
         `when`(manager.currentColorSource).thenReturn(null)
 
         assertThat(colorOption.isActive(manager)).isTrue()
@@ -183,7 +191,7 @@ class ColorOptionTest {
 
     @Test
     fun wallpaperColorOption_isActive_notDefault_differentSource() {
-        val colorOption = setUpWallpaperColorOption(false)
+        val colorOption = setUpWallpaperColorOption(isDefault = false)
         `when`(manager.currentColorSource).thenReturn("some_other_source")
 
         assertThat(colorOption.isActive(manager)).isFalse()
@@ -191,7 +199,7 @@ class ColorOptionTest {
 
     @Test
     fun wallpaperColorOption_isActive_default_emptyJson() {
-        val colorOption = setUpWallpaperColorOption(true)
+        val colorOption = setUpWallpaperColorOption(isDefault = true)
         `when`(manager.storedOverlays).thenReturn("")
 
         assertThat(colorOption.isActive(manager)).isTrue()
@@ -199,7 +207,7 @@ class ColorOptionTest {
 
     @Test
     fun wallpaperColorOption_isActive_default_nonEmptyJson() {
-        val colorOption = setUpWallpaperColorOption(true)
+        val colorOption = setUpWallpaperColorOption(isDefault = true)
 
         `when`(manager.storedOverlays).thenReturn("{non-empty-json}")
 
@@ -209,12 +217,105 @@ class ColorOptionTest {
 
     @Test
     fun wallpaperColorOption_isActive_default_nonEmptyOverlays() {
-        val colorOption = setUpWallpaperColorOption(true)
+        val colorOption = setUpWallpaperColorOption(isDefault = true)
 
         val settings = mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "fake_color")
         val json = JSONObject(settings).toString()
         `when`(manager.storedOverlays).thenReturn(json)
         `when`(manager.currentOverlays).thenReturn(settings)
         assertThat(colorOption.isActive(manager)).isFalse()
+    }
+
+    @Test
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun wallpaperColorOption_isActive_default_differentStyle() {
+        val colorOption = setUpWallpaperColorOption(isDefault = true, style = ThemeStyle.EXPRESSIVE)
+
+        `when`(manager.currentStyle).thenReturn(ThemeStyle.TONAL_SPOT.toString())
+
+        // Should not be Active because style is different
+        assertThat(colorOption.isActive(manager)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun wallpaperColorOption_isActive_default_differentStyle_colorPickerUpdate() {
+        val colorOption =
+            setUpWallpaperColorOption(
+                isDefault = true,
+                style = ThemeStyle.EXPRESSIVE,
+                isColorPickerUpdateEnabled = true,
+            )
+
+        `when`(manager.currentStyle).thenReturn(ThemeStyle.TONAL_SPOT.toString())
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isActive(manager)).isTrue()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun simplifiedColorOption_isEquivalent_differentSource() {
+        val colorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+        val otherColorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "other_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isEquivalent(otherColorOption)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun simplifiedColorOption_isEquivalent_differentSeedColor() {
+        val colorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+        val otherColorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 54321,
+                defaultStyle = 1,
+            )
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isEquivalent(otherColorOption)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun simplifiedColorOption_isEquivalent_differentStyle() {
+        val colorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+        val otherColorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 2,
+            )
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isEquivalent(otherColorOption)).isTrue()
     }
 }

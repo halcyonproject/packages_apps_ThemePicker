@@ -29,15 +29,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,12 +46,22 @@ import androidx.compose.ui.unit.dp
 import com.android.themepicker.R
 
 @Composable
-fun ColorVariantPicker(navigateToLanding: () -> Unit, modifier: Modifier = Modifier) {
+fun ColorVariantPicker(
+    styleOptions: List<Int>,
+    selectedOption: Int?,
+    onClick: (Int) -> Unit,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+    navigateToLanding: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
-    val selectedIdx: MutableState<Int> = remember { mutableStateOf(0) }
 
     // Handle back navigation when color variant picker is active.
-    BackHandler { navigateToLanding() }
+    BackHandler {
+        onCancel()
+        navigateToLanding()
+    }
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
@@ -71,11 +78,11 @@ fun ColorVariantPicker(navigateToLanding: () -> Unit, modifier: Modifier = Modif
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 // TODO (b/441279631): provide actual data from view model & make options bounceable
-                itemsIndexed(listOf(1, 2, 3, 4)) { idx, option ->
+                items(styleOptions) { option ->
                     ColorStyleOption(
                         modifier = Modifier.size(68.dp),
-                        isSelected = idx == selectedIdx.value,
-                        onClick = { selectedIdx.value = idx },
+                        isSelected = option == selectedOption,
+                        onClick = { onClick(option) },
                     )
                 }
             }
@@ -95,7 +102,10 @@ fun ColorVariantPicker(navigateToLanding: () -> Unit, modifier: Modifier = Modif
         ) {
             Button(
                 modifier = Modifier.width(72.dp).height(56.dp),
-                onClick = navigateToLanding,
+                onClick = {
+                    onCancel()
+                    navigateToLanding()
+                },
                 colors =
                     ButtonColors(
                         containerColor = colorScheme.secondaryContainer,
@@ -112,7 +122,10 @@ fun ColorVariantPicker(navigateToLanding: () -> Unit, modifier: Modifier = Modif
             }
             Button(
                 modifier = Modifier.width(72.dp).height(56.dp),
-                onClick = navigateToLanding,
+                onClick = {
+                    onConfirm()
+                    navigateToLanding()
+                },
                 colors =
                     ButtonColors(
                         containerColor = colorScheme.primary,

@@ -22,17 +22,24 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.shared.model.ColorType
+import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
+@HiltAndroidTest
 @SmallTest
 @RunWith(RobolectricTestRunner::class)
 class ColorPickerInteractorTest {
+    @get:Rule var hiltRule = HiltAndroidRule(this)
+
     private lateinit var underTest: ColorPickerInteractor
     private lateinit var repository: FakeColorPickerRepository
 
@@ -40,27 +47,29 @@ class ColorPickerInteractorTest {
 
     @Before
     fun setUp() {
+        hiltRule.inject()
+
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        repository = FakeColorPickerRepository()
+        repository = FakeColorPickerRepository(baseFlags = BaseFlags.get(context))
         underTest = ColorPickerInteractor(repository = repository)
         repository.setOptions(4, 4, ColorType.WALLPAPER_COLOR, 0)
     }
 
     @Test
-    fun select() = runTest {
+    fun apply() = runTest {
         val colorOptions = collectLastValue(underTest.colorOptions)
         val selectedColorOption = collectLastValue(underTest.selectedColorOption)
 
         val wallpaperColorOption = colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(2)
         assertThat(selectedColorOption()).isNotEqualTo(wallpaperColorOption)
 
-        wallpaperColorOption?.let { underTest.select(colorOption = it) }
+        wallpaperColorOption?.let { underTest.apply(colorOption = it) }
         assertThat(selectedColorOption()).isEqualTo(wallpaperColorOption)
 
         val presetColorOption = colorOptions()?.get(ColorType.PRESET_COLOR)?.get(1)
         assertThat(selectedColorOption()).isNotEqualTo(presetColorOption)
 
-        presetColorOption?.let { underTest.select(colorOption = it) }
+        presetColorOption?.let { underTest.apply(colorOption = it) }
         assertThat(selectedColorOption()).isEqualTo(presetColorOption)
     }
 }

@@ -65,13 +65,13 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 class ColorPickerRepositoryImpl
 @Inject
 constructor(
-    @ApplicationContext appContext: Context,
+    @ApplicationContext private val appContext: Context,
     @BackgroundDispatcher scope: CoroutineScope,
     @BackgroundDispatcher backgroundDispatcher: CoroutineDispatcher,
     private val colorManager: ColorCustomizationManager,
     private val themeManager: ThemeManager?,
     client: WallpaperClient,
-    baseFlags: BaseFlags,
+    private val baseFlags: BaseFlags,
 ) : ColorPickerRepository {
 
     // ThemeManager is only non-null when theme service flag is enabled
@@ -186,39 +186,34 @@ constructor(
             // every time this flow is collected, since colorManager is a singleton.
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
 
+    private val selectedThemeSettings =
+        callbackFlow {
+                trySend(themeManager?.themeSettingsOrDefault)
+                val callback =
+                    object : IThemeSettingsCallback.Stub() {
+                        override fun onSettingsChanged(
+                            oldSettings: ThemeSettings?,
+                            newSettings: ThemeSettings?,
+                        ) {
+                            newSettings?.let { trySend(it) }
+                        }
+                    }
+                themeManager?.registerThemeSettingsCallback(callback)
+                awaitClose { themeManager?.unregisterThemeSettingsCallback(callback) }
+            }
+            .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
+
     override val selectedColorOption =
         if (shouldUseThemeService) {
-                callbackFlow {
-                    trySend(
-                        themeManager!!.themeSettingsOrDefault.let {
-                            ColorOptionImpl.buildSimplifiedOption(
-                                title = null,
-                                source = it.colorSource(),
-                                seedColor = it.systemPalette().toArgb(),
-                                style = it.themeStyle(),
-                            )
-                        }
-                    )
-                    val callback =
-                        object : IThemeSettingsCallback.Stub() {
-                            override fun onSettingsChanged(
-                                oldSettings: ThemeSettings?,
-                                newSettings: ThemeSettings?,
-                            ) {
-                                newSettings?.let {
-                                    trySend(
-                                        ColorOptionImpl.buildSimplifiedOption(
-                                            title = null,
-                                            source = it.colorSource(),
-                                            seedColor = it.systemPalette().toArgb(),
-                                            style = it.themeStyle(),
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    themeManager.registerThemeSettingsCallback(callback)
-                    awaitClose { themeManager.unregisterThemeSettingsCallback(callback) }
+                selectedThemeSettings.map { themeSettings ->
+                    themeSettings?.let {
+                        ColorOptionImpl.buildSimplifiedSeedOption(
+                            title = null,
+                            source = it.colorSource(),
+                            seedColor = it.systemPalette().toArgb(),
+                            defaultStyle = it.themeStyle(),
+                        )
+                    }
                 }
             } else {
                 combine(colorOptions, settingsChanged) { options, _ ->
@@ -233,6 +228,8 @@ constructor(
                 }
             }
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
+
+    override val styleList: List<Int> = colorProvider.styleList
 
     private fun getSettingsColorOption(): ColorOption {
         val overlays = colorManager.currentOverlays
@@ -253,6 +250,7 @@ constructor(
                 } else {
                     seedColorStr.toColorInt()
                 }
+            builder.seedColor = seedColorInt
             builder.lightColors =
                 ColorProviderUtil.getColorPreview(
                     ColorScheme(seedColorInt, /* darkTheme= */ false, style),
@@ -284,7 +282,16 @@ constructor(
         return builder.build()
     }
 
-    override suspend fun select(colorOption: ColorOption): Boolean {
+    override val selectedStyle: Flow<Int?> =
+        if (shouldUseThemeService) {
+            selectedThemeSettings.map { it?.themeStyle() }
+        } else {
+            settingsChanged.map {
+                colorManager.currentStyle?.let { ThemeStyle.valueOf(it) } ?: ThemeStyle.TONAL_SPOT
+            }
+        }
+
+    override suspend fun apply(colorOption: ColorOption): Boolean {
         // TODO (b/461547295): setting color using Theme Service is failing
         if (shouldUseThemeService) {
             val settings =
@@ -319,6 +326,42 @@ constructor(
                 )
             }
         }
+    }
+
+    /** Selects a color option and style and returns whether the operation was successful */
+    override suspend fun apply(colorOption: ColorOption, @ThemeStyle.Type style: Int): Boolean {
+        val colorOptionForApply =
+            if (style == colorOption.style) {
+                colorOption
+            } else if (shouldUseThemeService) {
+                ColorOptionImpl.buildSimplifiedSeedOption(
+                    title = colorOption.title,
+                    source = colorOption.source,
+                    seedColor = colorOption.seedColor,
+                    defaultStyle = style,
+                )
+            } else {
+                if (colorOption.source == ColorProviderUtil.COLOR_SOURCE_PRESET) {
+                    ColorProviderUtil.buildPreset(
+                        title = colorOption.title,
+                        color = colorOption.seedColor,
+                        index = colorOption.index,
+                        style = style,
+                        isColorPickerUpdateEnabled = baseFlags.isColorPickerUpdateEnabled(),
+                    )
+                } else {
+                    ColorProviderUtil.buildBundle(
+                        context = appContext,
+                        colorInt = colorOption.seedColor,
+                        index = colorOption.index,
+                        style = style,
+                        isDefault = colorOption.isDefault,
+                        isColorPickerUpdateEnabled = baseFlags.isColorPickerUpdateEnabled(),
+                        isThemeServiceEnabled = baseFlags.isThemeServiceEnabled(),
+                    )
+                }
+            }
+        return apply(colorOptionForApply)
     }
 
     companion object {

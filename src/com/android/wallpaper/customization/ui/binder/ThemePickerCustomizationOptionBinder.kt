@@ -36,6 +36,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.picker.clock.ui.binder.ClockFloatingSheetBinder
 import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView
@@ -498,19 +499,52 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                         combine(
                                 optionsViewModel.colorPickerViewModel2.overridingColorOption,
                                 optionsViewModel.colorPickerViewModel2.selectedColorOption,
+                                optionsViewModel.colorPickerViewModel2.overridingStyle,
+                                optionsViewModel.colorPickerViewModel2.selectedStyle,
                                 optionsViewModel.darkModeViewModel.overridingIsDarkMode,
-                                ::Triple,
-                            )
-                            .collect { (overridingColor, selectedColor, overridingIsDarkMode) ->
-                                if (overridingColor != null || overridingIsDarkMode != null) {
+                                optionsViewModel.darkModeViewModel.isDarkMode,
+                            ) { args: Array<*> ->
+                                val overridingColor = args[0] as ColorOption?
+                                val selectedColor = args[1] as ColorOption?
+                                val overridingStyle = args[2] as Int?
+                                val selectedStyle = args[3] as Int?
+                                val overridingIsDarkMode = args[4] as Boolean?
+                                val isDarkMode = args[5] as Boolean
+                                Sextuple(
+                                    overridingColor,
+                                    selectedColor,
+                                    overridingStyle,
+                                    selectedStyle,
+                                    overridingIsDarkMode,
+                                    isDarkMode,
+                                )
+                            }
+                            .collect {
+                                (
+                                    overridingColor,
+                                    selectedColor,
+                                    overridingStyle,
+                                    selectedStyle,
+                                    overridingIsDarkMode,
+                                    isDarkMode) ->
+                                if (
+                                    overridingColor != null ||
+                                        overridingStyle != null ||
+                                        overridingIsDarkMode != null
+                                ) {
                                     val previewColorOption = overridingColor ?: selectedColor
-                                    val previewIsDarkMode =
-                                        overridingIsDarkMode
-                                            ?: view.resources.configuration.isNightModeActive
+                                    val previewIsDarkMode = overridingIsDarkMode ?: isDarkMode
+                                    val previewingStyle =
+                                        optionsViewModel.colorPickerViewModel2.getPreviewingStyle(
+                                            selectedStyle,
+                                            overridingStyle,
+                                            selectedColor,
+                                            overridingColor,
+                                        )
                                     previewColorOption?.let {
                                         colorUpdateViewModel.previewColors(
                                             previewColorOption.seedColor,
-                                            previewColorOption.style,
+                                            previewingStyle ?: previewColorOption.style,
                                             previewIsDarkMode,
                                         )
                                     }
@@ -869,6 +903,15 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
     }
 
     data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
+
+    data class Sextuple<A, B, C, D, E, F>(
+        val first: A,
+        val second: B,
+        val third: C,
+        val fourth: D,
+        val fifth: E,
+        val sixth: F,
+    )
 
     companion object {
         private const val THUMBNAIL_CORNER_RADIUS = 18
