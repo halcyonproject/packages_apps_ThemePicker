@@ -580,6 +580,27 @@ class ColorPickerViewModelTest {
 
     @Test
     @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun doubleConfirmStyleOptionSelection_colorPickerUpdate() =
+        testScope.runTest {
+            setupColorPickerUpdateTest()
+            val previewingStyle = collectLastValue(underTest.previewingStyle)
+            assertThat(previewingStyle()).isEqualTo(ThemeStyle.TONAL_SPOT)
+
+            // Select a new style
+            underTest.onStyleOptionClick(ThemeStyle.VIBRANT)
+            assertThat(previewingStyle()).isEqualTo(ThemeStyle.VIBRANT)
+
+            // Confirm style selection
+            underTest.confirmStyleOptionSelection()
+            assertThat(previewingStyle()).isEqualTo(ThemeStyle.VIBRANT)
+
+            // Confirm style selection again without selecting new style
+            underTest.confirmStyleOptionSelection()
+            assertThat(previewingStyle()).isEqualTo(ThemeStyle.VIBRANT)
+        }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun applyAndResetStyleOptionSelection_colorPickerUpdate() =
         testScope.runTest {
             setupColorPickerUpdateTest()

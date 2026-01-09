@@ -123,7 +123,7 @@ constructor(
     }
 
     fun confirmStyleOptionSelection() {
-        _overridingStyle.value = _tempOverridingStyle.value
+        _tempOverridingStyle.value?.let { _overridingStyle.value = it }
         _tempOverridingStyle.value = null
     }
 
