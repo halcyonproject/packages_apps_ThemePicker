@@ -25,5 +25,6 @@
         <permission name="android.permission.SET_WALLPAPER_COMPONENT"/>
         <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
         <permission name="android.permission.SET_WALLPAPER_DIM_AMOUNT"/>
+        <permission name="android.permission.UPDATE_THEME_SETTINGS"/>
     </privapp-permissions>
 </permissions>
