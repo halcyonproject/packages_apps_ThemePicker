@@ -16,6 +16,7 @@
  */
 package com.android.customization.picker.color.data.repository
 
+import android.content.theming.ThemeStyle
 import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.shared.model.ColorType
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +32,15 @@ interface ColorPickerRepository {
     /** The system selected color option from the generated list of color options */
     val selectedColorOption: Flow<ColorOption?>
 
+    /** List of theme styles use to build color options, of the type [ThemeStyle] */
+    val styleList: List<Int>
+
+    /** The system selected theme style, used in the color seed and variant picker */
+    val selectedStyle: Flow<Int?>
+
     /** Selects a color option and returns whether the operation was successful */
-    suspend fun select(colorOption: ColorOption): Boolean
+    suspend fun apply(colorOption: ColorOption): Boolean
+
+    /** Selects a color option and style and returns whether the operation was successful */
+    suspend fun apply(colorOption: ColorOption, @ThemeStyle.Type style: Int): Boolean
 }

@@ -38,7 +38,7 @@ constructor(
     private val interactor: DarkModeInteractor,
     private val logger: ThemesUserEventLogger,
 ) {
-    private val isDarkMode = interactor.isDarkMode
+    val isDarkMode = interactor.isDarkMode
     val isEnabled = interactor.isEnabled
 
     private val _overridingIsDarkMode = MutableStateFlow<Boolean?>(null)

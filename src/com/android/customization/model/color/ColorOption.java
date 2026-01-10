@@ -64,10 +64,11 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
     private final @ColorInt int mSeedColor;
 
     private final boolean mIsThemeServiceEnabled;
+    private final boolean mIsColorPickerUpdateEnabled;
 
     protected ColorOption(String title, Map<String, String> overlayPackages, boolean isDefault,
             int seedColor, @ThemeStyle.Type Integer style, int index,
-            boolean isThemeServiceEnabled) {
+            boolean isThemeServiceEnabled, boolean isColorPickerUpdateEnabled) {
         mTitle = title;
         mIsDefault = isDefault;
         mSeedColor = seedColor;
@@ -75,6 +76,7 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
         mIndex = index;
         mPackagesByCategory = Collections.unmodifiableMap(removeNullValues(overlayPackages));
         mIsThemeServiceEnabled = isThemeServiceEnabled;
+        mIsColorPickerUpdateEnabled = isColorPickerUpdateEnabled;
     }
 
     @Override
@@ -90,7 +92,9 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
         if (TextUtils.isEmpty(currentStyle)) {
             currentStyle = ThemeStyle.toString(ThemeStyle.TONAL_SPOT);
         }
-        boolean isCurrentStyle = TextUtils.equals(ThemeStyle.toString(getStyle()), currentStyle);
+        // Style is no longer evaluated against settings if color picker update is enabled
+        boolean isCurrentStyle = mIsColorPickerUpdateEnabled || TextUtils.equals(
+                ThemeStyle.toString(getStyle()), currentStyle);
 
         if (mIsDefault) {
             String serializedOverlays = colorManager.getStoredOverlays();
@@ -141,7 +145,7 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
      */
     public abstract PreviewInfo getPreviewInfo();
 
-    boolean isDefault() {
+    public boolean isDefault() {
         return mIsDefault;
     }
 

@@ -16,6 +16,7 @@
  */
 package com.android.customization.picker.color.domain.interactor
 
+import android.content.theming.ThemeStyle
 import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.data.repository.ColorPickerRepository
 import javax.inject.Inject
@@ -29,5 +30,12 @@ class ColorPickerInteractor @Inject constructor(private val repository: ColorPic
     /** List of wallpaper and preset color options on the device, categorized by Color Type */
     val colorOptions = repository.colorOptions
 
-    suspend fun select(colorOption: ColorOption): Boolean = repository.select(colorOption)
+    val styleList = repository.styleList
+
+    val selectedStyle = repository.selectedStyle
+
+    suspend fun apply(colorOption: ColorOption): Boolean = repository.apply(colorOption)
+
+    suspend fun apply(colorOption: ColorOption, @ThemeStyle.Type style: Int): Boolean =
+        repository.apply(colorOption, style)
 }
