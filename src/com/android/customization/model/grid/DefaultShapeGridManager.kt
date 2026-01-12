@@ -18,6 +18,7 @@ package com.android.customization.model.grid
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.database.ContentObserver
 import android.graphics.drawable.Drawable
@@ -301,6 +302,9 @@ constructor(
                 TAG,
                 "Unable to find drawable resource from package $launcherPackageName with resource ID $iconId",
             )
+            return null
+        } catch (exception: PackageManager.NameNotFoundException) {
+            Log.w(TAG, "Package not found when getting grid option drawable", exception)
             return null
         }
     }
