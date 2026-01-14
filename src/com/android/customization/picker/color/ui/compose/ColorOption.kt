@@ -25,9 +25,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.CacheDrawScope
+import androidx.compose.ui.draw.DrawResult
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -35,19 +37,40 @@ fun ColorOption(
     modifier: Modifier,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onDrawBehind: DrawScope.() -> Unit,
+    onDrawWithCache: CacheDrawScope.() -> DrawResult,
 ) {
     val colorScheme = LocalAnimatedColorScheme.current
-    val roundedCornerShape = RoundedCornerShape(percent = 35)
-    val shapeModifier =
+    val roundedCornerShape = RoundedCornerShape(18.dp)
+    Box(modifier = modifier) {
+        // selection ring
         if (isSelected) {
-            modifier
-                .fillMaxSize()
-                .clip(roundedCornerShape)
-                .border(width = 3.dp, color = colorScheme.primary, shape = roundedCornerShape)
-                .border(width = 7.dp, color = colorScheme.surfaceBright, shape = roundedCornerShape)
-        } else {
-            modifier.fillMaxSize().padding(7.dp).clip(CircleShape)
+            Box(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .clip(roundedCornerShape)
+                        .border(
+                            width = 3.dp,
+                            color = colorScheme.primary,
+                            shape = roundedCornerShape,
+                        )
+                        .drawBehind { drawRect(colorScheme.surfaceBright) }
+            )
         }
-    Box(modifier = shapeModifier.clickable(onClick = onClick).drawBehind(onDraw = onDrawBehind))
+        // content
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(7.dp)
+                    .clip(
+                        if (isSelected) {
+                            //  Inner corners are less rounded to visually compensate border effect
+                            RoundedCornerShape(12.dp)
+                        } else {
+                            CircleShape
+                        }
+                    )
+                    .clickable(onClick = onClick)
+                    .drawWithCache(onBuildDrawCache = onDrawWithCache)
+        )
+    }
 }

@@ -101,6 +101,7 @@ fun ColorFloatingSheet(
         )
     val previewingStyle: Int? by
         colorPickerViewModel.previewingStyle.collectAsStateWithLifecycle(initialValue = null)
+    val styleOptions = colorPickerViewModel.styleOptions.map { StyleBounceable(it) }
 
     PlatformTheme {
         val scheme =
@@ -133,8 +134,10 @@ fun ColorFloatingSheet(
                         )
                     ColorPickerViewModel.Screen.VARIANT_PICKER ->
                         ColorVariantPicker(
-                            styleOptions = colorPickerViewModel.styleOptions,
+                            styleOptions = styleOptions,
                             selectedOption = previewingStyle,
+                            previewingSeedColor = previewingColorOption?.seedColor,
+                            previewingIsDarkMode = previewingIsDarkMode,
                             onClick = colorPickerViewModel::onStyleOptionClick,
                             onCancel = colorPickerViewModel::cancelStyleOptionSelection,
                             onConfirm = colorPickerViewModel::confirmStyleOptionSelection,
@@ -322,46 +325,48 @@ fun ColorSeedOption(
             // Round up width to prevent empty pixels between quadrants in bounce
             // animation.
             val quadrantSize = Size(ceil(size.width / 2f), size.height / 2f)
-            colorIcon?.let {
-                drawRect(
-                    color =
-                        if (isDarkMode) {
-                            Color(it.darkThemeColor0)
-                        } else {
-                            Color(it.lightThemeColor0)
-                        },
-                    size = quadrantSize,
-                )
-                drawRect(
-                    color =
-                        if (isDarkMode) {
-                            Color(it.darkThemeColor1)
-                        } else {
-                            Color(it.lightThemeColor1)
-                        },
-                    topLeft = Offset(x = size.width / 2f, y = 0f),
-                    size = quadrantSize,
-                )
-                drawRect(
-                    color =
-                        if (isDarkMode) {
-                            Color(it.darkThemeColor2)
-                        } else {
-                            Color(it.lightThemeColor2)
-                        },
-                    topLeft = Offset(x = 0f, y = size.height / 2f),
-                    size = quadrantSize,
-                )
-                drawRect(
-                    color =
-                        if (isDarkMode) {
-                            Color(it.darkThemeColor3)
-                        } else {
-                            Color(it.lightThemeColor3)
-                        },
-                    topLeft = Offset(x = size.width / 2f, y = size.height / 2f),
-                    size = quadrantSize,
-                )
+            onDrawBehind {
+                colorIcon?.let {
+                    drawRect(
+                        color =
+                            if (isDarkMode) {
+                                Color(it.darkThemeColor0)
+                            } else {
+                                Color(it.lightThemeColor0)
+                            },
+                        size = quadrantSize,
+                    )
+                    drawRect(
+                        color =
+                            if (isDarkMode) {
+                                Color(it.darkThemeColor1)
+                            } else {
+                                Color(it.lightThemeColor1)
+                            },
+                        topLeft = Offset(x = size.width / 2f, y = 0f),
+                        size = quadrantSize,
+                    )
+                    drawRect(
+                        color =
+                            if (isDarkMode) {
+                                Color(it.darkThemeColor2)
+                            } else {
+                                Color(it.lightThemeColor2)
+                            },
+                        topLeft = Offset(x = 0f, y = size.height / 2f),
+                        size = quadrantSize,
+                    )
+                    drawRect(
+                        color =
+                            if (isDarkMode) {
+                                Color(it.darkThemeColor3)
+                            } else {
+                                Color(it.lightThemeColor3)
+                            },
+                        topLeft = Offset(x = size.width / 2f, y = size.height / 2f),
+                        size = quadrantSize,
+                    )
+                }
             }
         }
 

@@ -78,11 +78,13 @@ import com.android.wallpaper.picker.wallpapers.data.repository.RotationInitializ
 import com.android.wallpaper.settings.data.repository.SecureSettingsRepositoryImpl
 import com.android.wallpaper.testing.FakeCategoryInteractor
 import com.android.wallpaper.testing.FakeCuratedPhotosInteractorImpl
+import com.android.wallpaper.testing.FakeCurrentWallpaperModelUtilsHelper
 import com.android.wallpaper.testing.FakeDefaultRequester
 import com.android.wallpaper.testing.FakeOnDeviceWallpapersInteractor
 import com.android.wallpaper.testing.FakeThirdPartyCategoryInteractor
 import com.android.wallpaper.testing.FakeWallpaperCategoryWrapper
 import com.android.wallpaper.testing.TestPartnerProvider
+import com.android.wallpaper.util.CurrentWallpaperModelUtilsHelper
 import com.android.wallpaper.util.converter.DefaultWallpaperModelFactory
 import com.android.wallpaper.util.converter.WallpaperModelFactory
 import dagger.Binds
@@ -94,8 +96,6 @@ import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import com.android.wallpaper.util.CurrentWallpaperModelUtilsHelper
-import com.android.wallpaper.util.DefaultCurrentWallpaperModelUtilsHelper
 
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [ThemePickerAppModule::class])
@@ -220,7 +220,7 @@ abstract class ThemePickerTestModule {
     @Binds
     @Singleton
     abstract fun bindCurrentWallpaperModelUtilsHelper(
-        impl: DefaultCurrentWallpaperModelUtilsHelper
+        impl: FakeCurrentWallpaperModelUtilsHelper
     ): CurrentWallpaperModelUtilsHelper
 
     @Binds
