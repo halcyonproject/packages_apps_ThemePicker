@@ -197,36 +197,89 @@ constructor(
                                 }
                             }
 
-                            launch {
-                                combine(
-                                        viewModel.colorPickerViewModel2.overridingColorOption,
-                                        viewModel.darkModeViewModel.overridingIsDarkMode,
-                                        ::Pair,
-                                    )
-                                    .collect { (colorOption, darkMode) ->
-                                        val bundle =
-                                            Bundle().apply {
-                                                if (colorOption != null) {
-                                                    val (ids, colors) =
-                                                        materialColorsGenerator.generate(
-                                                            colorOption.seedColor,
-                                                            colorOption.style,
-                                                            darkMode,
-                                                        )
-                                                    putIntArray(KEY_COLOR_RESOURCE_IDS, ids)
-                                                    putIntArray(KEY_COLOR_VALUES, colors)
-                                                }
-
-                                                if (darkMode != null) {
-                                                    putBoolean(KEY_DARK_MODE, darkMode)
-                                                }
-                                            }
-                                        safeSendMessage(
-                                            workspaceCallback,
-                                            MESSAGE_ID_UPDATE_COLOR,
-                                            bundle,
+                            if (BaseFlags.get(context).isColorPickerUpdateEnabled()) {
+                                launch {
+                                    combine(
+                                            viewModel.colorPickerViewModel2.selectedColorOption,
+                                            viewModel.colorPickerViewModel2.overridingColorOption,
+                                            viewModel.colorPickerViewModel2.overridingStyle,
+                                            viewModel.darkModeViewModel.overridingIsDarkMode,
+                                            ::Quadruple,
                                         )
-                                    }
+                                        .collect {
+                                            (
+                                                selectedColor,
+                                                overridingColor,
+                                                overridingStyle,
+                                                overridingDarkMode) ->
+                                            val bundle =
+                                                Bundle().apply {
+                                                    val colorNeedsUpdate = overridingColor != null
+                                                    val styleNeedsUpdate = overridingStyle != null
+                                                    val colorOption =
+                                                        overridingColor ?: selectedColor
+                                                    if (
+                                                        (colorNeedsUpdate || styleNeedsUpdate) &&
+                                                            colorOption != null
+                                                    ) {
+                                                        val style =
+                                                            overridingStyle ?: colorOption.style
+                                                        val (ids, colors) =
+                                                            materialColorsGenerator.generate(
+                                                                colorOption.seedColor,
+                                                                style,
+                                                                overridingDarkMode,
+                                                            )
+                                                        putIntArray(KEY_COLOR_RESOURCE_IDS, ids)
+                                                        putIntArray(KEY_COLOR_VALUES, colors)
+                                                    }
+
+                                                    if (overridingDarkMode != null) {
+                                                        putBoolean(
+                                                            KEY_DARK_MODE,
+                                                            overridingDarkMode,
+                                                        )
+                                                    }
+                                                }
+                                            safeSendMessage(
+                                                workspaceCallback,
+                                                MESSAGE_ID_UPDATE_COLOR,
+                                                bundle,
+                                            )
+                                        }
+                                }
+                            } else {
+                                launch {
+                                    combine(
+                                            viewModel.colorPickerViewModel2.overridingColorOption,
+                                            viewModel.darkModeViewModel.overridingIsDarkMode,
+                                            ::Pair,
+                                        )
+                                        .collect { (colorOption, darkMode) ->
+                                            val bundle =
+                                                Bundle().apply {
+                                                    if (colorOption != null) {
+                                                        val (ids, colors) =
+                                                            materialColorsGenerator.generate(
+                                                                colorOption.seedColor,
+                                                                colorOption.style,
+                                                                darkMode,
+                                                            )
+                                                        putIntArray(KEY_COLOR_RESOURCE_IDS, ids)
+                                                        putIntArray(KEY_COLOR_VALUES, colors)
+                                                    }
+
+                                                    if (darkMode != null) {
+                                                        putBoolean(KEY_DARK_MODE, darkMode)
+                                                    }
+                                                }
+                                            safeSendMessage(
+                                                workspaceCallback,
+                                                MESSAGE_ID_UPDATE_COLOR,
+                                                bundle,
+                                            )
+                                        }
+                                }
                             }
 
                             if (BaseFlags.get(context).isExtendibleThemeManager()) {
@@ -285,6 +338,8 @@ constructor(
         homeScreenJob?.cancel()
         homeScreenJob = null
     }
+
+    data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 
     companion object {
         const val TAG = "ThemePickerWorkspaceCallbackBinder"

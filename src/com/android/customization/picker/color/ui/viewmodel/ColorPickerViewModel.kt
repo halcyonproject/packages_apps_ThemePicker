@@ -16,6 +16,7 @@
 package com.android.customization.picker.color.ui.viewmodel
 
 import android.content.Context
+import android.content.theming.ThemeStyle
 import android.util.Log
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
@@ -23,6 +24,7 @@ import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.themepicker.R
+import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
@@ -41,6 +43,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
@@ -55,6 +58,7 @@ constructor(
     private val colorUpdateViewModel: ColorUpdateViewModel,
     private val interactor: ColorPickerInteractor,
     private val logger: ThemesUserEventLogger,
+    private val baseFlags: BaseFlags,
     @Assisted private val viewModelScope: CoroutineScope,
 ) {
     val selectedColorOption = interactor.selectedColorOption
@@ -63,10 +67,106 @@ constructor(
     val overridingColorOption = _overridingColorOption.asStateFlow()
     val previewingColorOption =
         combine(overridingColorOption, selectedColorOption) { overriding, selected ->
-            overriding ?: selected
-        }
+                overriding ?: selected
+            }
+            .distinctUntilChanged()
+
+    // Used in seed & variant picker
+    val previewingColorOptionKey = previewingColorOption.map { it?.getKey() }
+
+    /**
+     * Returns a key to uniquely identify the color option for equivalence. This function only
+     * compares source and seed color, and is meant to be used in the color seed & variant picker.
+     */
+    private fun ColorOption.getKey(): String {
+        return "${this.source}::${this.seedColor}"
+    }
 
     val styleOptions = interactor.styleList
+    val selectedStyle = interactor.selectedStyle.distinctUntilChanged()
+    private val _overridingStyle = MutableStateFlow<Int?>(null)
+    // Style selected but not yet confirmed by user, this is reset to null if the user cancels
+    private val _tempOverridingStyle = MutableStateFlow<Int?>(null)
+    val overridingStyle =
+        combine(_overridingStyle, _tempOverridingStyle) { saved, temp -> temp ?: saved }
+            .distinctUntilChanged()
+    val previewingStyle =
+        combine(selectedStyle, overridingStyle, selectedColorOption, overridingColorOption) {
+                selectedStyle,
+                overridingStyle,
+                selectedColor,
+                overridingColor ->
+                getPreviewingStyle(selectedStyle, overridingStyle, selectedColor, overridingColor)
+            }
+            .distinctUntilChanged()
+
+    @ThemeStyle.Type
+    fun getPreviewingStyle(
+        @ThemeStyle.Type selectedStyle: Int?,
+        @ThemeStyle.Type overridingStyle: Int?,
+        selectedColorOption: ColorOption?,
+        overridingColorOption: ColorOption?,
+    ): Int? {
+        // User selection takes precedence
+        return overridingStyle
+            // Otherwise, if the there is a different color option selected, use its style
+            ?: if (
+                overridingColorOption != null &&
+                    !overridingColorOption.isEquivalent(selectedColorOption)
+            ) {
+                overridingColorOption.style
+            } else {
+                // Otherwise, use the system selected style
+                selectedStyle
+            }
+    }
+
+    fun onStyleOptionClick(@ThemeStyle.Type style: Int) {
+        _tempOverridingStyle.value = style
+    }
+
+    fun confirmStyleOptionSelection() {
+        _tempOverridingStyle.value?.let { _overridingStyle.value = it }
+        _tempOverridingStyle.value = null
+    }
+
+    fun cancelStyleOptionSelection() {
+        _tempOverridingStyle.value = null
+    }
+
+    fun resetStyleOptionSelection() {
+        _overridingStyle.value = null
+        _tempOverridingStyle.value = null
+    }
+
+    val colorSeedOptions =
+        interactor.colorOptions.map { colorOptions ->
+            colorOptions
+                .map { colorOptionEntry ->
+                    colorOptionEntry.key to
+                        colorOptionEntry.value.mapIndexed { index, colorOption ->
+                            colorOption as ColorOptionImpl
+                            ColorOptionViewModel(
+                                icon = ColorOptionIconViewModel.fromColorOption(colorOption),
+                                key = colorOption.getKey(),
+                                onClick = {
+                                    viewModelScope.launch {
+                                        _overridingColorOption.value = colorOption
+                                        _overridingColorOptionIndex.value = index
+                                        // Reset overriding style when a new option
+                                        // is selected.
+                                        resetStyleOptionSelection()
+                                    }
+                                },
+                                text =
+                                    Text.Loaded(
+                                        colorOption.getContentDescription(context).toString()
+                                    ),
+                            )
+                        }
+                }
+                .toMap()
+        }
 
     val _overridingColorOptionIndex = MutableStateFlow<Int>(0)
     val overridingColorOptionIndex = _overridingColorOptionIndex.asStateFlow()
@@ -123,7 +223,7 @@ constructor(
         }
 
     /** The list of all color options mapped by their color type */
-    val allColorOptions:
+    private val allColorOptions:
         Flow<Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>> =
         interactor.colorOptions.map { colorOptions ->
             colorOptions
@@ -175,46 +275,88 @@ constructor(
      * change updates, which are applied with a latency.
      */
     val onApply: Flow<(suspend () -> Unit)?> =
-        combine(overridingColorOption, selectedColorOption) { previewing, selected ->
-            previewing?.let {
-                if (previewing.isEquivalent(selected)) {
-                    null
-                } else {
+        if (baseFlags.isColorPickerUpdateEnabled()) {
+            combine(selectedColorOption, overridingColorOption, selectedStyle, overridingStyle) {
+                selectedColor,
+                overridingColor,
+                selectedStyle,
+                overridingStyle ->
+                val colorNeedsUpdate =
+                    overridingColor != null && !overridingColor.isEquivalent(selectedColor)
+                val styleNeedsUpdate = overridingStyle != null && overridingStyle != selectedStyle
+                val colorOption = overridingColor ?: selectedColor
+                if ((colorNeedsUpdate || styleNeedsUpdate) && colorOption != null) {
+                    val style = overridingStyle ?: colorOption.style
                     {
-                        coroutineScope {
-                            val waitForColorUpdateJob = launch {
-                                // Suspend until first color update, or time out after 3 seconds
-                                try {
-                                    withTimeout(COLOR_UPDATE_TIMEOUT_MILLIS) {
-                                        colorUpdateViewModel.systemColorsUpdatedNoReplay
-                                            .take(1)
-                                            .collect {
-                                                return@collect
-                                            }
-                                    }
-                                } catch (e: TimeoutCancellationException) {
-                                    Log.w(TAG, "Timed out waiting for color update", e)
-                                }
-                            }
-                            val success = interactor.select(it)
-                            if (success) {
+                        applyAndWaitForColorUpdate(
+                            apply = { interactor.apply(colorOption, style) },
+                            onSuccess = {
                                 logger.logThemeColorApplied(
-                                    it.sourceForLogging,
-                                    it.styleForLogging,
-                                    it.seedColor,
+                                    colorOption.sourceForLogging,
+                                    // TODO(b/473022455): centralize logging in
+                                    //  ThemesUserEventLogger
+                                    ThemeStyle.toString(style).hashCode(),
+                                    colorOption.seedColor,
                                 )
-                                waitForColorUpdateJob.join()
-                            } else {
-                                waitForColorUpdateJob.cancel()
-                            }
+                            },
+                        )
+                    }
+                } else null
+            }
+        } else {
+            combine(overridingColorOption, selectedColorOption) { previewing, selected ->
+                previewing?.let {
+                    if (previewing.isEquivalent(selected)) {
+                        null
+                    } else {
+                        {
+                            applyAndWaitForColorUpdate(
+                                apply = { interactor.apply(it) },
+                                onSuccess = {
+                                    logger.logThemeColorApplied(
+                                        it.sourceForLogging,
+                                        it.styleForLogging,
+                                        it.seedColor,
+                                    )
+                                },
+                            )
                         }
                     }
                 }
             }
         }
 
+    private suspend fun applyAndWaitForColorUpdate(
+        apply: suspend () -> Boolean,
+        onSuccess: () -> Unit,
+    ) {
+        return coroutineScope {
+            val waitForColorUpdateJob = launch {
+                // Suspend until first color update, or time out after 3 seconds
+                try {
+                    withTimeout(COLOR_UPDATE_TIMEOUT_MILLIS) {
+                        colorUpdateViewModel.systemColorsUpdatedNoReplay.take(1).collect {
+                            return@collect
+                        }
+                    }
+                } catch (e: TimeoutCancellationException) {
+                    Log.w(TAG, "Timed out waiting for color update", e)
+                }
+            }
+            val success = apply()
+            if (success) {
+                onSuccess()
+                waitForColorUpdateJob.join()
+            } else {
+                waitForColorUpdateJob.cancel()
+            }
+        }
+    }
+
     fun resetPreview() {
         _overridingColorOption.value = null
+        _overridingStyle.value = null
+        _tempOverridingStyle.value = null
     }
 
     /** The list of all available color options for the selected Color Type. */

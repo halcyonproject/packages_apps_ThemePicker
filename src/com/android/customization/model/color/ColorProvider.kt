@@ -182,11 +182,11 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
             // TODO (b/441279631): enable updating color titles
             val colorOption =
                 if (isUsingThemeService) {
-                    ColorOptionImpl.buildSimplifiedOption(
+                    ColorOptionImpl.buildSimplifiedSeedOption(
                         title = "",
                         source = COLOR_SOURCE_HOME,
                         seedColor = colorInt,
-                        style = ThemeStyle.TONAL_SPOT,
+                        defaultStyle = ThemeStyle.TONAL_SPOT,
                     )
                 } else {
                     ColorProviderUtil.buildBundle(
@@ -249,11 +249,11 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                 }
                 bundles.add(
                     if (isUsingThemeService) {
-                        ColorOptionImpl.buildSimplifiedOption(
+                        ColorOptionImpl.buildSimplifiedSeedOption(
                             title = title,
                             source = COLOR_SOURCE_PRESET,
                             seedColor = color,
-                            style = style,
+                            defaultStyle = style,
                         )
                     } else {
                         ColorProviderUtil.buildPreset(
@@ -262,6 +262,7 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                             // Color option index value starts from 1.
                             index = i + 1,
                             style = style,
+                            isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
                         )
                     }
                 )
@@ -299,6 +300,7 @@ open class ColorProvider(private val context: Context, stubPackageName: String) 
                         index = -1,
                         style = ThemeStyle.MONOCHROMATIC,
                         type = ColorType.WALLPAPER_COLOR,
+                        isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
                     ),
                 )
             }
