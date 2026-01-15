@@ -92,7 +92,9 @@ public abstract class ColorOption implements CustomizationOption<ColorOption> {
         }
         boolean isCurrentStyle = TextUtils.equals(ThemeStyle.toString(getStyle()), currentStyle);
 
-        if (mIsDefault) {
+        // When theme service is enabled, default color options will no longer be differentiated
+        // from non-default color options.
+        if (!mIsThemeServiceEnabled && mIsDefault) {
             String serializedOverlays = colorManager.getStoredOverlays();
             // a default color option is active if the manager has no stored overlays or current
             // overlays, or the stored overlay does not contain either category system palette or
