@@ -16,7 +16,6 @@
  */
 package com.android.customization.picker.color.domain.interactor
 
-import android.content.theming.ThemeStyle
 import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.data.repository.ColorPickerRepository
 import javax.inject.Inject
@@ -32,10 +31,5 @@ class ColorPickerInteractor @Inject constructor(private val repository: ColorPic
 
     val styleList = repository.styleList
 
-    val selectedStyle = repository.selectedStyle
-
-    suspend fun apply(colorOption: ColorOption): Boolean = repository.apply(colorOption)
-
-    suspend fun apply(colorOption: ColorOption, @ThemeStyle.Type style: Int): Boolean =
-        repository.apply(colorOption, style)
+    suspend fun select(colorOption: ColorOption): Boolean = repository.select(colorOption)
 }

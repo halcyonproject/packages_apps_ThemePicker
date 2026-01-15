@@ -41,9 +41,6 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
     override val styleList: List<Int> =
         ColorProviderUtil.getStyleList(baseFlags.isColorPickerUpdateEnabled())
 
-    private val _selectedStyle = MutableStateFlow<Int?>(null)
-    override val selectedStyle = _selectedStyle.asStateFlow()
-
     private val _colorOptions =
         MutableStateFlow(
             mapOf<ColorType, List<ColorOption>>(
@@ -74,9 +71,6 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
                                     selectedColorOptionIndex == index
                             if (isSelected) {
                                 _selectedColorOption.value = colorOption
-                                if (baseFlags.isColorPickerUpdateEnabled()) {
-                                    _selectedStyle.value = colorOption.style
-                                }
                             }
                             add(colorOption)
                         }
@@ -89,9 +83,6 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
                                     selectedColorOptionIndex == index
                             if (isSelected) {
                                 _selectedColorOption.value = colorOption
-                                if (baseFlags.isColorPickerUpdateEnabled()) {
-                                    _selectedStyle.value = colorOption.style
-                                }
                             }
                             add(colorOption)
                         }
@@ -116,9 +107,6 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
                             val colorOption = buildWallpaperOption(index)
                             if (isSelected) {
                                 _selectedColorOption.value = colorOption
-                                if (baseFlags.isColorPickerUpdateEnabled()) {
-                                    _selectedStyle.value = colorOption.style
-                                }
                             }
                             add(colorOption)
                         }
@@ -132,9 +120,6 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
                             val colorOption = buildPresetOption(index)
                             if (isSelected) {
                                 _selectedColorOption.value = colorOption
-                                if (baseFlags.isColorPickerUpdateEnabled()) {
-                                    _selectedStyle.value = colorOption.style
-                                }
                             }
                             add(colorOption)
                         }
@@ -220,17 +205,9 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
 
     var applySuccess = true
 
-    override suspend fun apply(colorOption: ColorOption): Boolean {
+    override suspend fun select(colorOption: ColorOption): Boolean {
         if (applySuccess) {
             _selectedColorOption.value = colorOption
-        }
-        return applySuccess
-    }
-
-    override suspend fun apply(colorOption: ColorOption, style: Int): Boolean {
-        if (applySuccess) {
-            _selectedColorOption.value = colorOption
-            _selectedStyle.value = style
         }
         return applySuccess
     }

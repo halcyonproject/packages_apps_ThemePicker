@@ -44,9 +44,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -66,8 +67,6 @@ import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
 import com.android.wallpaper.picker.option.ui.compose.OptionBounceable
 import com.google.ux.material.libmonet.dynamiccolor.MaterialDynamicColors
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 
 object Shader {
@@ -123,23 +122,16 @@ object Shader {
 @Composable
 fun ColorVariantPicker(
     styleOptions: List<StyleBounceable>,
-    selectedOption: Int?,
     previewingSeedColor: Int?,
     previewingIsDarkMode: Boolean,
-    onClick: (Int) -> Unit,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit,
     navigateToLanding: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val selectedIdx: MutableState<Int> = remember { mutableStateOf(0) }
 
     // Handle back navigation when color variant picker is active.
-    BackHandler {
-        onCancel()
-        navigateToLanding()
-    }
+    BackHandler { navigateToLanding() }
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
@@ -156,7 +148,7 @@ fun ColorVariantPicker(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 itemsIndexed(styleOptions) { idx, option ->
-                    val isSelected = option.style == selectedOption
+                    val isSelected = idx == selectedIdx.value
                     val animatedAlpha: Float by animateFloatAsState(if (isSelected) 1f else 0.25f)
                     val scheme =
                         remember(previewingSeedColor, previewingIsDarkMode) {
@@ -180,10 +172,7 @@ fun ColorVariantPicker(
                                         orientation = Horizontal,
                                     ),
                             isSelected = isSelected,
-                            onClick = {
-                                onClick(option.style)
-                                coroutineScope.launch { option.clickBounceAnimate() }
-                            },
+                            onClick = { selectedIdx.value = idx },
                         ) {
                             val materialColors = MaterialDynamicColors()
                             val colors =
@@ -277,10 +266,7 @@ fun ColorVariantPicker(
         ) {
             Button(
                 modifier = Modifier.width(72.dp).height(56.dp),
-                onClick = {
-                    onCancel()
-                    navigateToLanding()
-                },
+                onClick = navigateToLanding,
                 colors =
                     ButtonColors(
                         containerColor = colorScheme.secondaryContainer,
@@ -297,10 +283,7 @@ fun ColorVariantPicker(
             }
             Button(
                 modifier = Modifier.width(72.dp).height(56.dp),
-                onClick = {
-                    onConfirm()
-                    navigateToLanding()
-                },
+                onClick = navigateToLanding,
                 colors =
                     ButtonColors(
                         containerColor = colorScheme.primary,

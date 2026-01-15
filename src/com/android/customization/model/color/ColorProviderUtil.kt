@@ -60,7 +60,7 @@ object ColorProviderUtil {
     /**
      * Builds a [ColorOptionImpl] for a wallpaper-based color with a specified color and style. Only
      * use this when Theme Service cannot be used. Otherwise use
-     * [ColorOptionImpl.buildSimplifiedSeedOption].
+     * [ColorOptionImpl.buildSimplifiedOption].
      *
      * @param isDefault Whether the colorInt provided is the primary seed of the WallpaperColors it
      *   is generated from.
@@ -101,7 +101,6 @@ object ColorProviderUtil {
                 darkTheme = true,
                 isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
             )
-        builder.isColorPickerUpdateEnabled = isColorPickerUpdateEnabled
         builder.isThemeServiceEnabled = isThemeServiceEnabled
         // Always set system palette color if theme service is enabled
         if (!isDefault || isThemeServiceEnabled) {
@@ -127,7 +126,7 @@ object ColorProviderUtil {
 
     /**
      * Builds a [ColorOptionImpl] for a preset color with a specified color and style Only use this
-     * when Theme Service cannot be used. Otherwise use [ColorOptionImpl.buildSimplifiedSeedOption]
+     * when Theme Service cannot be used. Otherwise use [ColorOptionImpl.buildSimplifiedOption]
      */
     fun buildPreset(
         title: String,
@@ -135,7 +134,6 @@ object ColorProviderUtil {
         index: Int,
         @ThemeStyle.Type style: Int? = null,
         type: ColorType = ColorType.PRESET_COLOR,
-        isColorPickerUpdateEnabled: Boolean,
     ): ColorOptionImpl {
         val builder = ColorOptionImpl.Builder()
         builder.title = title
@@ -172,7 +170,6 @@ object ColorProviderUtil {
         }
         builder.lightColors = lightColors
         builder.darkColors = darkColors
-        builder.isColorPickerUpdateEnabled = isColorPickerUpdateEnabled
         return builder.build()
     }
 

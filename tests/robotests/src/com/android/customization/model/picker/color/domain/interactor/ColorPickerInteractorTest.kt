@@ -56,20 +56,20 @@ class ColorPickerInteractorTest {
     }
 
     @Test
-    fun apply() = runTest {
+    fun select() = runTest {
         val colorOptions = collectLastValue(underTest.colorOptions)
         val selectedColorOption = collectLastValue(underTest.selectedColorOption)
 
         val wallpaperColorOption = colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(2)
         assertThat(selectedColorOption()).isNotEqualTo(wallpaperColorOption)
 
-        wallpaperColorOption?.let { underTest.apply(colorOption = it) }
+        wallpaperColorOption?.let { underTest.select(colorOption = it) }
         assertThat(selectedColorOption()).isEqualTo(wallpaperColorOption)
 
         val presetColorOption = colorOptions()?.get(ColorType.PRESET_COLOR)?.get(1)
         assertThat(selectedColorOption()).isNotEqualTo(presetColorOption)
 
-        presetColorOption?.let { underTest.apply(colorOption = it) }
+        presetColorOption?.let { underTest.select(colorOption = it) }
         assertThat(selectedColorOption()).isEqualTo(presetColorOption)
     }
 }
