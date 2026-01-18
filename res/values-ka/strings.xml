@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"ძირითადი ნეიტრალური თემა"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"ძირითადი ცოცხალი თემა"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"ძირითადი ექსპრესიული თემა"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"ნეიტრალური"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"რბილი"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"კაშკაშა"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"მუქი"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"თემის სტილის ცვლილების გამოყენება"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"თემის სტილის ცვლილების გაუქმება"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ფერის ნაგულისხმევი ვარიანტი"</string>

@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"မူလ မနုမရင့် အပြင်အဆင်"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"မူလ စိုလွင်သော အပြင်အဆင်"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"မူလ ခံစားမှုပြ အပြင်အဆင်"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"ပုံမှန်"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"နူးညံ့"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"လင်း"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"စာလုံးထူ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"အပြင်အဆင်ပုံစံ ပြောင်းလဲမှုကို သုံးရန်"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"အပြင်အဆင်ပုံစံ ပြောင်းလဲမှုကို နောက်ပြန်ရန်"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"မူလ အရောင်ရွေးစရာ"</string>

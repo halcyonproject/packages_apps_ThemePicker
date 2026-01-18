@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"Neutralt tema med primära färger"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"Livfullt tema med primära färger"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"Uttrycksfullt tema med primära färger"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"Neutral"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"Mjuk"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"Ljus"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Djärv"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Tillämpa ändring av temastil"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Ångra ändring av temastil"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Standardfärgen"</string>

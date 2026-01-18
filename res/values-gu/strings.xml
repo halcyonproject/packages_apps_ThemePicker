@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"પ્રાથમિક કુદરતી થીમ"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"પ્રાથિમક વાઇબ્રન્ટ થીમ"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"પ્રાથિમક અભિવ્યક્તપૂર્ણ થીમ"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"તટસ્થ"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"સૌમ્ય"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"બ્રાઇટ"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"બોલ્ડ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"થીમની શૈલીમાં ફેરફાર લાગુ કરો"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"થીમની શૈલીમાં કરેલો ફેરફાર રદ કરો"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ડિફૉલ્ટ રંગનો વિકલ્પ"</string>

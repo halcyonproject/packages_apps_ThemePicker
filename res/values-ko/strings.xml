@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"기본 보통 테마"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"기본 활기 테마"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"기본 표현 테마"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"뉴트럴"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"소프트"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"브라이트"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"볼드"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"테마 스타일 변경 적용"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"테마 스타일 변경 실행취소"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"기본 색상 옵션"</string>
