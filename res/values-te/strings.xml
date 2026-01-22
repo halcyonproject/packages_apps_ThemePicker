@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"ప్రాథమిక న్యూట్రల్ రూపం"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"ప్రాథమిక వైబ్రెంట్ రూపం"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"ప్రాథమిక ఎక్స్‌ప్రెషిప్ రూపం"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"మధ్యస్థం"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"సాఫ్ట్"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"బ్రైట్"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"బోల్డ్"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"థీమ్ స్టయిల్ మార్పును వర్తింపజేయండి"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"థీమ్ స్టయిల్ మార్పును రద్దు చేయండి"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ఆటోమేటిక్ సెట్టింగ్ రంగు ఆప్షన్"</string>

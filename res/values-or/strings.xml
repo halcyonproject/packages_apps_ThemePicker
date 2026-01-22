@@ -171,6 +171,10 @@
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"ପ୍ରାଥମିକ ନ୍ୟୁଟ୍ରାଲ ଥିମ"</string>
     <string name="content_description_vibrant_color_option" msgid="2230249305878632821">"ପ୍ରାଥମିକ ଭାଇବ୍ରାଣ୍ଟ ଥିମ"</string>
     <string name="content_description_expressive_color_option" msgid="6081295313456341282">"ପ୍ରାଥମିକ ଏକ୍ସପ୍ରେସିଭ ଥିମ"</string>
+    <string name="color_variant_option_label_neutral" msgid="4412085293640372330">"ନ୍ୟୁଟ୍ରାଲ"</string>
+    <string name="color_variant_option_label_soft" msgid="5073290767548293847">"ସଫ୍ଟ"</string>
+    <string name="color_variant_option_label_bright" msgid="3764688816491282376">"ଉଜ୍ଜ୍ୱଳ"</string>
+    <string name="color_variant_option_label_bold" msgid="7239402636388565778">"ବୋଲ୍ଡ କରନ୍ତୁ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"ଥିମ ଷ୍ଟାଇଲରେ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନକୁ ଲାଗୁ କରନ୍ତୁ"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"ଥିମ ଷ୍ଟାଇଲରେ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନକୁ ଅନଡୁ କରନ୍ତୁ"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ଡିଫଲ୍ଟ ରଙ୍ଗର ବିକଳ୍ପ"</string>
