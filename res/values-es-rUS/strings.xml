@@ -140,7 +140,7 @@
     <string name="wallpaper_color_title" msgid="5687965239180986458">"Color del fondo de pantalla"</string>
     <string name="preset_color_tab" msgid="3133391839341329314">"Colores básicos"</string>
     <string name="preset_color_tab_2" msgid="1444107326712562538">"Otros colores"</string>
-    <string name="preset_color_subheader" msgid="8230588536141279371">"Elige un color para tus íconos, tu reloj y mucho más"</string>
+    <string name="preset_color_subheader" msgid="8230588536141279371">"Elige un color para tus íconos, tu reloj y más"</string>
     <string name="color_changed" msgid="7029571720331641235">"Se cambió el color"</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"Dinámico"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"Colores del sistema"</string>
