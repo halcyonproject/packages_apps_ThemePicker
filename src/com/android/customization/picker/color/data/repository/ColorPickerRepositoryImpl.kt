@@ -237,10 +237,17 @@ constructor(
     override val styleList: List<Int> = colorProvider.styleList
 
     private fun getSettingsColorOption(): ColorOption {
-        val overlays = colorManager.currentOverlays
-        val styleOrNull = colorManager.currentStyle
-        val style = styleOrNull?.let { ThemeStyle.valueOf(it) } ?: ThemeStyle.TONAL_SPOT
-        val source = colorManager.currentColorSource
+        val overlays: Map<String, String> = colorManager.currentOverlays
+        val style: Int =
+            colorManager.currentStyle?.let {
+                try {
+                    ThemeStyle.valueOf(it)
+                } catch (e: IllegalArgumentException) {
+                    Log.e(TAG, "Failed to parse settings style", e)
+                    ThemeStyle.TONAL_SPOT
+                }
+            } ?: ThemeStyle.TONAL_SPOT
+        val source: String? = colorManager.currentColorSource
         val builder = ColorOptionImpl.Builder()
         builder.source = source
         builder.style = style
