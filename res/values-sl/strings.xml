@@ -41,7 +41,7 @@
     <string name="clock_color_teal" msgid="7499223425741344251">"Zelenomodra"</string>
     <string name="clock_size" msgid="5028923902364418263">"Velikost"</string>
     <string name="clock_size_dynamic" msgid="1023930312455061642">"Dinamična"</string>
-    <string name="clock_size_dynamic_description" msgid="2776620745774561662">"Velikost ure se spremeni glede na vsebino zaklenjenega zaslona."</string>
+    <string name="clock_size_dynamic_description" msgid="2776620745774561662">"Velikost ure se spremeni glede na vsebino zaklenjenega zaslona"</string>
     <string name="clock_size_large" msgid="3143248715744138979">"Velika"</string>
     <string name="clock_size_large_description" msgid="1171001745473029918">"Prikazano, ko obvestila niso vidna"</string>
     <string name="clock_size_small" msgid="2280449912094164133">"Majhna"</string>
