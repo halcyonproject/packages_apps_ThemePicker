@@ -21,6 +21,7 @@ import android.stats.style.StyleEnums
 import androidx.core.graphics.ColorUtils
 import androidx.test.filters.SmallTest
 import com.android.customization.module.logging.TestThemesUserEventLogger
+import com.android.customization.picker.clock.ai.DefaultClockStyleViewUtil
 import com.android.customization.picker.clock.data.repository.FakeClockPickerRepository
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
 import com.android.customization.picker.clock.shared.ClockSize
@@ -87,6 +88,7 @@ class ClockPickerViewModelTest {
             )
         val colorPickerRepository = FakeColorPickerRepository(baseFlags = BaseFlags.get(context))
         val colorPickerInteractor = ColorPickerInteractor(repository = colorPickerRepository)
+        val clockStyleViewUtil = DefaultClockStyleViewUtil()
         colorMap = ClockColorViewModel.getPresetColorMap(context.resources)
         underTest =
             ClockPickerViewModel(
@@ -97,6 +99,7 @@ class ClockPickerViewModelTest {
                 logger = logger,
                 backgroundDispatcher = testDispatcher,
                 viewModelScope = testScope,
+                clockStyleViewUtil = clockStyleViewUtil,
             )
 
         testScope.launch {

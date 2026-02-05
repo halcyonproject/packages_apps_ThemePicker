@@ -32,10 +32,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.customization.picker.clock.model.ClockStyleModel
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockFloatingSheetHeightsViewModel
-import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.ClockStyleModel
 import com.android.customization.picker.clock.ui.viewmodel.ClockPickerViewModel.Tab
 import com.android.customization.picker.color.ui.binder.ColorOptionIconBinder
 import com.android.customization.picker.color.ui.view.ColorOptionIconView
