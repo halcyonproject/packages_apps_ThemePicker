@@ -59,7 +59,7 @@
     <string name="app_icons_description" msgid="6616831372060467315">"<xliff:g id="ID_1">%1$s</xliff:g>, <xliff:g id="ID_2">%2$s</xliff:g>"</string>
     <string name="app_icons_theme_default" msgid="4773453045331265070">"predeterminada"</string>
     <string name="app_icons_theme_themed" msgid="6539464818104931856">"temàtica"</string>
-    <string name="app_icons_style_default" msgid="2568057806991656437">"Predeterminat"</string>
+    <string name="app_icons_style_default" msgid="2568057806991656437">"Per defecte"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Minimalista"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Forma"</string>
     <string name="app_icons_label" msgid="394863025501627247">"Etiqueta"</string>
@@ -146,8 +146,8 @@
     <string name="color_picker_title" msgid="6666830057938082864">"Colors del sistema"</string>
     <string name="system_colors_title" msgid="8011422955674152731">"Colors"</string>
     <string name="screen_saver_title" msgid="4178511806237734356">"Estalvi de pantalla"</string>
-    <string name="keyguard_slot_name_bottom_start" msgid="8747677880200629719">"Drecera de l\'esquerra"</string>
-    <string name="keyguard_slot_name_bottom_end" msgid="2525487375680217083">"Drecera de la dreta"</string>
+    <string name="keyguard_slot_name_bottom_start" msgid="8747677880200629719">"Drecera esquerra"</string>
+    <string name="keyguard_slot_name_bottom_end" msgid="2525487375680217083">"Drecera dreta"</string>
     <string name="keyguard_affordance_none" msgid="1751643933430782312">"Cap"</string>
     <string name="keyguard_affordance_enablement_dialog_headline" msgid="365379085932610314">"La drecera no es pot afegir"</string>
     <string name="keyguard_affordance_enablement_dialog_action_template" msgid="8117011931337357438">"Obre <xliff:g id="APPNAME">%1$s</xliff:g>"</string>

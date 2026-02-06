@@ -136,7 +136,7 @@
     <string name="beta_title" msgid="8703819523760746458">"Beta 版"</string>
     <string name="gird_picker_entry_content_description" msgid="9087651470212293439">"更改应用网格"</string>
     <string name="wallpaper_color_tab" msgid="1447926591721403840">"壁纸颜色"</string>
-    <string name="wallpaper_color_subheader" msgid="4044464573669965670">"图标、文字等元素自动采用壁纸配色"</string>
+    <string name="wallpaper_color_subheader" msgid="4044464573669965670">"图标、文字等元素自动采用壁纸颜色"</string>
     <string name="wallpaper_color_title" msgid="5687965239180986458">"壁纸颜色"</string>
     <string name="preset_color_tab" msgid="3133391839341329314">"基本颜色"</string>
     <string name="preset_color_tab_2" msgid="1444107326712562538">"其他颜色"</string>

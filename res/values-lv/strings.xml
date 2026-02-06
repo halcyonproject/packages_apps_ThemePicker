@@ -41,7 +41,7 @@
     <string name="clock_color_teal" msgid="7499223425741344251">"Zilganzaļa"</string>
     <string name="clock_size" msgid="5028923902364418263">"Lielums"</string>
     <string name="clock_size_dynamic" msgid="1023930312455061642">"Dinamisks"</string>
-    <string name="clock_size_dynamic_description" msgid="2776620745774561662">"Pulksteņa lielums mainās atkarībā no bloķēšanas ekrāna satura."</string>
+    <string name="clock_size_dynamic_description" msgid="2776620745774561662">"Pulksteņa lielums mainās atkarībā no bloķēšanas ekrāna satura"</string>
     <string name="clock_size_large" msgid="3143248715744138979">"Liels"</string>
     <string name="clock_size_large_description" msgid="1171001745473029918">"Tiek rādīts, kad nav redzami paziņojumi"</string>
     <string name="clock_size_small" msgid="2280449912094164133">"Mazs"</string>

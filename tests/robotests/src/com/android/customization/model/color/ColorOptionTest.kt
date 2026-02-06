@@ -149,11 +149,15 @@ class ColorOptionTest {
     ): ColorOptionImpl {
         val overlays =
             if (isDefault) {
-                HashMap()
+                emptyMap()
             } else {
                 mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "fake_color")
             }
+        val json = JSONObject(overlays).toString()
+        `when`(manager.storedOverlays).thenReturn(json)
         `when`(manager.currentOverlays).thenReturn(overlays)
+        `when`(manager.currentColorSource).thenReturn(source)
+        `when`(manager.currentStyle).thenReturn(ThemeStyle.toString(ThemeStyle.TONAL_SPOT))
         return ColorOptionImpl(
             title = "fake color",
             source = source,
@@ -226,6 +230,7 @@ class ColorOptionTest {
     fun wallpaperColorOption_isActive_default_emptyJson() {
         val colorOption = setUpWallpaperColorOption(isDefault = true)
         `when`(manager.storedOverlays).thenReturn("")
+        `when`(manager.currentOverlays).thenReturn(emptyMap())
 
         assertThat(colorOption.isActive(manager)).isTrue()
     }
@@ -235,7 +240,10 @@ class ColorOptionTest {
     fun wallpaperColorOption_isActive_default_nonEmptyJson() {
         val colorOption = setUpWallpaperColorOption(isDefault = true)
 
-        `when`(manager.storedOverlays).thenReturn("{non-empty-json}")
+        val overlays = mapOf("some_package" to "some_value", "other_package" to "other_value")
+        val json = JSONObject(overlays).toString()
+        `when`(manager.storedOverlays).thenReturn(json)
+        `when`(manager.currentOverlays).thenReturn(overlays)
 
         // Should still be Active because overlays is empty
         assertThat(colorOption.isActive(manager)).isTrue()
@@ -320,8 +328,8 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
-    fun isActive_default_emptyJsonInManager_themeServiceEnabled() {
-        val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
+    fun isActive_noOverlayInManager_themeServiceEnabled() {
+        val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = false)
         `when`(manager.storedOverlays).thenReturn("")
         `when`(manager.currentOverlays).thenReturn(mapOf())
 
@@ -330,9 +338,43 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
-    fun isActive_default_nonEmptyJsonInManager_themeServiceEnabled() {
+    fun isActive_default_noOverlayInManager_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
-        val overlays = mapOf("some_package" to "some_color", "other_package" to "other_color")
+        `when`(manager.storedOverlays).thenReturn("")
+        `when`(manager.currentOverlays).thenReturn(mapOf())
+
+        assertThat(colorOption.isActive(manager)).isTrue()
+    }
+
+    @Test
+    @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    fun isActive_default_overlayMissingColorSettings_themeServiceEnabled() {
+        val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
+        val overlays = mapOf("some_package" to "some_value", "other_package" to "other_value")
+        val json = JSONObject(overlays).toString()
+        `when`(manager.storedOverlays).thenReturn(json)
+        `when`(manager.currentOverlays).thenReturn(overlays)
+
+        assertThat(colorOption.isActive(manager)).isTrue()
+    }
+
+    @Test
+    @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    fun isActive_differentColorSettingsInManager_themeServiceEnabled() {
+        val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = false)
+        val overlays = mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "other_color")
+        val json = JSONObject(overlays).toString()
+        `when`(manager.storedOverlays).thenReturn(json)
+        `when`(manager.currentOverlays).thenReturn(overlays)
+
+        assertThat(colorOption.isActive(manager)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    fun isActive_default_differentColorSettingsInManager_themeServiceEnabled() {
+        val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
+        val overlays = mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "other_color")
         val json = JSONObject(overlays).toString()
         `when`(manager.storedOverlays).thenReturn(json)
         `when`(manager.currentOverlays).thenReturn(overlays)
