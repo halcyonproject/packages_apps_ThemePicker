@@ -26,6 +26,7 @@ import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_HOME
 import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_LOCK
 import com.android.customization.model.color.ColorProviderUtil.COLOR_SOURCE_PRESET
 import com.android.customization.picker.color.shared.model.ColorType
+import com.android.wallpaper.Flags.FLAG_COLOR_PICKER_UPDATE_FLAG
 import com.google.common.truth.Truth.assertThat
 import org.json.JSONObject
 import org.junit.Rule
@@ -146,6 +147,8 @@ class ColorOptionTest {
     private fun setUpWallpaperColorOption(
         isDefault: Boolean,
         source: String = "some_source",
+        @ThemeStyle.Type style: Int = ThemeStyle.TONAL_SPOT,
+        isColorPickerUpdateEnabled: Boolean = false,
     ): ColorOptionImpl {
         val overlays =
             if (isDefault) {
@@ -162,8 +165,9 @@ class ColorOptionTest {
             title = "fake color",
             source = source,
             seedColor = 12345,
-            style = ThemeStyle.TONAL_SPOT,
+            style = style,
             isThemeServiceEnabled = false,
+            isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
             overlayPackages = overlays,
             isDefault = isDefault,
             index = 0,
@@ -177,6 +181,7 @@ class ColorOptionTest {
         source: String = "some_source",
         overlays: Map<String, String?> = mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "fake_color"),
         @ThemeStyle.Type style: Int = ThemeStyle.TONAL_SPOT,
+        isColorPickerUpdateEnabled: Boolean = false,
     ): ColorOptionImpl {
         val json = JSONObject(overlays).toString()
         `when`(manager.storedOverlays).thenReturn(json)
@@ -189,6 +194,7 @@ class ColorOptionTest {
             seedColor = 12345,
             style = style,
             isThemeServiceEnabled = true,
+            isColorPickerUpdateEnabled = isColorPickerUpdateEnabled,
             overlayPackages = overlays,
             isDefault = isDefault,
             index = 0,
@@ -262,7 +268,100 @@ class ColorOptionTest {
     }
 
     @Test
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun isActive_default_differentStyle() {
+        val colorOption = setUpWallpaperColorOption(isDefault = true, style = ThemeStyle.EXPRESSIVE)
+        `when`(manager.currentStyle).thenReturn(ThemeStyle.TONAL_SPOT.toString())
+
+        // Should not be Active because style is different
+        assertThat(colorOption.isActive(manager)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    @DisableFlags(FLAG_ENABLE_THEME_SERVICE)
+    fun isActive_default_differentStyle_colorPickerUpdate() {
+        val colorOption =
+            setUpWallpaperColorOption(
+                isDefault = true,
+                style = ThemeStyle.EXPRESSIVE,
+                isColorPickerUpdateEnabled = true,
+            )
+        `when`(manager.currentStyle).thenReturn(ThemeStyle.TONAL_SPOT.toString())
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isActive(manager)).isTrue()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun simplifiedColorOption_isEquivalent_differentSource() {
+        val colorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+        val otherColorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "other_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isEquivalent(otherColorOption)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun simplifiedColorOption_isEquivalent_differentSeedColor() {
+        val colorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+        val otherColorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 54321,
+                defaultStyle = 1,
+            )
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isEquivalent(otherColorOption)).isFalse()
+    }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG, FLAG_ENABLE_THEME_SERVICE)
+    fun simplifiedColorOption_isEquivalent_differentStyle() {
+        val colorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 1,
+            )
+        val otherColorOption =
+            ColorOptionImpl.buildSimplifiedSeedOption(
+                title = "some_title",
+                source = "some_source",
+                seedColor = 12345,
+                defaultStyle = 2,
+            )
+
+        // Should be Active because style is no longer compared in color picker update
+        assertThat(colorOption.isEquivalent(otherColorOption)).isTrue()
+    }
+
+    @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = false)
 
@@ -271,6 +370,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_default_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
 
@@ -279,6 +379,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_noSourceInManager_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = false)
         `when`(manager.currentColorSource).thenReturn(null)
@@ -288,6 +389,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_differentSourceInManager_themeServiceEnabled() {
         val colorOption =
             setUpThemeServiceColorOptionAndManager(isDefault = false, source = "some_source")
@@ -298,6 +400,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_noStyleInManager_tonalSpotOption_themeServiceEnabled() {
         val colorOption =
             setUpThemeServiceColorOptionAndManager(isDefault = false, style = ThemeStyle.TONAL_SPOT)
@@ -308,6 +411,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_noStyleInManager_nonTonalSpotOption_themeServiceEnabled() {
         val colorOption =
             setUpThemeServiceColorOptionAndManager(isDefault = false, style = ThemeStyle.VIBRANT)
@@ -318,6 +422,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_differentStyleInManager_themeServiceEnabled() {
         val colorOption =
             setUpThemeServiceColorOptionAndManager(isDefault = false, style = ThemeStyle.VIBRANT)
@@ -327,7 +432,22 @@ class ColorOptionTest {
     }
 
     @Test
+    @EnableFlags(FLAG_ENABLE_THEME_SERVICE, FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun isActive_differentStyleInManager_themeServiceAndColorPickerUpdateEnabled() {
+        val colorOption =
+            setUpThemeServiceColorOptionAndManager(
+                isDefault = false,
+                style = ThemeStyle.VIBRANT,
+                isColorPickerUpdateEnabled = true,
+            )
+        `when`(manager.currentStyle).thenReturn(ThemeStyle.toString(ThemeStyle.SPRITZ))
+
+        assertThat(colorOption.isActive(manager)).isTrue()
+    }
+
+    @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_noOverlayInManager_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = false)
         `when`(manager.storedOverlays).thenReturn("")
@@ -338,6 +458,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_default_noOverlayInManager_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
         `when`(manager.storedOverlays).thenReturn("")
@@ -348,6 +469,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_default_overlayMissingColorSettings_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
         val overlays = mapOf("some_package" to "some_value", "other_package" to "other_value")
@@ -360,6 +482,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_differentColorSettingsInManager_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = false)
         val overlays = mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "other_color")
@@ -372,6 +495,7 @@ class ColorOptionTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_THEME_SERVICE)
+    @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun isActive_default_differentColorSettingsInManager_themeServiceEnabled() {
         val colorOption = setUpThemeServiceColorOptionAndManager(isDefault = true)
         val overlays = mapOf(OVERLAY_CATEGORY_SYSTEM_PALETTE to "other_color")
