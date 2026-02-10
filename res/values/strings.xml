@@ -713,9 +713,17 @@
     <string name="clock_face_width">Clock face width</string>
 
     <!--
-    Accessibility announcement template for a numerical range.
-    %1$d is the current value, %1$d is the minimum value, %2$d is the maximum value.
-    Example: "value 3, range from 1 to 7". [CHAR LIMIT=none]
+    Accessibility announcement template for a numerical range for an enabled slider.
+    %1$d is the current value, %2$d is the minimum value, %3$d is the maximum value.
+    Example: "enabled 3, range from 1 to 7". [CHAR LIMIT=none]
     -->
-    <string name="slider_state_description_template">%1$d, range from %2$d to %3$d</string>
+    <string name="enabled_slider_state_description_template">%1$d, range from %2$d to %3$d</string>
+
+    <!--
+    Accessibility announcement template for a numerical range for a disabled slider.
+    %1$d is the current value, %2$d is the minimum value, %3$d is the maximum value.
+    Example: "disabled 3, range from 1 to 7". [CHAR LIMIT=none]
+    -->
+    <string name="disabled_slider_state_description_template">disabled, %1$d, range from %2$d to %3$d</string>
+
 </resources>

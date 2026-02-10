@@ -205,10 +205,16 @@ object ClockFloatingSheetBinder {
             valueFrom = ClockMetadataModel.MIN_COLOR_TONE_PROGRESS.toFloat()
             valueTo = ClockMetadataModel.MAX_COLOR_TONE_PROGRESS.toFloat()
             labelBehavior = LabelFormatter.LABEL_GONE
-            addOnChangeListener { _, value, fromUser ->
+            addOnChangeListener { slider, value, fromUser ->
                 if (fromUser) {
                     viewModel.onSliderProgressChanged(value.roundToInt())
                 }
+                updateAccessibilityStateDescription(
+                    slider = slider,
+                    appContext = slider.context,
+                    isEnabled = slider.isEnabled,
+                    hasValueOffset = false,
+                )
             }
             addOnSliderTouchListener(
                 object : OnSliderTouchListener {
@@ -469,6 +475,12 @@ object ClockFloatingSheetBinder {
                         clockColorSlider.isEnabled = isEnabled
                         clockColorSlider.alpha =
                             if (isEnabled) SLIDER_ENABLED_ALPHA else SLIDER_DISABLED_ALPHA
+                        updateAccessibilityStateDescription(
+                            slider = clockColorSlider,
+                            appContext = clockColorSlider.context,
+                            isEnabled = isEnabled,
+                            hasValueOffset = false,
+                        )
                     }
                 }
 
@@ -550,8 +562,10 @@ object ClockFloatingSheetBinder {
                         axisPresetSlider.stepSize = axisPresetsSliderViewModel.stepSize
                         axisPresetSlider.clearOnSliderTouchListeners()
                         updateAccessibilityStateDescription(
-                            axisPresetSlider,
-                            axisPresetSlider.context,
+                            slider = axisPresetSlider,
+                            appContext = axisPresetSlider.context,
+                            isEnabled = true,
+                            hasValueOffset = true,
                         )
                         axisPresetSlider.addOnSliderTouchListener(
                             object : OnSliderTouchListener {
@@ -568,12 +582,22 @@ object ClockFloatingSheetBinder {
                         )
                         axisPresetSlider.clearOnChangeListeners()
                         axisPresetSlider.addOnChangeListener { slider, value, fromUser ->
-                            updateAccessibilityStateDescription(slider, slider.context)
+                            updateAccessibilityStateDescription(
+                                slider = slider,
+                                appContext = slider.context,
+                                isEnabled = true,
+                                hasValueOffset = true,
+                            )
 
                             if (optionsViewModel.isAccessibilityEnabled(slider.context)) {
                                 axisPresetsSliderViewModel.onSliderStopTrackingTouch(value)
                             }
-                            updateAccessibilityStateDescription(axisPresetSlider, slider.context)
+                            updateAccessibilityStateDescription(
+                                slider = axisPresetSlider,
+                                appContext = slider.context,
+                                isEnabled = true,
+                                hasValueOffset = true,
+                            )
                         }
                     }
                 }
@@ -585,18 +609,26 @@ object ClockFloatingSheetBinder {
         }
     }
 
-    private fun updateAccessibilityStateDescription(slider: Slider, appContext: Context) {
-        val currentValueInt = Math.round(slider.value + 1.0f)
-        val minInt = (slider.valueFrom + 1.0f).toInt()
-        val maxInt = (slider.valueTo + 1.0f).toInt()
+    private fun updateAccessibilityStateDescription(
+        slider: Slider,
+        appContext: Context,
+        isEnabled: Boolean,
+        hasValueOffset: Boolean,
+    ) {
+        val offset = if (hasValueOffset) 1f else 0f
+        val currentValueInt = Math.round(slider.value + offset)
+        val minInt = (slider.valueFrom + offset).toInt()
+        val maxInt = (slider.valueTo + offset).toInt()
+
+        val stateDescription =
+            if (isEnabled) {
+                R.string.enabled_slider_state_description_template
+            } else {
+                R.string.disabled_slider_state_description_template
+            }
 
         slider.stateDescription =
-            appContext.getString(
-                R.string.slider_state_description_template,
-                currentValueInt,
-                minInt,
-                maxInt,
-            )
+            appContext.getString(stateDescription, currentValueInt, minInt, maxInt)
     }
 
     private fun createClockStyleOptionItemAdapter(
