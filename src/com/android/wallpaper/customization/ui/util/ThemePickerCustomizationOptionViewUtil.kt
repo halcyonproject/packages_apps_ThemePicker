@@ -21,6 +21,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewStub
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.compose.ui.platform.ComposeView
@@ -213,6 +214,7 @@ constructor(
         val isComposeRefactorEnabled = BaseFlags.get(context).isComposeRefactorEnabled()
         val isColorPickerUpdateEnabled = BaseFlags.get(context).isColorPickerUpdateEnabled()
         val isColorPickerComposeEnabled = BaseFlags.get(context).isColorPickerComposeEnabled()
+        val isDesktopUi: Boolean = BaseFlags.get(context).shouldShowDesktopUi(context)
         val isKeyguardQuickAffordanceEnabled =
             BaseFlags.get(context).isKeyguardQuickAffordanceEnabled(bottomSheetContainer.context)
         return buildMap {
@@ -221,6 +223,15 @@ constructor(
                 CLOCK,
                 inflateFloatingSheet(CLOCK, bottomSheetContainer, layoutInflater).also {
                     bottomSheetContainer.addView(it)
+                    val clockColorContentStub: ViewStub =
+                        it.requireViewById(R.id.clock_color_content_stub)
+                    clockColorContentStub.layoutResource =
+                        if (isDesktopUi) {
+                            R.layout.floating_sheet_clock_color_desktop_content
+                        } else {
+                            R.layout.floating_sheet_clock_color_content
+                        }
+                    clockColorContentStub.inflate()
                 },
             )
             if (isKeyguardQuickAffordanceEnabled) {
