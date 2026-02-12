@@ -816,9 +816,10 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     combine(
                             viewModel.customizationOptionsViewModel.selectedOption,
                             clockPickerViewModel.onClockFaceClicked,
-                            ::Pair,
+                            clockPickerViewModel.previewingClockPresetIndexedStyle,
+                            ::Triple,
                         )
-                        .collect { (selectedOption, onClockFaceClicked) ->
+                        .collect { (selectedOption, onClockFaceClicked, clockPresetIndexedStyle) ->
                             if (
                                 selectedOption == ThemePickerLockCustomizationOption.CLOCK &&
                                     onClockFaceClicked != null
@@ -831,8 +832,17 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                                 clockFaceClickDelegateView.isVisible = false
                                 clockFaceClickDelegateView.setOnClickListener(null)
                             }
+                            val clockStyle =
+                                if (clockPresetIndexedStyle?.groupIndex == 0) {
+                                    context.getString(R.string.clock_style_round_clock)
+                                } else {
+                                    context.getString(R.string.clock_style_sharp_clock)
+                                }
                             clockFaceClickDelegateView.contentDescription =
-                                context.getString(R.string.clock_style_round_clock)
+                                context.getString(
+                                    R.string.change_clock_style_content_description,
+                                    clockStyle,
+                                )
                         }
                 }
 
