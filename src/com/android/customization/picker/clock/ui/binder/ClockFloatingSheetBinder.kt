@@ -248,6 +248,11 @@ object ClockFloatingSheetBinder {
 
         // Clock size
         val clockSizeContent: View = view.requireViewById(R.id.clock_floating_sheet_size_content)
+        val clockSizeDescription: TextView =
+            clockSizeContent.requireViewById(R.id.clock_style_clock_size_description)
+        if (isDesktopUi) {
+            clockSizeDescription.isVisible = false
+        }
         val clockSizeSwitch: MaterialSwitch =
             clockSizeContent.requireViewById(R.id.clock_style_clock_size_switch)
         ColorUpdateBinder.bind(
