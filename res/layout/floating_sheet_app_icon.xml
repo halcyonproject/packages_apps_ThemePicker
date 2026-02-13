@@ -47,6 +47,7 @@
             It's critical for any TextViews inside the included layout to have text.
             -->
             <include
+                android:id="@+id/icon_style_option_placeholder"
                 layout="@layout/icon_style_option2"
                 android:visibility="invisible" />
 
