@@ -111,8 +111,14 @@
     <!-- Description for clock font editor axis revert button. [CHAR LIMIT=NONE] -->
     <string name="clock_font_editor_revert">Undo clock font changes</string>
 
-    <!-- Description for a clock style setting that toggles the clock font between one with rounded corners and one without. [CHAR LIMIT=NONE] -->
+    <!-- Description for a round clock style. [CHAR LIMIT=NONE] -->
     <string name="clock_style_round_clock">Round clock</string>
+
+    <!-- Description for a clock style setting for a clock font with sharp corners. [CHAR LIMIT=NONE] -->
+    <string name="clock_style_sharp_clock">Sharp clock</string>
+
+    <!-- Content description for the clock face to announce the current style and the action to change it. [CHAR LIMIT=NONE] -->
+    <string name="change_clock_style_content_description"><xliff:g name="clock_style" example="Round clock">%1$s</xliff:g>. Tap to change clock style.</string>
 
     <!-- Toast message to notify that the clock style is updated when they tap on the clock face. They can tap again to undo. [CHAR LIMIT=NONE] -->
     <string name="clock_style_update_toast">Style changed to <xliff:g name="font_name">%1$s</xliff:g>. Tap again to undo.</string>
@@ -713,9 +719,17 @@
     <string name="clock_face_width">Clock face width</string>
 
     <!--
-    Accessibility announcement template for a numerical range.
-    %1$d is the current value, %1$d is the minimum value, %2$d is the maximum value.
-    Example: "value 3, range from 1 to 7". [CHAR LIMIT=none]
+    Accessibility announcement template for a numerical range for an enabled slider.
+    %1$d is the current value, %2$d is the minimum value, %3$d is the maximum value.
+    Example: "enabled 3, range from 1 to 7". [CHAR LIMIT=none]
     -->
-    <string name="slider_state_description_template">%1$d, range from %2$d to %3$d</string>
+    <string name="enabled_slider_state_description_template">%1$d, range from %2$d to %3$d</string>
+
+    <!--
+    Accessibility announcement template for a numerical range for a disabled slider.
+    %1$d is the current value, %2$d is the minimum value, %3$d is the maximum value.
+    Example: "disabled 3, range from 1 to 7". [CHAR LIMIT=none]
+    -->
+    <string name="disabled_slider_state_description_template">disabled, %1$d, range from %2$d to %3$d</string>
+
 </resources>
