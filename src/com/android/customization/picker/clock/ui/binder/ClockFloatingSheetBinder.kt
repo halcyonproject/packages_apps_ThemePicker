@@ -19,7 +19,6 @@ package com.android.customization.picker.clock.ui.binder
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewStub
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.TextView
@@ -169,15 +168,8 @@ object ClockFloatingSheetBinder {
             lifecycleOwner = lifecycleOwner,
         )
 
-        val clockColorContentStub: ViewStub = view.requireViewById(R.id.clock_color_content_stub)
-        clockColorContentStub.layoutResource =
-            if (isDesktopUi) {
-                R.layout.floating_sheet_clock_color_desktop_content
-            } else {
-                R.layout.floating_sheet_clock_color_content
-            }
-        val clockColorContent: View = clockColorContentStub.inflate()
-
+        // Clock color
+        val clockColorContent: View = view.requireViewById(R.id.clock_floating_sheet_color_content)
         val clockColorAdapter =
             createClockColorOptionItemAdapter(
                 uiMode = view.resources.configuration.uiMode,
@@ -248,6 +240,11 @@ object ClockFloatingSheetBinder {
 
         // Clock size
         val clockSizeContent: View = view.requireViewById(R.id.clock_floating_sheet_size_content)
+        val clockSizeDescription: TextView =
+            clockSizeContent.requireViewById(R.id.clock_style_clock_size_description)
+        if (isDesktopUi) {
+            clockSizeDescription.isVisible = false
+        }
         val clockSizeSwitch: MaterialSwitch =
             clockSizeContent.requireViewById(R.id.clock_style_clock_size_switch)
         ColorUpdateBinder.bind(
