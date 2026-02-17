@@ -23,6 +23,8 @@ import com.android.customization.module.CustomizationInjector
 import com.android.customization.module.CustomizationPreferences
 import com.android.customization.module.logging.TestThemesUserEventLogger
 import com.android.customization.module.logging.ThemesUserEventLogger
+import com.android.customization.picker.clock.ai.ClockStyleViewUtil
+import com.android.customization.picker.clock.ai.DefaultClockStyleViewUtil
 import com.android.customization.picker.clock.data.repository.ClockPickerRepository
 import com.android.customization.picker.clock.data.repository.ClockPickerRepositoryImpl
 import com.android.customization.picker.clock.data.repository.ClockRegistryProvider
@@ -180,6 +182,10 @@ abstract class ThemePickerTestModule {
     ): CuratedPhotosInteractor
 
     @Binds @Singleton abstract fun bindInjector(impl: TestCustomizationInjector): Injector
+
+    @Binds
+    @Singleton
+    abstract fun bindClockStyleViewUtil(impl: DefaultClockStyleViewUtil): ClockStyleViewUtil
 
     @Binds
     @Singleton

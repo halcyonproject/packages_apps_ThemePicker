@@ -23,6 +23,8 @@ import com.android.customization.module.DefaultCustomizationPreferences
 import com.android.customization.module.ThemePickerInjector
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.module.logging.ThemesUserEventLoggerImpl
+import com.android.customization.picker.clock.ai.ClockStyleViewUtil
+import com.android.customization.picker.clock.ai.DefaultClockStyleViewUtil
 import com.android.customization.picker.clock.data.repository.ClockPickerRepository
 import com.android.customization.picker.clock.data.repository.ClockPickerRepositoryImpl
 import com.android.customization.picker.clock.data.repository.ClockRegistryProvider
@@ -261,6 +263,10 @@ abstract class ThemePickerAppModule {
     abstract fun bindThirdPartyLiveWallpaperModelFactory(
         impl: DefaultThirdPartyLiveWallpaperModelFactory
     ): ThirdPartyLiveWallpaperModelFactory
+
+    @Binds
+    @Singleton
+    abstract fun bindClockStyleViewUtil(impl: DefaultClockStyleViewUtil): ClockStyleViewUtil
 
     companion object {
 
