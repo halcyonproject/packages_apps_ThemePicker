@@ -49,6 +49,10 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"ಕ್ಲಾಕ್ ಫಾಂಟ್ ಬದಲಾವಣೆಗಳನ್ನು ಅನ್ವಯಿಸಿ"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"ಕ್ಲಾಕ್ ಫಾಂಟ್ ಬದಲಾವಣೆಗಳನ್ನು ರದ್ದುಗೊಳಿಸಿ"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"ಗೋಲಾಕಾರದ ಗಡಿಯಾದ"</string>
+    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
+    <skip />
+    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
+    <skip />
     <string name="clock_style_update_toast" msgid="6933583129162805444">"ಶೈಲಿಯನ್ನು <xliff:g id="ID_1">%1$s</xliff:g> ಗೆ ಬದಲಾಯಿಸಲಾಗಿದೆ. ರದ್ದುಗೊಳಿಸಲು ಮತ್ತೊಮ್ಮೆ ಟ್ಯಾಪ್ ಮಾಡಿ."</string>
     <string name="clock_style_round" msgid="261319982647730366">"ಸುತ್ತು"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"ಚೂಪಾಗಿರುವ"</string>
@@ -183,5 +187,8 @@
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"ಬೇರೊಂದು ಕ್ಲಾಕ್ ಫೇಸ್ ಅನ್ನು ಆಯ್ಕೆಮಾಡಲು ಬಲಕ್ಕೆ ಸ್ವೈಪ್ ಮಾಡಿ"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"ಕಸ್ಟಮ್ ಕ್ಲಾಕ್‌ಗಳು"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"ಗಡಿಯಾರದ ಮುಖದ ಅಗಲ"</string>
-    <string name="slider_state_description_template" msgid="1028160527998877233">"%1$d, %2$d ರಿಂದ %3$d ನ ಶ್ರೇಣಿಯಲ್ಲಿದೆ"</string>
+    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
+    <skip />
+    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
+    <skip />
 </resources>
