@@ -678,6 +678,13 @@
     <string name="color_variant_editor_revert">Undo theme style change</string>
 
     <!--
+    Description shown in the freeform color editor of the system colors setting, which enables users
+    to select a hue and tone to create a custom system color.
+    [CHAR LIMIT=55].
+    -->
+    <string name="color_freeform_editor_description">Select a color</string>
+
+    <!--
     Accessibility string for a button that allows the user to select the default color for their
     lock screen clock on the device. This is shown next to other buttons that allow the user to
     select from a set of custom colors.

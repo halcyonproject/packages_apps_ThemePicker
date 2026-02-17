@@ -41,6 +41,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -130,6 +132,11 @@ fun ColorFloatingSheet(
                                     ColorPickerViewModel.Screen.VARIANT_PICKER
                                 )
                             },
+                            navigateToFreeformPicker = {
+                                colorPickerViewModel.setScreen(
+                                    ColorPickerViewModel.Screen.FREEFORM_PICKER
+                                )
+                            },
                             modifier = modifier,
                         )
                     ColorPickerViewModel.Screen.VARIANT_PICKER ->
@@ -141,6 +148,19 @@ fun ColorFloatingSheet(
                             onClick = colorPickerViewModel::onStyleOptionClick,
                             onCancel = colorPickerViewModel::cancelStyleOptionSelection,
                             onConfirm = colorPickerViewModel::confirmStyleOptionSelection,
+                            navigateToLanding = {
+                                colorPickerViewModel.setScreen(ColorPickerViewModel.Screen.LANDING)
+                            },
+                            modifier = modifier,
+                        )
+                    ColorPickerViewModel.Screen.FREEFORM_PICKER ->
+                        FreeformColorPicker(
+                            onCancel = {
+                                // TODO (b/441279631): enable selecting & cancelling freeform color
+                            },
+                            onConfirm = {
+                                // TODO (b/441279631): enable selecting & cancelling freeform color
+                            },
                             navigateToLanding = {
                                 colorPickerViewModel.setScreen(ColorPickerViewModel.Screen.LANDING)
                             },
@@ -160,6 +180,7 @@ fun ColorFloatingSheetLanding(
     colorSeedOptions: Map<ColorType, List<ColorOptionViewModel>>,
     selectedColorSeedKey: String?,
     navigateToVariantPicker: () -> Unit,
+    navigateToFreeformPicker: () -> Unit,
     modifier: Modifier,
 ) {
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
@@ -192,24 +213,45 @@ fun ColorFloatingSheetLanding(
                 .clip(shape = RoundedCornerShape(28.dp))
                 .drawBehind { drawRect(colorScheme.surfaceBright) }
     ) {
-        Column(modifier = Modifier.padding(vertical = 20.dp)) {
-            AnimatedContent(
-                targetState = textResId,
-                transitionSpec = {
-                    fadeIn(
-                        animationSpec = tween(durationMillis = 200, delayMillis = 200)
-                    ) togetherWith fadeOut(animationSpec = tween(durationMillis = 200))
-                },
-            ) { text ->
-                Text(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    text = stringResource(text),
-                    color = colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium,
-                )
+        Column(modifier = Modifier.padding(top = 16.dp, bottom = 20.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AnimatedContent(
+                    targetState = textResId,
+                    transitionSpec = {
+                        fadeIn(
+                            animationSpec = tween(durationMillis = 200, delayMillis = 200)
+                        ) togetherWith fadeOut(animationSpec = tween(durationMillis = 200))
+                    },
+                ) { text ->
+                    Text(
+                        text = stringResource(text),
+                        color = colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+
+                IconButton(
+                    modifier = Modifier.size(32.dp),
+                    onClick = navigateToFreeformPicker,
+                    colors =
+                        IconButtonDefaults.iconButtonColors(
+                            containerColor = colorScheme.surfaceDim,
+                            contentColor = colorScheme.onSurface,
+                        ),
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(R.drawable.ic_palette_filled_24px),
+                        contentDescription = "",
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             LazyRow(
                 state = lazyListState,

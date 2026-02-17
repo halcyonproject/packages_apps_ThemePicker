@@ -371,6 +371,7 @@ constructor(
     enum class Screen {
         LANDING,
         VARIANT_PICKER,
+        FREEFORM_PICKER,
     }
 
     private val _currentScreen = MutableStateFlow(Screen.LANDING)
