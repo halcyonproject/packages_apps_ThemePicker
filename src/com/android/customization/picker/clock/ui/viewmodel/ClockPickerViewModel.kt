@@ -196,32 +196,30 @@ constructor(
             .mapLatest { allClocks ->
                 // Delay to avoid the case that the full list of clocks is not initiated.
                 delay(CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
-                val allClockMap = allClocks.groupBy { it.axisPresetConfig != null }
+
+                val (hasAxisConfig, noAxisConfig) =
+                    allClocks.partition { it.axisPresetConfig != null }
+
                 buildList {
                     var index = 0
                     val customClockStyleThumbnail =
                         clockStyleViewUtil.getEntryPointOptionViewModel(context)
+
                     if (customClockStyleThumbnail != null) {
                         add(customClockStyleThumbnail)
                     }
-                    allClockMap[true]?.forEach {
+                    hasAxisConfig.forEach {
                         add(
                             it.toOption(
-                                resources = resources,
+                                resources,
                                 isBeforeDivider = customClockStyleThumbnail == null,
                                 index = index++,
                             )
                         )
                     }
 
-                    allClockMap[false]?.forEach {
-                        add(
-                            it.toOption(
-                                resources = resources,
-                                isBeforeDivider = false,
-                                index = index++,
-                            )
-                        )
+                    noAxisConfig.forEach {
+                        add(it.toOption(resources, isBeforeDivider = false, index = index++))
                     }
                 }
             }
