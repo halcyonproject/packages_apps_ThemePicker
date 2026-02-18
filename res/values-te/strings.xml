@@ -49,6 +49,10 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"క్లాక్ ఫాంట్ మార్పులను వర్తింపజేయండి"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"క్లాక్ ఫాంట్ మార్పులను చర్య రద్దు చేయండి"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"రౌండ్ క్లాక్"</string>
+    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
+    <skip />
+    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
+    <skip />
     <string name="clock_style_update_toast" msgid="6933583129162805444">"స్టయిల్ <xliff:g id="ID_1">%1$s</xliff:g>‌కు మారింది. చర్యను రద్దు చేయడానికి మళ్లీ ట్యాప్ చేయండి."</string>
     <string name="clock_style_round" msgid="261319982647730366">"రౌండ్"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"షార్ప్"</string>
@@ -183,5 +187,8 @@
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"వేరొక గడియార ముఖాన్ని ఎంచుకోవడానికి కుడి వైపునకు స్వైప్ చేయండి"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"అనుకూల గడియారాలు"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"గడియారం ముఖం వెడల్పు"</string>
-    <string name="slider_state_description_template" msgid="1028160527998877233">"%1$d, %2$d నుండి %3$d వరకు పరిధి"</string>
+    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
+    <skip />
+    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
+    <skip />
 </resources>
