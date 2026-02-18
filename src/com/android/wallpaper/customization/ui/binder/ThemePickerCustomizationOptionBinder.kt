@@ -80,9 +80,11 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 
 @Singleton
@@ -91,6 +93,7 @@ class ThemePickerCustomizationOptionsBinder
 constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationOptionsBinder) :
     CustomizationOptionsBinder {
 
+    @OptIn(FlowPreview::class)
     override fun bind(
         customizationOptionsData: CustomizationOptionsData,
         view: View,
@@ -496,7 +499,9 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
 
                     launch {
                         combine(
-                                optionsViewModel.colorPickerViewModel2.overridingColorOption,
+                                // Sample to reduce UI color updates during freeform slider updates
+                                optionsViewModel.colorPickerViewModel2.tempOverridingColorOption
+                                    .sample(100),
                                 optionsViewModel.colorPickerViewModel2.selectedColorOption,
                                 optionsViewModel.colorPickerViewModel2.overridingStyle,
                                 optionsViewModel.colorPickerViewModel2.selectedStyle,

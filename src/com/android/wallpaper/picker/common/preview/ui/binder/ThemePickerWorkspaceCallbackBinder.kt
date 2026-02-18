@@ -52,8 +52,10 @@ import com.android.wallpaper.picker.customization.ui.viewmodel.CustomizationOpti
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 @Singleton
@@ -68,6 +70,7 @@ constructor(
     private var lockScreenJob: Job? = null
     private var homeScreenJob: Job? = null
 
+    @OptIn(FlowPreview::class)
     override fun bind(
         workspaceCallback: Message,
         viewModel: CustomizationOptionsViewModel,
@@ -201,7 +204,11 @@ constructor(
                                 launch {
                                     combine(
                                             viewModel.colorPickerViewModel2.selectedColorOption,
-                                            viewModel.colorPickerViewModel2.overridingColorOption,
+                                            // Sample to reduce workspace updates during freeform
+                                            // slider updates
+                                            viewModel.colorPickerViewModel2
+                                                .tempOverridingColorOption
+                                                .debounce(200),
                                             viewModel.colorPickerViewModel2.overridingStyle,
                                             viewModel.darkModeViewModel.overridingIsDarkMode,
                                             ::Quadruple,

@@ -22,8 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -35,6 +33,8 @@ import com.android.themepicker.R
 /** UI for defining custom colors. */
 @Composable
 fun FreeformColorPicker(
+    hueSliderPosition: Float,
+    onHueChange: (Float) -> Unit,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
     navigateToLanding: () -> Unit,
@@ -57,9 +57,7 @@ fun FreeformColorPicker(
                 textAlign = TextAlign.Center,
             )
 
-            val hueSliderPosition = remember { mutableFloatStateOf(0f) }
             val huePhaseShift = -30f
-            val hue = (hueSliderPosition.floatValue + huePhaseShift).mod(360.0).toFloat()
             val hueColorList = buildList {
                 for (i in 0..360 step 30) {
                     add(
@@ -75,17 +73,7 @@ fun FreeformColorPicker(
                 brush = Brush.horizontalGradient(colors = hueColorList),
                 sliderPosition = hueSliderPosition,
                 valueRange = 0f..360f,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            val valueSliderPosition = remember { mutableFloatStateOf(0f) }
-            BrushSlider(
-                brush =
-                    Brush.horizontalGradient(
-                        colors = listOf(Color.hsv(hue, 0.3f, 0f), Color.hsv(hue, 0.3f, 1f))
-                    ),
-                sliderPosition = valueSliderPosition,
-                valueRange = 0f..1f,
+                onValueChange = onHueChange,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

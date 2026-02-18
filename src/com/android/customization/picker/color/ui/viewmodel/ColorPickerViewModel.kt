@@ -20,6 +20,7 @@ import android.content.theming.ThemeStyle
 import android.util.Log
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
+import com.android.customization.model.color.ColorProviderUtil.hueToColorOption
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
 import com.android.customization.picker.color.shared.model.ColorType
@@ -36,6 +37,8 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -44,13 +47,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 
 /** Models UI state for a color picker experience. */
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class ColorPickerViewModel
 @AssistedInject
 constructor(
@@ -58,20 +64,23 @@ constructor(
     private val colorUpdateViewModel: ColorUpdateViewModel,
     private val interactor: ColorPickerInteractor,
     private val logger: ThemesUserEventLogger,
-    private val baseFlags: BaseFlags,
+    baseFlags: BaseFlags,
     @Assisted private val viewModelScope: CoroutineScope,
 ) {
     val selectedColorOption = interactor.selectedColorOption
 
+    // The overriding color on the color picker landing screen
     private val _overridingColorOption = MutableStateFlow<ColorOption?>(null)
+    // The overriding color on the color picker landing screen
     val overridingColorOption = _overridingColorOption.asStateFlow()
+    // The color being previewed on the color picker landing screen
     val previewingColorOption =
         combine(overridingColorOption, selectedColorOption) { overriding, selected ->
                 overriding ?: selected
             }
             .distinctUntilChanged()
 
-    // Used in seed & variant picker
+    // Used in updated variant & freeform picker
     val previewingColorOptionKey = previewingColorOption.map { it?.getKey() }
 
     /**
@@ -82,6 +91,46 @@ constructor(
         return "${this.source}::${this.seedColor}"
     }
 
+    // Screen, used in updated variant & freeform picker
+    enum class Screen {
+        LANDING,
+        VARIANT_PICKER,
+        FREEFORM_PICKER,
+    }
+
+    private val _currentScreen = MutableStateFlow(Screen.LANDING)
+    val currentScreen = _currentScreen.asStateFlow()
+
+    fun setScreen(screen: Screen) {
+        _currentScreen.value = screen
+    }
+
+    // Slider values, used in freeform picker
+    private val _hueSliderPosition = MutableStateFlow(HUE_INIT_VALUE)
+    val hueSliderPosition = _hueSliderPosition.asStateFlow()
+    // The freeform color selected but not yet confirmed by user
+    private val tempFreeformColorOption = hueSliderPosition.map { hue -> hueToColorOption(hue) }
+    // The overriding color across screens, including the freeform color screen
+    val tempOverridingColorOption =
+        currentScreen.flatMapLatest {
+            when (it) {
+                Screen.FREEFORM_PICKER -> tempFreeformColorOption
+                else -> _overridingColorOption
+            }
+        }
+    // The color being previewed across screens, including the freeform color screen
+    val tempPreviewingColorOption =
+        combine(tempOverridingColorOption, selectedColorOption) { overriding, selected ->
+                overriding ?: selected
+            }
+            .distinctUntilChanged()
+            .sample(100)
+
+    fun updateHue(hue: Float) {
+        _hueSliderPosition.value = hue
+    }
+
+    // Style options, used in variant picker
     val styleOptions = interactor.styleList
     val selectedStyle = interactor.selectedStyle.distinctUntilChanged()
     private val _overridingStyle = MutableStateFlow<Int?>(null)
@@ -168,7 +217,7 @@ constructor(
                 .toMap()
         }
 
-    val _overridingColorOptionIndex = MutableStateFlow<Int>(0)
+    private val _overridingColorOptionIndex = MutableStateFlow<Int>(0)
     val overridingColorOptionIndex = _overridingColorOptionIndex.asStateFlow()
 
     private val selectedColorTypeTabId = MutableStateFlow<ColorType?>(null)
@@ -368,19 +417,6 @@ constructor(
             allColorOptions[selectedColorTypeId] ?: emptyList()
         }
 
-    enum class Screen {
-        LANDING,
-        VARIANT_PICKER,
-        FREEFORM_PICKER,
-    }
-
-    private val _currentScreen = MutableStateFlow(Screen.LANDING)
-    val currentScreen = _currentScreen.asStateFlow()
-
-    fun setScreen(screen: Screen) {
-        _currentScreen.value = screen
-    }
-
     @ViewModelScoped
     @AssistedFactory
     interface Factory {
@@ -390,5 +426,6 @@ constructor(
     companion object {
         const val TAG = "ColorPickerViewModel"
         const val COLOR_UPDATE_TIMEOUT_MILLIS = 3000L
+        const val HUE_INIT_VALUE = 180f
     }
 }

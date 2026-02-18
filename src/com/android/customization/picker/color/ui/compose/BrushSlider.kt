@@ -22,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -42,15 +41,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BrushSlider(
     brush: Brush,
-    sliderPosition: MutableState<Float>,
+    sliderPosition: Float,
     valueRange: ClosedFloatingPointRange<Float>,
+    onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val trackHeight: Dp = 28.dp
 
     Slider(
-        value = sliderPosition.value,
-        onValueChange = { sliderPosition.value = it },
+        value = sliderPosition,
+        onValueChange = onValueChange,
         modifier = modifier,
         valueRange = valueRange,
         track = { sliderState ->

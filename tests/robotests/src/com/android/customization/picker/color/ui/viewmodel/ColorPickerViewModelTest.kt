@@ -664,6 +664,29 @@ class ColorPickerViewModelTest {
         }
 
     @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun freeformPicker_colorPickerUpdate() =
+        testScope.runTest {
+            setupColorPickerUpdateTest()
+            val tempOverridingColorOption = collectLastValue(underTest.tempOverridingColorOption)
+            assertThat(tempOverridingColorOption()).isNull()
+
+            underTest.setScreen(ColorPickerViewModel.Screen.FREEFORM_PICKER)
+            assertThat(
+                    tempOverridingColorOption()
+                        ?.isEquivalent(ColorProviderUtil.hueToColorOption(180f))
+                )
+                .isTrue()
+
+            underTest.updateHue(50f)
+            assertThat(
+                    tempOverridingColorOption()
+                        ?.isEquivalent(ColorProviderUtil.hueToColorOption(50f))
+                )
+                .isTrue()
+        }
+
+    @Test
     @DisableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
     fun previewingAndOverriding_initialState() =
         testScope.runTest {
