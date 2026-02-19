@@ -19,9 +19,9 @@ package com.android.customization.picker.icon.ui.util
 import android.content.Context
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.RecyclerView
 import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
@@ -32,6 +32,7 @@ import com.android.themepicker.R
 import com.android.wallpaper.picker.common.icon.ui.viewbinder.IconViewBinder
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
+import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -52,11 +53,7 @@ constructor(@ApplicationContext private val context: Context) : IconStyleViewUti
         shouldAnimateColor: () -> Boolean,
         lifecycleOwner: LifecycleOwner,
     ): DisposableHandle? {
-        val optionIcon = view.requireViewById<ViewGroup>(R.id.option_icon)
-        val buttonIcon = view.requireViewById<ViewGroup>(R.id.button_icon)
         val icon = getIcon(iconStyleModel)
-        optionIcon.visibility = View.VISIBLE
-        buttonIcon.visibility = View.GONE
         val foregroundView = view.requireViewById<ImageView>(R.id.app_icon)
         IconViewBinder.bind(foregroundView, icon)
         return bindIconColors(
@@ -127,4 +124,10 @@ constructor(@ApplicationContext private val context: Context) : IconStyleViewUti
             contentDescription = null,
         )
     }
+
+    override fun bindListDivider(
+        options: List<OptionItemViewModel2<IconStyleModel>>,
+        list: RecyclerView,
+        optionIconHeightPx: Int?,
+    ) {}
 }

@@ -52,6 +52,7 @@ import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 object AppIconFloatingSheetBinder {
@@ -137,6 +138,10 @@ object AppIconFloatingSheetBinder {
                 it.initOptionList(view.context, styleOptionListAdapter)
             }
 
+        val styleOption = styleContent.findViewById<View>(R.id.icon_style_option_placeholder)
+        val styleIcon = styleOption.findViewById<View>(R.id.option_icon)
+        val styleIconHeight: MutableStateFlow<Int?> = MutableStateFlow(null)
+
         val themedIconsSwitch = view.requireViewById<MaterialSwitch>(R.id.themed_icon_toggle)
         val themedIconEntry = view.requireViewById<ViewGroup>(R.id.themed_icon_toggle_entry)
         val themedIconTitle = view.requireViewById<TextView>(R.id.themed_icon_toggle_title)
@@ -162,6 +167,7 @@ object AppIconFloatingSheetBinder {
             styleContent.viewTreeObserver.addOnGlobalLayoutListener(
                 object : OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
+                        styleIconHeight.value = styleIcon.height
                         if (
                             styleContent.height != 0 &&
                                 floatingSheetHeights.value.styleContentHeight != styleContent.height
@@ -241,6 +247,17 @@ object AppIconFloatingSheetBinder {
                                     .scrollToPosition(indexToFocus)
                             }
                         }
+                    }
+
+                    launch {
+                        combine(viewModel.styleOptions, styleIconHeight.filterNotNull(), ::Pair)
+                            .collect { (options, iconHeight) ->
+                                iconStyleViewUtil.bindListDivider(
+                                    options,
+                                    styleOptionList,
+                                    iconHeight,
+                                )
+                            }
                     }
 
                     launch {

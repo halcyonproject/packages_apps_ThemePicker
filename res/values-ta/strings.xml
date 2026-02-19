@@ -49,6 +49,10 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"கடிகார எழுத்து வடிவ மாற்றங்களைப் பயன்படுத்தும்"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"கடிகார எழுத்து வடிவ மாற்றங்களைச் செயல்தவிர்க்கும்"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"வட்டக் கடிகாரம்"</string>
+    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
+    <skip />
+    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
+    <skip />
     <string name="clock_style_update_toast" msgid="6933583129162805444">"<xliff:g id="ID_1">%1$s</xliff:g> ஸ்டைலுக்கு மாற்றப்பட்டது. செயல்தவிர்க்க மீண்டும் தட்டவும்."</string>
     <string name="clock_style_round" msgid="261319982647730366">"வட்ட"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"கூர்மை"</string>
@@ -162,7 +166,7 @@
     <string name="keyguard_quick_affordance_two_selected_template" msgid="1757099194522296363">"<xliff:g id="FIRST">%1$s</xliff:g>, <xliff:g id="SECOND">%2$s</xliff:g>"</string>
     <string name="keyguard_quick_affordance_none_selected" msgid="8494127020144112003">"ஏதுமில்லை"</string>
     <string name="show_notifications_on_lock_screen" msgid="4157744243084646720">"பூட்டுத் திரையில் அறிவிப்புகளைக் காட்டு"</string>
-    <string name="lock_screen_notifications_section_title" msgid="906673283764252102">"பூட்டுத் திரையில் அறிவிப்புகள்"</string>
+    <string name="lock_screen_notifications_section_title" msgid="906673283764252102">"லாக்ஸ்கிரீனில் அறிவிப்புகள்"</string>
     <string name="lock_screen_notifications_section_description" msgid="3321937285144466046">"அறிவிப்புகள் தோன்றும் விதம் &amp; காட்ட வேண்டியவற்றை நிர்வகிக்கலாம்"</string>
     <string name="more_settings_section_title" msgid="6854797937797818510">"கூடுதல் பூட்டுத் திரை அமைப்புகள்"</string>
     <string name="more_settings_section_description" msgid="1860115709122398325">"தனியுரிமை, பாடல் விவரம் மற்றும் பல"</string>
@@ -183,5 +187,8 @@
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"வேறு கடிகார முகப்பைத் தேர்வுசெய்ய வலதுபக்கம் ஸ்வைப் செய்யவும்"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"பிரத்தியேகக் கடிகார முகப்புகள்"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"வாட்ச் முகப்பின் அகலம்"</string>
-    <string name="slider_state_description_template" msgid="1028160527998877233">"%1$d, %2$d முதல் %3$d வரையிலான வரம்பு"</string>
+    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
+    <skip />
+    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
+    <skip />
 </resources>

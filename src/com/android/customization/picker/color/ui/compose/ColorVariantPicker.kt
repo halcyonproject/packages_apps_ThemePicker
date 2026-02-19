@@ -18,29 +18,21 @@ package com.android.customization.picker.color.ui.compose
 
 import android.content.theming.ThemeStyle
 import android.graphics.RuntimeShader
-import androidx.activity.compose.BackHandler
 import androidx.annotation.ColorInt
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.Orientation.Horizontal
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,13 +42,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -119,6 +107,7 @@ object Shader {
             .trimIndent()
 }
 
+/** UI for selecting a color variant (aka theme style). */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ColorVariantPicker(
@@ -135,185 +124,119 @@ fun ColorVariantPicker(
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-    // Handle back navigation when color variant picker is active.
-    BackHandler {
-        onCancel()
-        navigateToLanding()
-    }
-
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier =
-                Modifier.wrapContentSize()
-                    .padding(horizontal = 16.dp)
-                    .clip(shape = RoundedCornerShape(28.dp))
-                    .drawBehind { drawRect(colorScheme.surfaceBright) }
+    DrillDownFloatingSheet(
+        onCancel = onCancel,
+        onConfirm = onConfirm,
+        navigateToLanding = navigateToLanding,
+        modifier = modifier,
+    ) {
+        LazyRow(
+            modifier = Modifier.padding(vertical = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            LazyRow(
-                modifier = Modifier.padding(vertical = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                itemsIndexed(styleOptions) { idx, option ->
-                    val isSelected = option.style == selectedOption
-                    val animatedAlpha: Float by animateFloatAsState(if (isSelected) 1f else 0.25f)
-                    val scheme =
-                        remember(previewingSeedColor, previewingIsDarkMode) {
-                            previewingSeedColor?.let {
-                                ColorScheme(previewingSeedColor, previewingIsDarkMode, option.style)
-                                    .materialScheme
-                            }
+            itemsIndexed(styleOptions) { idx, option ->
+                val isSelected = option.style == selectedOption
+                val animatedAlpha: Float by animateFloatAsState(if (isSelected) 1f else 0.25f)
+                val scheme =
+                    remember(previewingSeedColor, previewingIsDarkMode) {
+                        previewingSeedColor?.let {
+                            ColorScheme(previewingSeedColor, previewingIsDarkMode, option.style)
+                                .materialScheme
                         }
-                    Column(modifier = Modifier.width(68.dp)) {
-                        ColorOption(
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .height(68.dp)
-                                    .bounceable(
-                                        bounceable = styleOptions[idx],
-                                        previousBounceable =
-                                            if (idx > 0) styleOptions[idx - 1] else null,
-                                        nextBounceable =
-                                            if (idx < styleOptions.lastIndex) styleOptions[idx + 1]
-                                            else null,
-                                        orientation = Horizontal,
-                                    ),
-                            isSelected = isSelected,
-                            onClick = {
-                                onClick(option.style)
-                                coroutineScope.launch { option.clickBounceAnimate() }
-                            },
-                        ) {
-                            val materialColors = MaterialDynamicColors()
-                            val colors =
-                                scheme?.let {
-                                    when (option.style) {
-                                        ThemeStyle.SPRITZ ->
-                                            VariantColors(
-                                                background =
-                                                    materialColors.secondaryFixed().getArgb(scheme),
-                                                midLayer =
-                                                    materialColors.secondaryFixed().getArgb(scheme),
-                                                topLayer =
-                                                    materialColors.primaryFixed().getArgb(scheme),
-                                            )
-
-                                        else ->
-                                            VariantColors(
-                                                background =
-                                                    materialColors.tertiaryFixed().getArgb(scheme),
-                                                midLayer =
-                                                    materialColors.secondaryFixed().getArgb(scheme),
-                                                topLayer =
-                                                    materialColors.primaryFixed().getArgb(scheme),
-                                            )
-                                    }
-                                }
-                            val shader = RuntimeShader(CUSTOM_SHADER)
-                            val shaderBrush = ShaderBrush(shader)
-                            shader.setFloatUniform("resolution", size.width, size.height)
-                            onDrawBehind {
-                                colors?.let {
-                                    shader.setColorUniform(
-                                        "backgroundColor",
-                                        android.graphics.Color.valueOf(colors.background),
-                                    )
-                                    shader.setColorUniform(
-                                        "squareColor",
-                                        android.graphics.Color.valueOf(colors.midLayer),
-                                    )
-                                    shader.setColorUniform(
-                                        "circleColor",
-                                        android.graphics.Color.valueOf(colors.topLayer),
-                                    )
-                                    drawRect(brush = shaderBrush)
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(3.dp))
-
-                        Text(
-                            modifier =
-                                Modifier.fillMaxWidth().graphicsLayer { alpha = animatedAlpha },
-                            text =
+                    }
+                Column(modifier = Modifier.width(68.dp)) {
+                    ColorOption(
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .height(68.dp)
+                                .bounceable(
+                                    bounceable = styleOptions[idx],
+                                    previousBounceable =
+                                        if (idx > 0) styleOptions[idx - 1] else null,
+                                    nextBounceable =
+                                        if (idx < styleOptions.lastIndex) styleOptions[idx + 1]
+                                        else null,
+                                    orientation = Horizontal,
+                                ),
+                        isSelected = isSelected,
+                        onClick = {
+                            onClick(option.style)
+                            coroutineScope.launch { option.clickBounceAnimate() }
+                        },
+                    ) {
+                        val materialColors = MaterialDynamicColors()
+                        val colors =
+                            scheme?.let {
                                 when (option.style) {
                                     ThemeStyle.SPRITZ ->
-                                        stringResource(R.string.color_variant_option_label_neutral)
-                                    ThemeStyle.TONAL_SPOT ->
-                                        stringResource(R.string.color_variant_option_label_soft)
-                                    ThemeStyle.VIBRANT ->
-                                        stringResource(R.string.color_variant_option_label_bright)
-                                    ThemeStyle.EXPRESSIVE ->
-                                        stringResource(R.string.color_variant_option_label_bold)
-                                    else -> option.toString()
-                                },
-                            style =
-                                if (isSelected) {
-                                    MaterialTheme.typography.labelSmallEmphasized
-                                } else {
-                                    MaterialTheme.typography.labelSmall
-                                },
-                            color = { colorScheme.onSurface },
-                            textAlign = TextAlign.Center,
-                        )
+                                        VariantColors(
+                                            background =
+                                                materialColors.secondaryFixed().getArgb(scheme),
+                                            midLayer =
+                                                materialColors.secondaryFixed().getArgb(scheme),
+                                            topLayer = materialColors.primaryFixed().getArgb(scheme),
+                                        )
+
+                                    else ->
+                                        VariantColors(
+                                            background =
+                                                materialColors.tertiaryFixed().getArgb(scheme),
+                                            midLayer =
+                                                materialColors.secondaryFixed().getArgb(scheme),
+                                            topLayer = materialColors.primaryFixed().getArgb(scheme),
+                                        )
+                                }
+                            }
+                        val shader = RuntimeShader(CUSTOM_SHADER)
+                        val shaderBrush = ShaderBrush(shader)
+                        shader.setFloatUniform("resolution", size.width, size.height)
+                        onDrawBehind {
+                            colors?.let {
+                                shader.setColorUniform(
+                                    "backgroundColor",
+                                    android.graphics.Color.valueOf(colors.background),
+                                )
+                                shader.setColorUniform(
+                                    "squareColor",
+                                    android.graphics.Color.valueOf(colors.midLayer),
+                                )
+                                shader.setColorUniform(
+                                    "circleColor",
+                                    android.graphics.Color.valueOf(colors.topLayer),
+                                )
+                                drawRect(brush = shaderBrush)
+                            }
+                        }
                     }
+
+                    Spacer(modifier = Modifier.height(3.dp))
+
+                    Text(
+                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = animatedAlpha },
+                        text =
+                            when (option.style) {
+                                ThemeStyle.SPRITZ ->
+                                    stringResource(R.string.color_variant_option_label_neutral)
+                                ThemeStyle.TONAL_SPOT ->
+                                    stringResource(R.string.color_variant_option_label_soft)
+                                ThemeStyle.VIBRANT ->
+                                    stringResource(R.string.color_variant_option_label_bright)
+                                ThemeStyle.EXPRESSIVE ->
+                                    stringResource(R.string.color_variant_option_label_bold)
+                                else -> option.toString()
+                            },
+                        style =
+                            if (isSelected) {
+                                MaterialTheme.typography.labelSmallEmphasized
+                            } else {
+                                MaterialTheme.typography.labelSmall
+                            },
+                        color = { colorScheme.onSurface },
+                        textAlign = TextAlign.Center,
+                    )
                 }
-            }
-        }
-
-        Spacer(
-            modifier =
-                Modifier.height(
-                    dimensionResource(R.dimen.floating_sheet_tab_toolbar_vertical_margin)
-                )
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement =
-                Arrangement.spacedBy(dimensionResource(R.dimen.clock_font_apply_padding_start)),
-        ) {
-            Button(
-                modifier = Modifier.width(72.dp).height(56.dp),
-                onClick = {
-                    onCancel()
-                    navigateToLanding()
-                },
-                colors =
-                    ButtonColors(
-                        containerColor = colorScheme.secondaryContainer,
-                        contentColor = colorScheme.onSecondaryContainer,
-                        disabledContainerColor = colorScheme.onSurface,
-                        disabledContentColor = colorScheme.onSurface,
-                    ),
-            ) {
-                Icon(
-                    painter = painterResource(com.android.wallpaper.R.drawable.ic_close),
-                    contentDescription = stringResource(R.string.color_variant_editor_revert),
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-            Button(
-                modifier = Modifier.width(72.dp).height(56.dp),
-                onClick = {
-                    onConfirm()
-                    navigateToLanding()
-                },
-                colors =
-                    ButtonColors(
-                        containerColor = colorScheme.primary,
-                        contentColor = colorScheme.onPrimary,
-                        disabledContainerColor = colorScheme.onSurface,
-                        disabledContentColor = colorScheme.onSurface,
-                    ),
-            ) {
-                Icon(
-                    painter = painterResource(com.android.wallpaper.R.drawable.ic_check_wallpaper),
-                    contentDescription = stringResource(R.string.color_variant_editor_apply),
-                    modifier = Modifier.size(24.dp),
-                )
             }
         }
     }

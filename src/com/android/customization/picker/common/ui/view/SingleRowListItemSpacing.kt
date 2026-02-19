@@ -24,13 +24,16 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Item spacing used by the horizontal RecyclerView with only 1 row.
  *
- * @param dividerIndex Index of the item that a divider will be drawn on the right.
+ * @param dividerIndex Index of the item at the end of which a divider will be drawn.
+ * @param optionIconHeightPx Height of the option icon, for aligning the divider. If null, the full
+ *   height of the RecyclerView will be used.
  */
 class SingleRowListItemSpacing(
     private val edgeItemSpacePx: Int,
     private val itemHorizontalSpacePx: Int,
     private val dividerIndex: Int = -1,
     private val dividerDrawable: Drawable? = null,
+    private val optionIconHeightPx: Int? = null,
 ) : RecyclerView.ItemDecoration() {
 
     private val dividerWidth = dividerDrawable?.intrinsicWidth ?: 0
@@ -69,7 +72,8 @@ class SingleRowListItemSpacing(
 
         if (dividerDrawable == null || dividerHeight <= 0) return
 
-        val parentPaddedHeight = parent.height - parent.paddingTop - parent.paddingBottom
+        val parentPaddedHeight =
+            optionIconHeightPx ?: (parent.height - parent.paddingTop - parent.paddingBottom)
         val actualDrawableHeight = minOf(dividerHeight, parentPaddedHeight)
         val dividerTop = parent.paddingTop + (parentPaddedHeight - actualDrawableHeight) / 2
         val dividerBottom = dividerTop + actualDrawableHeight

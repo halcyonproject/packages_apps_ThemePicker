@@ -41,7 +41,7 @@
     <string name="clock_color_teal" msgid="7499223425741344251">"蓝绿色"</string>
     <string name="clock_size" msgid="5028923902364418263">"大小"</string>
     <string name="clock_size_dynamic" msgid="1023930312455061642">"动态"</string>
-    <string name="clock_size_dynamic_description" msgid="2776620745774561662">"时钟大小会随锁屏内容而变化"</string>
+    <string name="clock_size_dynamic_description" msgid="2776620745774561662">"时钟大小会随锁屏界面上的内容而变化"</string>
     <string name="clock_size_large" msgid="3143248715744138979">"大"</string>
     <string name="clock_size_large_description" msgid="1171001745473029918">"屏幕上没有通知时显示"</string>
     <string name="clock_size_small" msgid="2280449912094164133">"小"</string>
@@ -49,6 +49,10 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"应用时钟字体更改"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"撤消时钟字体更改"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"圆角时钟"</string>
+    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
+    <skip />
+    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
+    <skip />
     <string name="clock_style_update_toast" msgid="6933583129162805444">"样式已更改为“<xliff:g id="ID_1">%1$s</xliff:g>”。再次点按即可撤消。"</string>
     <string name="clock_style_round" msgid="261319982647730366">"圆润"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"锐利"</string>
@@ -183,5 +187,8 @@
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"向右滑动，选择另一个表盘"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"自定义表盘"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"表盘宽度"</string>
-    <string name="slider_state_description_template" msgid="1028160527998877233">"%1$d，范围为 %2$d 到 %3$d"</string>
+    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
+    <skip />
+    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
+    <skip />
 </resources>

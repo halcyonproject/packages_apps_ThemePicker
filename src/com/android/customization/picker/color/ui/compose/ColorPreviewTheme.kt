@@ -46,6 +46,7 @@ interface CustomColorScheme {
     val tertiary: Color
     val tertiaryFixed: Color
     val surfaceBright: Color
+    val surfaceDim: Color
     val onSurface: Color
     val onSurfaceVariant: Color
 }
@@ -61,6 +62,7 @@ val defaultCustomColorScheme =
         override val tertiary: Color = Color.Transparent
         override val tertiaryFixed: Color = Color.Transparent
         override val surfaceBright: Color = Color.Transparent
+        override val surfaceDim: Color = Color.Transparent
         override val onSurface: Color = Color.Transparent
         override val onSurfaceVariant: Color = Color.Transparent
     }
@@ -97,6 +99,7 @@ fun updateTransitionData(colorScheme: ColorScheme): CustomColorScheme {
     val tertiaryFixed = transition.animateThemeColor { state -> state.tertiaryFixed }
     val onSecondaryContainer = transition.animateThemeColor { state -> state.onSecondaryContainer }
     val surfaceBright = transition.animateThemeColor { state -> state.surfaceBright }
+    val surfaceDim = transition.animateThemeColor { state -> state.surfaceDim }
     val onSurface = transition.animateThemeColor { state -> state.onSurface }
     val onSurfaceVariant = transition.animateThemeColor { state -> state.onSurfaceVariant }
     return remember(transition) {
@@ -110,6 +113,7 @@ fun updateTransitionData(colorScheme: ColorScheme): CustomColorScheme {
             override val tertiary: Color by tertiary
             override val tertiaryFixed: Color by tertiaryFixed
             override val surfaceBright: Color by surfaceBright
+            override val surfaceDim: Color by surfaceDim
             override val onSurface: Color by onSurface
             override val onSurfaceVariant: Color by onSurfaceVariant
         }

@@ -17,13 +17,14 @@ package com.android.customization.picker.clock.ui.viewmodel
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.drawable.Drawable
 import android.stats.style.StyleEnums
 import androidx.core.graphics.ColorUtils
 import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.module.logging.ThemesUserEventLogger
+import com.android.customization.picker.clock.ai.ClockStyleViewUtil
 import com.android.customization.picker.clock.domain.interactor.ClockPickerInteractor
+import com.android.customization.picker.clock.model.ClockStyleModel
 import com.android.customization.picker.clock.shared.ClockSize
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
@@ -73,6 +74,7 @@ constructor(
     private val clockPickerInteractor: ClockPickerInteractor,
     colorPickerInteractor: ColorPickerInteractor,
     private val logger: ThemesUserEventLogger,
+    val clockStyleViewUtil: ClockStyleViewUtil,
     @BackgroundDispatcher private val backgroundDispatcher: CoroutineDispatcher,
     @Assisted private val viewModelScope: CoroutineScope,
 ) {
@@ -188,19 +190,37 @@ constructor(
 
     private suspend fun getUdfpsLocation() = clockPickerInteractor.getUdfpsLocation()
 
-    data class ClockStyleModel(val thumbnail: Drawable, val hasPresets: Boolean)
-
     @OptIn(ExperimentalCoroutinesApi::class)
     val clockStyleOptions: StateFlow<List<OptionItemViewModel2<ClockStyleModel>>> =
         clockPickerInteractor.allClocks
             .mapLatest { allClocks ->
                 // Delay to avoid the case that the full list of clocks is not initiated.
                 delay(CLOCKS_EVENT_UPDATE_DELAY_MILLIS)
-                val allClockMap = allClocks.groupBy { it.axisPresetConfig != null }
+
+                val (hasAxisConfig, noAxisConfig) =
+                    allClocks.partition { it.axisPresetConfig != null }
+
                 buildList {
                     var index = 0
-                    allClockMap[true]?.forEach { add(it.toOption(resources, true, index++)) }
-                    allClockMap[false]?.forEach { add(it.toOption(resources, false, index++)) }
+                    val customClockStyleThumbnail =
+                        clockStyleViewUtil.getEntryPointOptionViewModel(context)
+
+                    if (customClockStyleThumbnail != null) {
+                        add(customClockStyleThumbnail)
+                    }
+                    hasAxisConfig.forEach {
+                        add(
+                            it.toOption(
+                                resources,
+                                isBeforeDivider = customClockStyleThumbnail == null,
+                                index = index++,
+                            )
+                        )
+                    }
+
+                    noAxisConfig.forEach {
+                        add(it.toOption(resources, isBeforeDivider = false, index = index++))
+                    }
                 }
             }
             // makes sure that the operations above this statement are executed on I/O dispatcher
@@ -297,15 +317,15 @@ constructor(
 
     private suspend fun ClockMetadataModel.toOption(
         resources: Resources,
-        hasPresets: Boolean,
+        isBeforeDivider: Boolean,
         index: Int,
     ): OptionItemViewModel2<ClockStyleModel> {
         val isSelectedFlow = previewingClock.map { it.clockId == clockId }.stateIn(viewModelScope)
         val contentDescription =
             resources.getString(R.string.select_clock_action_description, description)
-        return OptionItemViewModel2<ClockStyleModel>(
+        return OptionItemViewModel2(
             key = MutableStateFlow(clockId) as StateFlow<String>,
-            payload = ClockStyleModel(thumbnail = thumbnail, hasPresets = hasPresets),
+            payload = ClockStyleModel(thumbnail = thumbnail, hasPresets = isBeforeDivider),
             text = Text.Loaded(contentDescription),
             isTextUserVisible = false,
             isSelected = isSelectedFlow,

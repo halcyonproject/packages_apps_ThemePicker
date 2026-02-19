@@ -312,10 +312,11 @@ constructor(
         combine(selectedOption, colorPickerViewModel2.currentScreen) {
             selectedOption,
             colorPickerScreen ->
-            val isInColorVariantPicker =
+            val isInDrillDown =
                 selectedOption == COLORS &&
-                    colorPickerScreen == ColorPickerViewModel.Screen.VARIANT_PICKER
-            !isInColorVariantPicker
+                    (colorPickerScreen == ColorPickerViewModel.Screen.VARIANT_PICKER ||
+                        colorPickerScreen == ColorPickerViewModel.Screen.FREEFORM_PICKER)
+            !isInDrillDown
         }
 
     @ViewModelScoped
