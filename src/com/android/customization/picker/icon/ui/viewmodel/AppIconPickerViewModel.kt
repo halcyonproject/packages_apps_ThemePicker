@@ -243,7 +243,7 @@ constructor(
                             icon =
                                 Icon.Resource(
                                     res = R.drawable.ic_app_names_filled_24px,
-                                    contentDescription = Text.Resource(R.string.app_icons_label),
+                                    contentDescription = Text.Resource(R.string.app_names),
                                 ),
                             text = Text.Resource(R.string.app_names).asString(applicationContext),
                             isSelected = isSelected,
