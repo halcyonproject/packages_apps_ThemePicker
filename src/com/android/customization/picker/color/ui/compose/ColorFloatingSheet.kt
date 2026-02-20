@@ -97,8 +97,10 @@ fun ColorFloatingSheet(
         darkModeViewModel.toggleDarkMode.collectAsStateWithLifecycle(initialValue = {})
     val isDarkModeToggleEnabled: Boolean by
         darkModeViewModel.isEnabled.collectAsStateWithLifecycle(initialValue = false)
-    val colorSeedOptions: Map<ColorType, List<ColorOptionViewModel>> by
-        colorPickerViewModel.colorSeedOptions.collectAsStateWithLifecycle(initialValue = emptyMap())
+    val colorSeedOptions: List<Pair<ColorType, List<ColorOptionViewModel>>> by
+        colorPickerViewModel.colorSeedOptions.collectAsStateWithLifecycle(
+            initialValue = emptyList()
+        )
     val previewingColorOptionKey: String? by
         colorPickerViewModel.previewingColorOptionKey.collectAsStateWithLifecycle(
             initialValue = null
@@ -107,7 +109,9 @@ fun ColorFloatingSheet(
         colorPickerViewModel.previewingStyle.collectAsStateWithLifecycle(initialValue = null)
     val styleOptions = colorPickerViewModel.styleOptions.map { StyleBounceable(it) }
     val hueSliderPosition: Float by
-        colorPickerViewModel.hueSliderPosition.collectAsStateWithLifecycle()
+        colorPickerViewModel.hueSliderPosition.collectAsStateWithLifecycle(
+            initialValue = ColorPickerViewModel.HUE_INIT_VALUE
+        )
 
     PlatformTheme {
         val scheme =
@@ -161,12 +165,8 @@ fun ColorFloatingSheet(
                         FreeformColorPicker(
                             hueSliderPosition = hueSliderPosition,
                             onHueChange = colorPickerViewModel::updateHue,
-                            onCancel = {
-                                // TODO (b/441279631): enable selecting & cancelling freeform color
-                            },
-                            onConfirm = {
-                                // TODO (b/441279631): enable selecting & cancelling freeform color
-                            },
+                            onCancel = colorPickerViewModel::cancelFreeformColor,
+                            onConfirm = colorPickerViewModel::confirmFreeformColor,
                             navigateToLanding = {
                                 colorPickerViewModel.setScreen(ColorPickerViewModel.Screen.LANDING)
                             },
@@ -183,7 +183,7 @@ fun ColorFloatingSheetLanding(
     isDarkMode: Boolean,
     toggleIsDarkMode: () -> Unit,
     isDarkModeToggleEnabled: Boolean,
-    colorSeedOptions: Map<ColorType, List<ColorOptionViewModel>>,
+    colorSeedOptions: List<Pair<ColorType, List<ColorOptionViewModel>>>,
     selectedColorSeedKey: String?,
     navigateToVariantPicker: () -> Unit,
     navigateToFreeformPicker: () -> Unit,
@@ -196,15 +196,19 @@ fun ColorFloatingSheetLanding(
             val firstVisibleIndex = lazyListState.firstVisibleItemIndex
             var startIdx = 0
             var endIdx = 0
-            for (entries in colorSeedOptions.entries) {
-                endIdx += entries.value.size
+            for (colorTypeToOptions in colorSeedOptions) {
+                endIdx += colorTypeToOptions.second.size
                 if (firstVisibleIndex in startIdx..<endIdx) {
-                    return@derivedStateOf when (entries.key) {
-                        ColorType.WALLPAPER_COLOR -> R.string.wallpaper_color_tab
-                        ColorType.PRESET_COLOR -> R.string.preset_color_tab
+                    return@derivedStateOf when (colorTypeToOptions.first) {
+                        ColorType.WALLPAPER_COLOR -> R.string.wallpaper_color_title_2
+                        ColorType.PRESET_COLOR -> R.string.preset_color_tab_2
+                        ColorType.FREEFORM_COLOR -> R.string.freeform_color_title
                     }
                 } else {
                     startIdx = endIdx
+                    // Account for the divider added between color types, and count it as the next
+                    // group
+                    endIdx += 1
                 }
             }
             return@derivedStateOf R.string.wallpaper_color_tab
@@ -259,13 +263,15 @@ fun ColorFloatingSheetLanding(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // TODO (b/441279631): implement scroll to selected color option
             LazyRow(
                 state = lazyListState,
                 verticalAlignment = Alignment.CenterVertically,
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                colorSeedOptions.values.forEachIndexed { colorTypeIdx, colorList ->
+                colorSeedOptions.forEachIndexed { colorTypeIdx, colorTypeToOptions ->
+                    val colorList = colorTypeToOptions.second
                     if (colorTypeIdx != 0 && colorList.isNotEmpty()) {
                         item { OptionListGroupDivider() }
                     }

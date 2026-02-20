@@ -20,6 +20,7 @@ import android.content.theming.ThemeStyle
 import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.shared.model.ColorType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Abstracts access to application state related to functionality for selecting, picking, or setting
@@ -27,7 +28,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ColorPickerRepository {
     /** List of wallpaper and preset color options on the device, categorized by Color Type */
-    val colorOptions: Flow<Map<ColorType, List<ColorOption>>>
+    val colorOptions: Flow<List<Pair<ColorType, List<ColorOption>>>>
 
     /** The system selected color option from the generated list of color options */
     val selectedColorOption: Flow<ColorOption?>
@@ -38,9 +39,13 @@ interface ColorPickerRepository {
     /** The system selected theme style, used in the color seed and variant picker */
     val selectedStyle: Flow<Int?>
 
+    val freeformColorHue: StateFlow<Float?>
+
     /** Selects a color option and returns whether the operation was successful */
     suspend fun apply(colorOption: ColorOption): Boolean
 
     /** Selects a color option and style and returns whether the operation was successful */
     suspend fun apply(colorOption: ColorOption, @ThemeStyle.Type style: Int): Boolean
+
+    fun saveFreeformColor(hue: Float)
 }

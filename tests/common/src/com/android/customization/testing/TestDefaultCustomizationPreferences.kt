@@ -28,6 +28,7 @@ open class TestDefaultCustomizationPreferences @Inject constructor() :
     private var customThemes: String? = null
     private val tabVisited: MutableSet<String> = HashSet()
     private var themedIconEnabled = false
+    private var freeformColorHue: Float? = null
 
     override fun getSerializedCustomThemes(): String? {
         return customThemes
@@ -51,5 +52,13 @@ open class TestDefaultCustomizationPreferences @Inject constructor() :
 
     override fun setThemedIconEnabled(enabled: Boolean) {
         themedIconEnabled = enabled
+    }
+
+    override fun getFreeformColorHue(): Float? {
+        return freeformColorHue
+    }
+
+    override fun setFreeformColorHue(hue: Float) {
+        freeformColorHue = hue
     }
 }
