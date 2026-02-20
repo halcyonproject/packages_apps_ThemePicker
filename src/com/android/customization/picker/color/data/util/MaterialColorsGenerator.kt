@@ -25,10 +25,13 @@ import com.android.customization.model.ResourceConstants
 import com.android.systemui.monet.ColorScheme
 import com.android.systemui.monet.DynamicColors
 import com.android.systemui.shared.settings.data.repository.SecureSettingsRepository
+import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import com.google.ux.material.libmonet.dynamiccolor.DynamicColor
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -42,6 +45,7 @@ class MaterialColorsGenerator
 constructor(
     @ApplicationContext private val applicationContext: Context,
     private val secureSettingsRepository: SecureSettingsRepository,
+    @BackgroundDispatcher private val backgroundDispatcher: CoroutineDispatcher,
 ) {
     private fun addDynamicColors(
         lightColorScheme: ColorScheme,
@@ -119,7 +123,7 @@ constructor(
      *
      * @return a list of color resource IDs and a corresponding list of their color values
      */
-    fun generate(
+    suspend fun generate(
         colorSeed: Int,
         @ThemeStyle.Type style: Int,
         useDarkMode: Boolean?,
@@ -135,63 +139,64 @@ constructor(
         )
     }
 
-    private fun generate(
+    private suspend fun generate(
         lightColorScheme: ColorScheme,
         darkColorScheme: ColorScheme,
         isDarkMode: Boolean,
-    ): Pair<IntArray, IntArray> {
-        val colorMap: MutableMap<Int, Int> = mutableMapOf()
+    ): Pair<IntArray, IntArray> =
+        withContext(backgroundDispatcher) {
+            val colorMap: MutableMap<Int, Int> = mutableMapOf()
 
-        colorMap.apply {
-            putAll(
-                addDynamicColors(
-                    lightColorScheme,
-                    darkColorScheme,
-                    DynamicColors.getAllNeutralPalette(),
-                    false,
-                    isDarkMode,
+            colorMap.apply {
+                putAll(
+                    addDynamicColors(
+                        lightColorScheme,
+                        darkColorScheme,
+                        DynamicColors.getAllNeutralPalette(),
+                        false,
+                        isDarkMode,
+                    )
                 )
-            )
-            putAll(
-                addDynamicColors(
-                    lightColorScheme,
-                    darkColorScheme,
-                    DynamicColors.getAllAccentPalette(),
-                    false,
-                    isDarkMode,
+                putAll(
+                    addDynamicColors(
+                        lightColorScheme,
+                        darkColorScheme,
+                        DynamicColors.getAllAccentPalette(),
+                        false,
+                        isDarkMode,
+                    )
                 )
-            )
-            putAll(
-                addDynamicColors(
-                    lightColorScheme,
-                    darkColorScheme,
-                    DynamicColors.getAllDynamicColorsMapped(),
-                    false,
-                    isDarkMode,
+                putAll(
+                    addDynamicColors(
+                        lightColorScheme,
+                        darkColorScheme,
+                        DynamicColors.getAllDynamicColorsMapped(),
+                        false,
+                        isDarkMode,
+                    )
                 )
-            )
-            putAll(
-                addDynamicColors(
-                    lightColorScheme,
-                    darkColorScheme,
-                    DynamicColors.getFixedColorsMapped(),
-                    true,
-                    isDarkMode,
+                putAll(
+                    addDynamicColors(
+                        lightColorScheme,
+                        darkColorScheme,
+                        DynamicColors.getFixedColorsMapped(),
+                        true,
+                        isDarkMode,
+                    )
                 )
-            )
-            putAll(
-                addDynamicColors(
-                    lightColorScheme,
-                    darkColorScheme,
-                    DynamicColors.getCustomColorsMapped(),
-                    false,
-                    isDarkMode,
+                putAll(
+                    addDynamicColors(
+                        lightColorScheme,
+                        darkColorScheme,
+                        DynamicColors.getCustomColorsMapped(),
+                        false,
+                        isDarkMode,
+                    )
                 )
-            )
+            }
+
+            Pair(colorMap.keys.toIntArray(), colorMap.values.toIntArray())
         }
-
-        return Pair(colorMap.keys.toIntArray(), colorMap.values.toIntArray())
-    }
 
     @ThemeStyle.Type
     private suspend fun fetchThemeStyleFromSetting(): Int {
