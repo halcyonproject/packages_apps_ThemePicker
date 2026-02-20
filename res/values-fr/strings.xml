@@ -49,10 +49,8 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"Appliquer les modifications de police de l\'horloge"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"Annuler les modifications de police de l\'horloge"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"Horloge ronde"</string>
-    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
-    <skip />
-    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
-    <skip />
+    <string name="clock_style_sharp_clock" msgid="1534034367317255693">"Horloge nette"</string>
+    <string name="change_clock_style_content_description" msgid="5831805715265928702">"<xliff:g id="ID_1">%1$s</xliff:g>. Appuyez pour modifier le style de l\'horloge."</string>
     <string name="clock_style_update_toast" msgid="6933583129162805444">"Style remplacé par <xliff:g id="ID_1">%1$s</xliff:g>. Appuyez à nouveau pour annuler."</string>
     <string name="clock_style_round" msgid="261319982647730366">"arrondi"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"sharp"</string>
@@ -181,14 +179,14 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Gras"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Appliquer la modification du style de thème"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Annuler la modification du style du thème"</string>
+    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
+    <skip />
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Option de couleur par défaut"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Option de couleur <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Balayer à gauche pour changer de clock face"</string>
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"Balayer à droite pour changer de clock face"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"Personnaliser les Horloges"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"Largeur du cadran"</string>
-    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
-    <skip />
-    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
-    <skip />
+    <string name="enabled_slider_state_description_template" msgid="110185389957126478">"%1$d, plage de %2$d à %3$d"</string>
+    <string name="disabled_slider_state_description_template" msgid="660230299054431711">"désactivé, %1$d, plage de %2$d à %3$d"</string>
 </resources>

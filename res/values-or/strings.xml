@@ -49,10 +49,8 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"ଘଡ଼ିର ଫଣ୍ଟରେ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନକୁ ଲାଗୁ କରନ୍ତୁ"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"ଘଡ଼ିର ଫଣ୍ଟରେ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନକୁ ଅନଡୁ କରନ୍ତୁ"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"ଗୋଲେଇ ଘଣ୍ଟା"</string>
-    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
-    <skip />
-    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
-    <skip />
+    <string name="clock_style_sharp_clock" msgid="1534034367317255693">"ସାର୍ପ କ୍ଲକ"</string>
+    <string name="change_clock_style_content_description" msgid="5831805715265928702">"<xliff:g id="ID_1">%1$s</xliff:g>। ଘଣ୍ଟା ଷ୍ଟାଇଲ ପରିବର୍ତ୍ତନ କରିବାକୁ ଟାପ କରନ୍ତୁ।"</string>
     <string name="clock_style_update_toast" msgid="6933583129162805444">"ଷ୍ଟାଇଲକୁ <xliff:g id="ID_1">%1$s</xliff:g>ରେ ପରିବର୍ତ୍ତନ କରାଯାଇଛି। ଅନଡୁ କରିବା ପାଇଁ ପୁଣି ଟାପ କରନ୍ତୁ।"</string>
     <string name="clock_style_round" msgid="261319982647730366">"ରାଉଣ୍ଡ"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"ସାର୍ପ"</string>
@@ -105,7 +103,7 @@
     <string name="apply_theme_error_msg" msgid="791364062636538317">"ଶୈଳୀ ପ୍ରୟୋଗ କରିବାରେ କିଛି ସମସ୍ୟା ହୋଇଛି"</string>
     <string name="custom_theme_next" msgid="6235420097213197301">"ପରବର୍ତ୍ତୀ"</string>
     <string name="custom_theme_previous" msgid="4941132112640503022">"ପୂର୍ବବର୍ତ୍ତୀ"</string>
-    <string name="custom_theme" msgid="1618351922263478163">"କଷ୍ଟମ୍"</string>
+    <string name="custom_theme" msgid="1618351922263478163">"କଷ୍ଟମ"</string>
     <string name="custom_theme_title" msgid="2192300350332693631">"କଷ୍ଟମ୍ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="custom_theme_fragment_title" msgid="6615547284702040280">"କଷ୍ଟମ୍‌ ଷ୍ଟାଇଲ୍"</string>
     <string name="custom_theme_delete" msgid="4744494663184126202">"ଡିଲିଟ୍‍ କରନ୍ତୁ"</string>
@@ -157,7 +155,7 @@
     <string name="keyguard_affordance_enablement_dialog_action_template" msgid="8117011931337357438">"<xliff:g id="APPNAME">%1$s</xliff:g> ଖୋଲନ୍ତୁ"</string>
     <string name="keyguard_affordance_enablement_dialog_message" msgid="6136286758939253570">"ଏକ ସର୍ଟକଟ ଭାବେ <xliff:g id="APPNAME">%1$s</xliff:g> ଆପ ଯୋଗ କରିବାକୁ, ଏହା ସୁନିଶ୍ଚିତ କରନ୍ତୁ"</string>
     <string name="keyguard_affordance_enablement_dialog_dismiss_button" msgid="629754625264422508">"ହୋଇଗଲା"</string>
-    <string name="keyguard_quick_affordance_title" msgid="4242813186995735584">"ସର୍ଟକଟଗୁଡ଼ିକ"</string>
+    <string name="keyguard_quick_affordance_title" msgid="4242813186995735584">"ସର୍ଟକଟ"</string>
     <string name="keyguard_quick_affordance_section_title" msgid="2806304242671717309">"ସର୍ଟକଟଗୁଡ଼ିକ"</string>
     <string name="color_contrast_section_title" msgid="7194809124718896091">"ରଙ୍ଗ କଣ୍ଟ୍ରାଷ୍ଟ"</string>
     <string name="color_contrast_default_title" msgid="7954235103549276978">"ଡିଫଲ୍ଟ"</string>
@@ -181,14 +179,13 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"ବୋଲ୍ଡ କରନ୍ତୁ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"ଥିମ ଷ୍ଟାଇଲରେ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନକୁ ଲାଗୁ କରନ୍ତୁ"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"ଥିମ ଷ୍ଟାଇଲରେ କରାଯାଇଥିବା ପରିବର୍ତ୍ତନକୁ ଅନଡୁ କରନ୍ତୁ"</string>
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"ଗୋଟିଏ ରଙ୍ଗ ଚୟନ କରନ୍ତୁ"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ଡିଫଲ୍ଟ ରଙ୍ଗର ବିକଳ୍ପ"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"ରଙ୍ଗର ବିକଳ୍ପ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"ଏକ ଭିନ୍ନ କ୍ଲକ ଫେସ ବାଛିବାକୁ ବାମକୁ ସ୍ୱାଇପ କରନ୍ତୁ"</string>
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"ଏକ ଭିନ୍ନ କ୍ଲକ ଫେସ ବାଛିବାକୁ ଡାହାଣକୁ ସ୍ୱାଇପ କରନ୍ତୁ"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"କ୍ଲକ ଫେସ କଷ୍ଟମ କରନ୍ତୁ"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"କ୍ଲକ ଫେସ ଚଉଡ଼ା"</string>
-    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
-    <skip />
-    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
-    <skip />
+    <string name="enabled_slider_state_description_template" msgid="110185389957126478">"%1$d, %2$dରୁ %3$d ରେଞ୍ଜ"</string>
+    <string name="disabled_slider_state_description_template" msgid="660230299054431711">"ଅକ୍ଷମ କରାଯାଇଛି, %1$d, %2$dରୁ %3$d ରେଞ୍ଜ"</string>
 </resources>
