@@ -49,10 +49,8 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"Použít změny písma hodin"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"Vrátit změny písma hodin zpět"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"Kulaté hodiny"</string>
-    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
-    <skip />
-    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
-    <skip />
+    <string name="clock_style_sharp_clock" msgid="1534034367317255693">"Ostré hodiny"</string>
+    <string name="change_clock_style_content_description" msgid="5831805715265928702">"<xliff:g id="ID_1">%1$s</xliff:g>. Styl hodin změníte klepnutím."</string>
     <string name="clock_style_update_toast" msgid="6933583129162805444">"Styl se změnil na <xliff:g id="ID_1">%1$s</xliff:g>. Klepnutím akci vrátíte zpět."</string>
     <string name="clock_style_round" msgid="261319982647730366">"kulatý"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"ostrý"</string>
@@ -181,14 +179,13 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Výrazné"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Použít změnu stylu motivu"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Vrátit změnu stylu motivu zpět"</string>
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"Vybrat barvu"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Výchozí barevná varianta"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Barevná varianta <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Přejetím doleva vyberete jiný ciferník"</string>
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"Přejetím doprava vyberete jiný ciferník"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"Vlastní hodiny"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"Šířka ciferníku"</string>
-    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
-    <skip />
-    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
-    <skip />
+    <string name="enabled_slider_state_description_template" msgid="110185389957126478">"%1$d, rozsah od %2$d do %3$d"</string>
+    <string name="disabled_slider_state_description_template" msgid="660230299054431711">"deaktivováno, %1$d, rozsah od %2$d do %3$d"</string>
 </resources>

@@ -181,6 +181,8 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Deciso"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Applica modifica allo stile del tema"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Annulla modifica allo stile del tema"</string>
+    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
+    <skip />
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Opzione colore predefinita"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Opzione colore <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Scorri a sinistra per selezionare un altro quadrante"</string>

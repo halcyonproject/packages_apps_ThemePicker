@@ -49,10 +49,8 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"ਘੜੀ ਦੇ ਫ਼ੌਟਾਂ ਵਿੱਚ ਕੀਤੀਆਂ ਤਬਦੀਲੀਆਂ ਲਾਗੂ ਕਰੋ"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"ਘੜੀ ਦੇ ਫ਼ੌਟਾਂ ਵਿੱਚ ਕੀਤੀਆਂ ਤਬਦੀਲੀਆਂ ਨੂੰ ਅਣਕੀਤਾ ਕਰੋ"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"ਰਾਉਂਡ ਕਲਾਕ"</string>
-    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
-    <skip />
-    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
-    <skip />
+    <string name="clock_style_sharp_clock" msgid="1534034367317255693">"ਸ਼ਾਰਪ ਕਲੌਕ"</string>
+    <string name="change_clock_style_content_description" msgid="5831805715265928702">"<xliff:g id="ID_1">%1$s</xliff:g>। ਘੜੀ ਦਾ ਸਟਾਈਲ ਬਦਲਣ ਲਈ ਟੈਪ ਕਰੋ।"</string>
     <string name="clock_style_update_toast" msgid="6933583129162805444">"ਸਟਾਈਲ ਨੂੰ ਬਦਲ ਕੇ <xliff:g id="ID_1">%1$s</xliff:g> ਕੀਤਾ ਗਿਆ। ਅਣਕੀਤਾ ਕਰਨ ਲਈ ਦੁਬਾਰਾ ਟੈਪ ਕਰੋ।"</string>
     <string name="clock_style_round" msgid="261319982647730366">"ਗੋਲ"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"ਸਪਸ਼ਟ"</string>
@@ -181,14 +179,14 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"ਬੋਲਡ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"ਥੀਮ ਸਟਾਈਲ ਤਬਦੀਲੀ ਲਾਗੂ ਕਰੋ"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"ਥੀਮ ਸਟਾਈਲ ਤਬਦੀਲੀ ਨੂੰ ਅਣਕੀਤਾ ਕਰੋ"</string>
+    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
+    <skip />
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ਰੰਗ ਦਾ ਪੂਰਵ-ਨਿਰਧਾਰਿਤ ਵਿਕਲਪ"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"ਰੰਗ ਦਾ ਵਿਕਲਪ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"ਕੋਈ ਵੱਖਰਾ ਘੜੀ ਦਾ ਡਾਇਲ ਚੁਣਨ ਲਈ ਖੱਬੇ ਪਾਸੇ ਵੱਲ ਸਵਾਈਪ ਕਰੋ"</string>
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"ਕੋਈ ਵੱਖਰਾ ਘੜੀ ਦਾ ਡਾਇਲ ਚੁਣਨ ਲਈ ਸੱਜੇ ਪਾਸੇ ਵੱਲ ਸਵਾਈਪ ਕਰੋ"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"ਵਿਉਂਤਬੱਧ ਘੜੀਆਂ"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"ਘੜੀ ਦੇ ਫ਼ੇਸ ਦੀ ਚੌੜਾਈ"</string>
-    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
-    <skip />
-    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
-    <skip />
+    <string name="enabled_slider_state_description_template" msgid="110185389957126478">"%1$d, ਰੇਂਜ %2$d ਤੋਂ %3$d ਤੱਕ"</string>
+    <string name="disabled_slider_state_description_template" msgid="660230299054431711">"ਬੰਦ ਕੀਤਾ ਗਿਆ, %1$d, ਰੇਂਜ %2$d ਤੋਂ %3$d ਤੱਕ"</string>
 </resources>
