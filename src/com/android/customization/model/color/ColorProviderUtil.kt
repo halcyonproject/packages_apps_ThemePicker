@@ -28,6 +28,7 @@ import com.android.customization.model.color.ColorUtils.toColorString
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
+import com.google.android.material.color.utilities.Hct
 
 object ColorProviderUtil {
     private const val ALPHA_MASK = 0xFF
@@ -326,5 +327,17 @@ object ColorProviderUtil {
                 ThemeStyle.EXPRESSIVE,
             )
         }
+    }
+
+    fun hueToColorOption(hue: Float): ColorOption {
+        val hct = Hct.from(hue.toDouble(), 100.0, 80.0)
+        return ColorOptionImpl.buildSimplifiedSeedOption(
+            // TODO(b/441279631): strings needed for content description & applying
+            //   option
+            title = "",
+            source = "",
+            seedColor = hct.toInt(),
+            defaultStyle = ThemeStyle.TONAL_SPOT,
+        )
     }
 }
