@@ -179,8 +179,7 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"બોલ્ડ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"થીમની શૈલીમાં ફેરફાર લાગુ કરો"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"થીમની શૈલીમાં કરેલો ફેરફાર રદ કરો"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"રંગ પસંદ કરો"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ડિફૉલ્ટ રંગનો વિકલ્પ"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"રંગનો વિકલ્પ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"કોઈ બીજી ઘડિયાળ પસંદ કરવા માટે ડાબે સ્વાઇપ કરો"</string>

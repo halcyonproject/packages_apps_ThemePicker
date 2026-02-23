@@ -179,8 +179,7 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"ਬੋਲਡ"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"ਥੀਮ ਸਟਾਈਲ ਤਬਦੀਲੀ ਲਾਗੂ ਕਰੋ"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"ਥੀਮ ਸਟਾਈਲ ਤਬਦੀਲੀ ਨੂੰ ਅਣਕੀਤਾ ਕਰੋ"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"ਕੋਈ ਰੰਗ ਚੁਣੋ"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"ਰੰਗ ਦਾ ਪੂਰਵ-ਨਿਰਧਾਰਿਤ ਵਿਕਲਪ"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"ਰੰਗ ਦਾ ਵਿਕਲਪ <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"ਕੋਈ ਵੱਖਰਾ ਘੜੀ ਦਾ ਡਾਇਲ ਚੁਣਨ ਲਈ ਖੱਬੇ ਪਾਸੇ ਵੱਲ ਸਵਾਈਪ ਕਰੋ"</string>
