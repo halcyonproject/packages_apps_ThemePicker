@@ -49,10 +49,8 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"시계 글꼴 변경사항 적용"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"시계 글꼴 변경사항 실행취소"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"모서리가 둥근 글꼴 시계"</string>
-    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
-    <skip />
-    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
-    <skip />
+    <string name="clock_style_sharp_clock" msgid="1534034367317255693">"각진 스타일의 시계"</string>
+    <string name="change_clock_style_content_description" msgid="5831805715265928702">"<xliff:g id="ID_1">%1$s</xliff:g>. 시계 스타일을 변경하려면 탭하세요."</string>
     <string name="clock_style_update_toast" msgid="6933583129162805444">"스타일이 <xliff:g id="ID_1">%1$s</xliff:g> 스타일로 변경되었습니다. 실행취소하려면 다시 탭하세요."</string>
     <string name="clock_style_round" msgid="261319982647730366">"둥근 모서리"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"각진 모서리"</string>
@@ -181,16 +179,13 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"볼드"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"테마 스타일 변경 적용"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"테마 스타일 변경 실행취소"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"색상 선택"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"기본 색상 옵션"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"<xliff:g id="ID_1">%1$d</xliff:g> 색상 옵션"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"왼쪽으로 스와이프하여 다른 시계 페이스 선택"</string>
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"오른쪽으로 스와이프하여 다른 시계 페이스 선택"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"시계 페이스 맞춤설정"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"시계 페이스 너비"</string>
-    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
-    <skip />
-    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
-    <skip />
+    <string name="enabled_slider_state_description_template" msgid="110185389957126478">"%1$d, 범위: %2$d~%3$d"</string>
+    <string name="disabled_slider_state_description_template" msgid="660230299054431711">"사용 중지됨, %1$d, 범위: %2$d~%3$d"</string>
 </resources>
