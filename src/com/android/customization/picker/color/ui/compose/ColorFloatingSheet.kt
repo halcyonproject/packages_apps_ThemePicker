@@ -86,7 +86,9 @@ fun ColorFloatingSheet(
     modifier: Modifier = Modifier,
 ) {
     val previewingColorOption: ColorOption? by
-        colorPickerViewModel.previewingColorOption.collectAsStateWithLifecycle(initialValue = null)
+        colorPickerViewModel.tempPreviewingColorOption.collectAsStateWithLifecycle(
+            initialValue = null
+        )
     val previewingIsDarkMode: Boolean by
         darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
     val screen: ColorPickerViewModel.Screen by
@@ -104,6 +106,8 @@ fun ColorFloatingSheet(
     val previewingStyle: Int? by
         colorPickerViewModel.previewingStyle.collectAsStateWithLifecycle(initialValue = null)
     val styleOptions = colorPickerViewModel.styleOptions.map { StyleBounceable(it) }
+    val hueSliderPosition: Float by
+        colorPickerViewModel.hueSliderPosition.collectAsStateWithLifecycle()
 
     PlatformTheme {
         val scheme =
@@ -155,6 +159,8 @@ fun ColorFloatingSheet(
                         )
                     ColorPickerViewModel.Screen.FREEFORM_PICKER ->
                         FreeformColorPicker(
+                            hueSliderPosition = hueSliderPosition,
+                            onHueChange = colorPickerViewModel::updateHue,
                             onCancel = {
                                 // TODO (b/441279631): enable selecting & cancelling freeform color
                             },
