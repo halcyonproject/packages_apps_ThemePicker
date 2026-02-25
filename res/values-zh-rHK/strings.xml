@@ -49,10 +49,8 @@
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"套用時鐘字型變更"</string>
     <string name="clock_font_editor_revert" msgid="5307491447405753061">"復原時鐘字型變更"</string>
     <string name="clock_style_round_clock" msgid="1694787561051568664">"圓角時鐘"</string>
-    <!-- no translation found for clock_style_sharp_clock (1534034367317255693) -->
-    <skip />
-    <!-- no translation found for change_clock_style_content_description (5831805715265928702) -->
-    <skip />
+    <string name="clock_style_sharp_clock" msgid="1534034367317255693">"銳角時鐘"</string>
+    <string name="change_clock_style_content_description" msgid="5831805715265928702">"<xliff:g id="ID_1">%1$s</xliff:g>。輕按即可變更時鐘樣式。"</string>
     <string name="clock_style_update_toast" msgid="6933583129162805444">"樣式已變更為「<xliff:g id="ID_1">%1$s</xliff:g>」。再次輕按即可復原。"</string>
     <string name="clock_style_round" msgid="261319982647730366">"圓邊"</string>
     <string name="clock_style_sharp" msgid="453991773733285628">"銳利"</string>
@@ -181,16 +179,13 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"突出"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"套用主題樣式變更"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"復原主題樣式變更"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"選取顏色"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"預設顏色選項"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"顏色選項：<xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"向左滑動即可選擇其他錶面"</string>
     <string name="scroll_backward_and_select" msgid="5472202348434803757">"向右滑動即可選擇其他錶面"</string>
     <string name="custom_clocks_label" msgid="8168419717593569347">"自訂時鐘"</string>
     <string name="clock_face_width" msgid="5818129719338363570">"錶面闊度"</string>
-    <!-- no translation found for enabled_slider_state_description_template (110185389957126478) -->
-    <skip />
-    <!-- no translation found for disabled_slider_state_description_template (660230299054431711) -->
-    <skip />
+    <string name="enabled_slider_state_description_template" msgid="110185389957126478">"%1$d，範圍介乎 %2$d 至 %3$d"</string>
+    <string name="disabled_slider_state_description_template" msgid="660230299054431711">"停用咗，%1$d，範圍介乎 %2$d 至 %3$d"</string>
 </resources>
