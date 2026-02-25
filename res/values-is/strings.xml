@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"Sjálfgefið"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Mínimalískt"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Form"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"Merki"</string>
     <string name="app_labels" msgid="4290052401987798752">"Forritsmerki"</string>
     <string name="app_names" msgid="708691253698583169">"Heiti"</string>
     <string name="show_app_names" msgid="522703901790555973">"Sýna heiti forrita"</string>
@@ -179,8 +178,7 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Feitletur"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Virkja breytingu á þemastíl"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Afturkalla breytingu á þemastíl"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"Veldu lit"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Sjálfgefinn litavalkostur"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Litavalkostur <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Strjúktu til vinstri til að velja aðra klukku"</string>

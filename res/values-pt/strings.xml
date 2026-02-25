@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"Padrão"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Minimalista"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Formato"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"Rótulo"</string>
     <string name="app_labels" msgid="4290052401987798752">"Rótulos do app"</string>
     <string name="app_names" msgid="708691253698583169">"Nomes"</string>
     <string name="show_app_names" msgid="522703901790555973">"Mostrar nomes de apps"</string>
@@ -132,7 +131,7 @@
     <string name="accessibility_custom_name_title" msgid="5494460518085463262">"Nome do estilo personalizado"</string>
     <string name="accessibility_clock_slider_description" msgid="8374135133110681332">"Intensidade da cor"</string>
     <string name="mode_title" msgid="2394873501427436055">"Tema escuro"</string>
-    <string name="mode_disabled_msg" msgid="9196245518435936512">"Desativado temporariamente pela Economia de bateria"</string>
+    <string name="mode_disabled_msg" msgid="9196245518435936512">"Desativado temporariamente pela economia de bateria"</string>
     <string name="themed_icon_title" msgid="7312460430471956558">"Ícones com tema"</string>
     <string name="themed_icon_beta_title" msgid="5433087142610402812">"Ícones com tema (Beta)"</string>
     <string name="beta_title" msgid="8703819523760746458">"Beta"</string>
@@ -165,7 +164,7 @@
     <string name="keyguard_quick_affordance_none_selected" msgid="8494127020144112003">"Nenhuma"</string>
     <string name="show_notifications_on_lock_screen" msgid="4157744243084646720">"Mostrar notificações na tela de bloqueio"</string>
     <string name="lock_screen_notifications_section_title" msgid="906673283764252102">"Notificações na tela de bloqueio"</string>
-    <string name="lock_screen_notifications_section_description" msgid="3321937285144466046">"Gerencie como as notificações aparecem e o que mostrar"</string>
+    <string name="lock_screen_notifications_section_description" msgid="3321937285144466046">"Gerenciar como as notificações aparecem e o que mostrar"</string>
     <string name="more_settings_section_title" msgid="6854797937797818510">"Mais configurações da tela de bloqueio"</string>
     <string name="more_settings_section_description" msgid="1860115709122398325">"Privacidade, Tocando Agora e muito mais"</string>
     <string name="more_colors" msgid="3191071655353004591">"Mais cores"</string>
@@ -179,8 +178,7 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Vívido"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Aplicar mudança de estilo de tema"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Desfazer mudança de estilo de tema"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"Selecione uma cor"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Opção de cor padrão"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Opção de cor <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Deslize para a esquerda para escolher outro mostrador do relógio"</string>
