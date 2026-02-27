@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"По умолчанию"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Минимализм"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Форма"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"Ярлык"</string>
     <string name="app_labels" msgid="4290052401987798752">"Ярлыки приложений"</string>
     <string name="app_names" msgid="708691253698583169">"Названия"</string>
     <string name="show_app_names" msgid="522703901790555973">"Показывать названия приложений"</string>
@@ -167,7 +166,7 @@
     <string name="lock_screen_notifications_section_title" msgid="906673283764252102">"Уведомления на заблокированном экране"</string>
     <string name="lock_screen_notifications_section_description" msgid="3321937285144466046">"Настроить внешний вид и содержание уведомлений"</string>
     <string name="more_settings_section_title" msgid="6854797937797818510">"Ещё настройки заблокированного экрана"</string>
-    <string name="more_settings_section_description" msgid="1860115709122398325">"Конфиденциальность, функция \"Что сейчас играет?\" и т. д."</string>
+    <string name="more_settings_section_description" msgid="1860115709122398325">"Конфиденциальность, \"Что сейчас играет?\" и другие настройки"</string>
     <string name="more_colors" msgid="3191071655353004591">"Ещё цвета"</string>
     <string name="content_description_dynamic_color_option" msgid="2191721655642529886">"Основная динамическая тема"</string>
     <string name="content_description_neutral_color_option" msgid="3385443834001275301">"Основная нейтральная тема"</string>

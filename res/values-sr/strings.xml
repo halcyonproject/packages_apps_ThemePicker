@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"Подразумевано"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Минимално"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Облик"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"Ознака"</string>
     <string name="app_labels" msgid="4290052401987798752">"Ознаке апликација"</string>
     <string name="app_names" msgid="708691253698583169">"Називи"</string>
     <string name="show_app_names" msgid="522703901790555973">"Прикажите називе апликација"</string>
@@ -102,7 +101,7 @@
     <string name="applied_grid_msg" msgid="3250499654436933034">"Мрежа је подешена"</string>
     <string name="apply_theme_error_msg" msgid="791364062636538317">"Дошло је до проблема при примени стила"</string>
     <string name="custom_theme_next" msgid="6235420097213197301">"Даље"</string>
-    <string name="custom_theme_previous" msgid="4941132112640503022">"Претходно"</string>
+    <string name="custom_theme_previous" msgid="4941132112640503022">"Назад"</string>
     <string name="custom_theme" msgid="1618351922263478163">"Прилагођено"</string>
     <string name="custom_theme_title" msgid="2192300350332693631">"Прилагођено <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="custom_theme_fragment_title" msgid="6615547284702040280">"Прилагођени стил"</string>
