@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"ഡിഫോൾട്ട്"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"മിനിമൽ"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"ആകൃതി"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"ലേബൽ"</string>
     <string name="app_labels" msgid="4290052401987798752">"ആപ്പ് ലേബലുകൾ"</string>
     <string name="app_names" msgid="708691253698583169">"പേരുകൾ"</string>
     <string name="show_app_names" msgid="522703901790555973">"ആപ്പുകളുടെ പേരുകൾ കാണിക്കുക"</string>

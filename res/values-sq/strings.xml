@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"E parazgjedhur"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Minimale"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Forma"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"Etiketa"</string>
     <string name="app_labels" msgid="4290052401987798752">"Etiketat e aplikacioneve"</string>
     <string name="app_names" msgid="708691253698583169">"Emrat"</string>
     <string name="show_app_names" msgid="522703901790555973">"Shfaq emrat e aplikacioneve"</string>

@@ -64,7 +64,6 @@
     <string name="app_icons_style_default" msgid="2568057806991656437">"Par défaut"</string>
     <string name="app_icons_style_minimal" msgid="4905227469969513136">"Minimal"</string>
     <string name="app_icons_shape" msgid="2539949450435849188">"Forme"</string>
-    <string name="app_icons_label" msgid="394863025501627247">"Libellé"</string>
     <string name="app_labels" msgid="4290052401987798752">"Libellés d\'application"</string>
     <string name="app_names" msgid="708691253698583169">"Noms"</string>
     <string name="show_app_names" msgid="522703901790555973">"Afficher les noms des applis"</string>
@@ -179,8 +178,7 @@
     <string name="color_variant_option_label_bold" msgid="7239402636388565778">"Gras"</string>
     <string name="color_variant_editor_apply" msgid="6735218825751029812">"Appliquer la modification du style de thème"</string>
     <string name="color_variant_editor_revert" msgid="1786509144393262567">"Annuler la modification du style du thème"</string>
-    <!-- no translation found for color_freeform_editor_description (1019960558215074662) -->
-    <skip />
+    <string name="color_freeform_editor_description" msgid="1019960558215074662">"Sélectionner une couleur"</string>
     <string name="content_description_default_color_option" msgid="7011899327541080695">"Option de couleur par défaut"</string>
     <string name="content_description_color_option" msgid="4169813692012119578">"Option de couleur <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="scroll_forward_and_select" msgid="6156132388656395769">"Balayer à gauche pour changer de clock face"</string>
