@@ -44,14 +44,17 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
     private val _selectedStyle = MutableStateFlow<Int?>(null)
     override val selectedStyle = _selectedStyle.asStateFlow()
 
+    private val _freeformColorHue = MutableStateFlow<Float?>(null)
+    override val freeformColorHue = _freeformColorHue.asStateFlow()
+
     private val _colorOptions =
         MutableStateFlow(
-            mapOf<ColorType, List<ColorOption>>(
-                ColorType.WALLPAPER_COLOR to listOf(),
+            listOf(
+                ColorType.WALLPAPER_COLOR to listOf<ColorOption>(),
                 ColorType.PRESET_COLOR to listOf(),
             )
         )
-    override val colorOptions: StateFlow<Map<ColorType, List<ColorOption>>> =
+    override val colorOptions: StateFlow<List<Pair<ColorType, List<ColorOption>>>> =
         _colorOptions.asStateFlow()
 
     init {
@@ -65,7 +68,7 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
         selectedColorOptionIndex: Int,
     ) {
         _colorOptions.value =
-            mapOf(
+            listOf(
                 ColorType.WALLPAPER_COLOR to
                     buildList {
                         for ((index, colorOption) in wallpaperOptions.withIndex()) {
@@ -106,7 +109,7 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
         selectedColorOptionIndex: Int,
     ) {
         _colorOptions.value =
-            mapOf(
+            listOf(
                 ColorType.WALLPAPER_COLOR to
                     buildList {
                         repeat(times = numWallpaperOptions) { index ->
@@ -233,5 +236,9 @@ class FakeColorPickerRepository @Inject constructor(private val baseFlags: BaseF
             _selectedStyle.value = style
         }
         return applySuccess
+    }
+
+    override fun saveFreeformColor(hue: Float) {
+        _freeformColorHue.value = hue
     }
 }

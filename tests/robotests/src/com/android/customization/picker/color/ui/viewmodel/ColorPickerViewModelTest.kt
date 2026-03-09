@@ -139,7 +139,10 @@ class ColorPickerViewModelTest {
             val onApply = collectLastValue(underTest.onApply)
 
             // Select a color option that is already applied
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(0)
+                ?.onClick
+                ?.invoke()
             // Apply the selection
             assertThat(onApply()).isNull()
         }
@@ -152,7 +155,10 @@ class ColorPickerViewModelTest {
             val onApply = collectLastValue(underTest.onApply)
 
             // Select a color option that is already applied
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(0)
+                ?.onClick
+                ?.invoke()
             // Select a style that is new
             underTest.onStyleOptionClick(ThemeStyle.VIBRANT)
             // Apply the selection
@@ -168,7 +174,10 @@ class ColorPickerViewModelTest {
             val onApply = collectLastValue(underTest.onApply)
 
             // Select a color option to preview
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(1)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(1)
+                ?.onClick
+                ?.invoke()
             // Apply the selection
             val job = testScope.launch { onApply()?.invoke() }
 
@@ -212,7 +221,10 @@ class ColorPickerViewModelTest {
             val onApply = collectLastValue(underTest.onApply)
 
             // Select a color option to preview
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(1)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(1)
+                ?.onClick
+                ?.invoke()
             // Apply the selection
             val job = testScope.launch { onApply()?.invoke() }
 
@@ -277,7 +289,10 @@ class ColorPickerViewModelTest {
             val colorOptions = collectLastValue(underTest.colorSeedOptions)
 
             // Select a color option to preview
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(0)
+                ?.onClick
+                ?.invoke()
             // Apply the selection
             applySelection()
 
@@ -340,7 +355,7 @@ class ColorPickerViewModelTest {
             val colorOptions = collectLastValue(underTest.colorSeedOptions)
 
             // Select a color option to preview
-            colorOptions()?.get(ColorType.PRESET_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.PRESET_COLOR)?.get(0)?.onClick?.invoke()
             // Apply the selection
             applySelection()
 
@@ -369,7 +384,10 @@ class ColorPickerViewModelTest {
             val colorOptions = collectLastValue(underTest.colorSeedOptions)
 
             // Select a color option that is already applied
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(0)
+                ?.onClick
+                ?.invoke()
             // Select a new style
             underTest.onStyleOptionClick(ThemeStyle.VIBRANT)
             // Apply the selection
@@ -401,7 +419,7 @@ class ColorPickerViewModelTest {
             val colorOptions = collectLastValue(underTest.colorSeedOptions)
 
             // Select a color option to preview
-            colorOptions()?.get(ColorType.PRESET_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.PRESET_COLOR)?.get(0)?.onClick?.invoke()
             // Select a new style
             underTest.onStyleOptionClick(ThemeStyle.VIBRANT)
             // Apply the selection
@@ -466,7 +484,10 @@ class ColorPickerViewModelTest {
 
             repository.applySuccess = false
             // Select a color option to preview
-            colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)?.onClick?.invoke()
+            getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)
+                ?.get(0)
+                ?.onClick
+                ?.invoke()
             // Apply the selected color option
             applySelection()
 
@@ -532,13 +553,13 @@ class ColorPickerViewModelTest {
             val previewingColorOptionKey = collectLastValue(underTest.previewingColorOptionKey)
             assertThat(previewingStyle()).isEqualTo(ThemeStyle.TONAL_SPOT)
             val getInitialOption: () -> ColorOptionViewModel? = {
-                colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)
+                getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)?.get(0)
             }
             assertThat(previewingColorOptionKey()).isEqualTo(getInitialOption()?.key)
 
             // Select a new color option
             val getNewOption: () -> ColorOptionViewModel? = {
-                colorOptions()?.get(ColorType.PRESET_COLOR)?.get(0)
+                getColorOptionsOfType(colorOptions(), ColorType.PRESET_COLOR)?.get(0)
             }
             getNewOption()?.onClick?.invoke()
             assertThat(previewingStyle()).isEqualTo(ThemeStyle.EXPRESSIVE)
@@ -638,13 +659,13 @@ class ColorPickerViewModelTest {
             val previewingColorOptionKey = collectLastValue(underTest.previewingColorOptionKey)
             assertThat(previewingStyle()).isEqualTo(ThemeStyle.TONAL_SPOT)
             val getInitialOption: () -> ColorOptionViewModel? = {
-                colorOptions()?.get(ColorType.WALLPAPER_COLOR)?.get(0)
+                getColorOptionsOfType(colorOptions(), ColorType.WALLPAPER_COLOR)?.get(0)
             }
             assertThat(previewingColorOptionKey()).isEqualTo(getInitialOption()?.key)
 
             // Select a new color option
             val getNewOption: () -> ColorOptionViewModel? = {
-                colorOptions()?.get(ColorType.PRESET_COLOR)?.get(0)
+                getColorOptionsOfType(colorOptions(), ColorType.PRESET_COLOR)?.get(0)
             }
             getNewOption()?.onClick?.invoke()
             assertThat(previewingStyle()).isEqualTo(ThemeStyle.EXPRESSIVE)
@@ -665,7 +686,7 @@ class ColorPickerViewModelTest {
 
     @Test
     @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
-    fun freeformPicker_colorPickerUpdate() =
+    fun freeformPicker_preview_colorPickerUpdate() =
         testScope.runTest {
             setupColorPickerUpdateTest()
             val tempOverridingColorOption = collectLastValue(underTest.tempOverridingColorOption)
@@ -683,6 +704,46 @@ class ColorPickerViewModelTest {
                     tempOverridingColorOption()
                         ?.isEquivalent(ColorProviderUtil.hueToColorOption(50f))
                 )
+                .isTrue()
+        }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun freeformPicker_confirmAndCancel_colorPickerUpdate() =
+        testScope.runTest {
+            setupColorPickerUpdateTest()
+            val hueSliderPosition = collectLastValue(underTest.hueSliderPosition)
+            assertThat(hueSliderPosition()).isEqualTo(180f)
+
+            underTest.setScreen(ColorPickerViewModel.Screen.FREEFORM_PICKER)
+            underTest.updateHue(50f)
+            underTest.confirmFreeformColor()
+
+            assertThat(hueSliderPosition()).isEqualTo(50f)
+
+            underTest.setScreen(ColorPickerViewModel.Screen.FREEFORM_PICKER)
+            underTest.updateHue(90f)
+            underTest.cancelFreeformColor()
+
+            assertThat(hueSliderPosition()).isEqualTo(50f)
+        }
+
+    @Test
+    @EnableFlags(FLAG_COLOR_PICKER_UPDATE_FLAG)
+    fun freeformPicker_apply_colorPickerUpdate() =
+        testScope.runTest {
+            setupColorPickerUpdateTest()
+            val hueSliderPosition = collectLastValue(underTest.hueSliderPosition)
+            val selectedColorOption = collectLastValue(underTest.selectedColorOption)
+            assertThat(hueSliderPosition()).isEqualTo(180f)
+
+            underTest.setScreen(ColorPickerViewModel.Screen.FREEFORM_PICKER)
+            underTest.updateHue(50f)
+            underTest.confirmFreeformColor()
+            applySelection()
+
+            assertThat(hueSliderPosition()).isEqualTo(50f)
+            assertThat(selectedColorOption()?.isEquivalent(ColorProviderUtil.hueToColorOption(50f)))
                 .isTrue()
         }
 
@@ -944,5 +1005,12 @@ class ColorPickerViewModelTest {
         val viewModel =
             colorTypes?.get(position) ?: error("No color type with ID \"$colorTypeId\"!")
         assertThat(viewModel.isSelected).isEqualTo(isSelected)
+    }
+
+    private fun getColorOptionsOfType(
+        colorTypesToOptions: List<Pair<ColorType, List<ColorOptionViewModel>>>?,
+        colorType: ColorType,
+    ): List<ColorOptionViewModel>? {
+        return colorTypesToOptions?.find { it.first == colorType }?.second
     }
 }

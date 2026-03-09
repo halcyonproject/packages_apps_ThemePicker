@@ -19,8 +19,10 @@ package com.android.customization.picker.color.domain.interactor
 import android.content.theming.ThemeStyle
 import com.android.customization.model.color.ColorOption
 import com.android.customization.picker.color.data.repository.ColorPickerRepository
+import com.android.customization.picker.color.shared.model.ColorType
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 /** Single entry-point for all application state and business logic related to system color. */
 @Singleton
@@ -28,14 +30,18 @@ class ColorPickerInteractor @Inject constructor(private val repository: ColorPic
     val selectedColorOption = repository.selectedColorOption
 
     /** List of wallpaper and preset color options on the device, categorized by Color Type */
-    val colorOptions = repository.colorOptions
+    val colorOptions: Flow<List<Pair<ColorType, List<ColorOption>>>> = repository.colorOptions
 
     val styleList = repository.styleList
 
     val selectedStyle = repository.selectedStyle
 
+    val freeformColorHue = repository.freeformColorHue
+
     suspend fun apply(colorOption: ColorOption): Boolean = repository.apply(colorOption)
 
     suspend fun apply(colorOption: ColorOption, @ThemeStyle.Type style: Int): Boolean =
         repository.apply(colorOption, style)
+
+    fun saveFreeformColor(hue: Float) = repository.saveFreeformColor(hue)
 }

@@ -37,11 +37,14 @@ import com.android.customization.model.color.ColorOption
 import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.model.color.ColorProvider
 import com.android.customization.model.color.ColorProviderUtil
+import com.android.customization.model.color.ColorProviderUtil.hueToColorOption
+import com.android.customization.module.CustomizationPreferences
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.systemui.monet.ColorScheme
 import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
+import com.android.wallpaper.module.WallpaperPreferences
 import com.android.wallpaper.picker.customization.data.content.WallpaperClient
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -52,7 +55,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
@@ -70,6 +75,7 @@ constructor(
     @BackgroundDispatcher backgroundDispatcher: CoroutineDispatcher,
     private val colorManager: ColorCustomizationManager,
     private val themeManager: ThemeManager?,
+    private val wallpaperPreferences: WallpaperPreferences,
     client: WallpaperClient,
     private val baseFlags: BaseFlags,
 ) : ColorPickerRepository {
@@ -116,17 +122,23 @@ constructor(
             .filter { (screen, _) -> screen == Screen.LOCK_SCREEN }
             .map { (_, colors) -> colors }
 
-    override val colorOptions: Flow<Map<ColorType, List<ColorOption>>> =
+    private val _colorOptions: Flow<List<Pair<ColorType, List<ColorOption>>>> =
         if (shouldUseThemeService) {
             homeWallpaperColors
                 .map { homeColors ->
-                    colorProvider.fetchThemeServiceCompatibleOptions(homeColors).groupBy { option ->
-                        when (option.source) {
-                            ColorProviderUtil.COLOR_SOURCE_HOME -> ColorType.WALLPAPER_COLOR
-                            ColorProviderUtil.COLOR_SOURCE_PRESET -> ColorType.PRESET_COLOR
-                            else -> ColorType.PRESET_COLOR
+                    val optionMap =
+                        colorProvider.fetchThemeServiceCompatibleOptions(homeColors).groupBy {
+                            option ->
+                            when (option.source) {
+                                ColorProviderUtil.COLOR_SOURCE_HOME -> ColorType.WALLPAPER_COLOR
+                                else -> ColorType.PRESET_COLOR
+                            }
                         }
-                    }
+                    listOf(
+                        ColorType.WALLPAPER_COLOR to
+                            (optionMap[ColorType.WALLPAPER_COLOR] ?: emptyList()),
+                        ColorType.PRESET_COLOR to (optionMap[ColorType.PRESET_COLOR] ?: emptyList()),
+                    )
                 }
                 // Fetching from color provider is time consuming. Start collecting Lazily to make
                 // sure color options are pre-populated and not re-fetched each time when entering
@@ -144,15 +156,20 @@ constructor(
                                     val presetColorOptions: MutableList<ColorOption> =
                                         mutableListOf()
                                     options?.forEach { option ->
-                                        when ((option as ColorOptionImpl).type) {
+                                        when (val colorType = (option as ColorOptionImpl).type) {
                                             ColorType.WALLPAPER_COLOR ->
                                                 wallpaperColorOptions.add(option)
                                             ColorType.PRESET_COLOR -> presetColorOptions.add(option)
+                                            else ->
+                                                Log.e(
+                                                    TAG,
+                                                    "This color type should not be in the CustomizationManager list: $colorType",
+                                                )
                                         }
                                     }
                                     continuation.resumeWith(
                                         Result.success(
-                                            mapOf(
+                                            listOf(
                                                 ColorType.WALLPAPER_COLOR to wallpaperColorOptions,
                                                 ColorType.PRESET_COLOR to presetColorOptions,
                                             )
@@ -174,6 +191,26 @@ constructor(
                     }
                 }
                 .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(), replay = 1)
+        }
+
+    private val _freeformColorHue =
+        MutableStateFlow((wallpaperPreferences as CustomizationPreferences).getFreeformColorHue())
+    override val freeformColorHue = _freeformColorHue.asStateFlow()
+
+    override val colorOptions: Flow<List<Pair<ColorType, List<ColorOption>>>> =
+        if (baseFlags.isColorPickerComposeEnabled()) {
+            combine(_colorOptions, _freeformColorHue) { options, hue ->
+                hue?.let {
+                    options.toMutableList().apply {
+                        add(
+                            index = 0,
+                            element = ColorType.FREEFORM_COLOR to listOf(hueToColorOption(hue)),
+                        )
+                    }
+                } ?: options
+            }
+        } else {
+            _colorOptions
         }
 
     private val settingsChanged =
@@ -299,7 +336,6 @@ constructor(
         }
 
     override suspend fun apply(colorOption: ColorOption): Boolean {
-        // TODO (b/461547295): setting color using Theme Service is failing
         if (shouldUseThemeService) {
             val settings =
                 ThemeSettings.Builder()
@@ -315,8 +351,6 @@ constructor(
             }
             return success
         } else {
-            // TODO (b/461547295): system colors update incorrectly when setting wallpaper colors
-            //  directly to secure settings with Theme Service flag on
             return suspendCancellableCoroutine { continuation ->
                 colorManager.apply(
                     colorOption,
@@ -369,6 +403,11 @@ constructor(
                 }
             }
         return apply(colorOptionForApply)
+    }
+
+    override fun saveFreeformColor(hue: Float) {
+        (wallpaperPreferences as CustomizationPreferences).setFreeformColorHue(hue)
+        _freeformColorHue.value = hue
     }
 
     companion object {
