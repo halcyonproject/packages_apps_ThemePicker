@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
@@ -129,7 +128,6 @@ constructor(
                 overriding ?: selected
             }
             .distinctUntilChanged()
-            .sample(100)
 
     fun updateHue(hue: Float) {
         overrideHue.value = hue
