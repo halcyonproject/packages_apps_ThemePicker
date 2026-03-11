@@ -332,10 +332,9 @@ object ColorProviderUtil {
     fun hueToColorOption(hue: Float): ColorOption {
         val hct = Hct.from(hue.toDouble(), 100.0, 80.0)
         return ColorOptionImpl.buildSimplifiedSeedOption(
-            // TODO(b/441279631): strings needed for content description & applying
-            //   option
+            // TODO(b/441279631): string needed for accessibility
             title = "",
-            source = "",
+            source = COLOR_SOURCE_PRESET,
             seedColor = hct.toInt(),
             defaultStyle = ThemeStyle.TONAL_SPOT,
         )

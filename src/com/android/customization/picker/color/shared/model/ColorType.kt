@@ -17,6 +17,9 @@
 package com.android.customization.picker.color.shared.model
 
 enum class ColorType {
+    /** Color created by the user using the freeform color picker */
+    FREEFORM_COLOR,
+
     /** Colors generated based on the current wallpaper */
     WALLPAPER_COLOR,
 
