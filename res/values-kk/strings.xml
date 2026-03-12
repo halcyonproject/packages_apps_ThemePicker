@@ -144,6 +144,9 @@
     <string name="preset_color_subheader" msgid="8230588536141279371">"Белгішелер, сағат, т.б. үшін қалаған түсті таңдаңыз."</string>
     <string name="color_changed" msgid="7029571720331641235">"Түс өзгертілді."</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"Динамикалық"</string>
+    <string name="freeform_color_title" msgid="7237399756373189892">"Арнаулы түстер"</string>
+    <string name="wallpaper_color_title_2" msgid="5292059876778066808">"Тұсқағаз түстері"</string>
+    <string name="cmf_color_title" msgid="3224736567184119951">"Орнатылған түстер"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"Жүйе түстері"</string>
     <string name="system_colors_title" msgid="8011422955674152731">"Түстер"</string>
     <string name="screen_saver_title" msgid="4178511806237734356">"Скринсейвер"</string>

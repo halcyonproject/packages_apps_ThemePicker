@@ -144,6 +144,9 @@
     <string name="preset_color_subheader" msgid="8230588536141279371">"Виберіть будь-який колір для значків, годинника тощо"</string>
     <string name="color_changed" msgid="7029571720331641235">"Колір змінено"</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"Динамічний"</string>
+    <string name="freeform_color_title" msgid="7237399756373189892">"Ваші кольори"</string>
+    <string name="wallpaper_color_title_2" msgid="5292059876778066808">"Кольори фону"</string>
+    <string name="cmf_color_title" msgid="3224736567184119951">"Кольори пристрою"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"Кольори системи"</string>
     <string name="system_colors_title" msgid="8011422955674152731">"Кольори"</string>
     <string name="screen_saver_title" msgid="4178511806237734356">"Заставка"</string>
