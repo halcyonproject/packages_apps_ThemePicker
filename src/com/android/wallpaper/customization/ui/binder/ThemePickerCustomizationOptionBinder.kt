@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.net.toUri
@@ -704,11 +705,17 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             customizationOptionFloatingSheetViewMap
                 ?.get(ThemePickerHomeCustomizationOption.COLORS)
                 ?.let {
-                    (it as ComposeView).setContent {
-                        ColorFloatingSheet(
-                            optionsViewModel.darkModeViewModel,
-                            optionsViewModel.colorPickerViewModel2,
+                    (it as ComposeView).apply {
+                        // Make sure Composable lifecycle aligns with fragment lifecycle
+                        setViewCompositionStrategy(
+                            ViewCompositionStrategy.DisposeOnLifecycleDestroyed(lifecycleOwner)
                         )
+                        setContent {
+                            ColorFloatingSheet(
+                                optionsViewModel.darkModeViewModel,
+                                optionsViewModel.colorPickerViewModel2,
+                            )
+                        }
                     }
                 }
         } else {
