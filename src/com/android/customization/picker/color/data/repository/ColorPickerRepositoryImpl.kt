@@ -247,7 +247,7 @@ constructor(
                         ColorOptionImpl.buildSimplifiedSeedOption(
                             title = null,
                             source = it.colorSource(),
-                            seedColor = it.systemPalette().toArgb(),
+                            seedColor = it.seedColors().first().toArgb(),
                             defaultStyle = it.themeStyle(),
                         )
                     }
@@ -339,7 +339,7 @@ constructor(
         if (shouldUseThemeService) {
             val settings =
                 ThemeSettings.Builder()
-                    .setSystemPalette(Color.valueOf(colorOption.seedColor))
+                    .setSeedColors(Color.valueOf(colorOption.seedColor))
                     .setThemeStyle(colorOption.style)
                     .setColorSource(colorOption.source)
                     .setAppliedTimestamp(Instant.now())
