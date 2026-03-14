@@ -86,7 +86,7 @@
 
         <activity
             tools:node="replace"
-            android:name="com.android.wallpaper.picker.customization.ui.CustomizationPickerActivity2"
+            android:name="com.android.wallpaper.picker.customization.ui.CustomizationPickerActivity"
             android:label="@string/app_name"
             android:relinquishTaskIdentity="true"
             android:screenOrientation="portrait"
