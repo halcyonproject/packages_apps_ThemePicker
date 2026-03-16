@@ -48,7 +48,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.android.customization.picker.color.ui.compose.CustomColorScheme
 import com.android.customization.picker.color.ui.compose.LocalAnimatedColorScheme
 import com.android.internal.policy.SystemBarUtils
-import com.android.wallpaper.picker.common.preview.ui.binder.BasePreviewBinder.POST_PROCESS_SURFACE_LAYER
+import com.android.wallpaper.picker.common.preview.ui.binder.BasePreviewBinder.MEDIA_OVERLAY_SURFACE_LAYER
 import com.android.wallpaper.picker.common.preview.ui.view.CustomizationSurfaceView
 
 /**
@@ -64,7 +64,7 @@ fun SkeletonShade(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 CustomizationSurfaceView(context).apply {
-                    compositionOrder = POST_PROCESS_SURFACE_LAYER
+                    compositionOrder = MEDIA_OVERLAY_SURFACE_LAYER
                     fun blur() {
                         val sc = this.surfaceControl
                         val t = SurfaceControl.Transaction()
