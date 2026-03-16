@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +46,6 @@ import com.android.customization.picker.color.ui.compose.ColorPreviewTheme
 import com.android.customization.picker.color.ui.viewmodel.ColorPickerViewModel
 import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
 import com.android.systemui.monet.ColorScheme
-import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsViewModel
 import com.android.wallpaper.picker.common.preview.ui.viewmodel.WorkspacePreviewScreen
 
@@ -59,66 +59,59 @@ fun ColorPreviewScreens(
     colorPickerViewModel: ColorPickerViewModel,
     darkModeViewModel: DarkModeViewModel,
 ) {
-    val selectedOption by
-        optionsViewModel.selectedOption.collectAsStateWithLifecycle(initialValue = null)
+    val previewScreen by
+        optionsViewModel.workspacePreviewScreen.collectAsStateWithLifecycle(
+            initialValue = WorkspacePreviewScreen.LAUNCHER
+        )
+    val previewingColorOption: ColorOption? by
+        colorPickerViewModel.tempPreviewingColorOption.collectAsStateWithLifecycle(
+            initialValue = null
+        )
+    val previewingIsDarkMode: Boolean by
+        darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
+    val previewingStyle: Int? by
+        colorPickerViewModel.previewingStyle.collectAsStateWithLifecycle(initialValue = null)
 
-    if (
-        selectedOption ==
-            ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.COLORS
-    ) {
-        val previewScreen by
-            optionsViewModel.workspacePreviewScreen.collectAsStateWithLifecycle(
-                initialValue = WorkspacePreviewScreen.LAUNCHER
-            )
-        val previewingColorOption: ColorOption? by
-            colorPickerViewModel.tempPreviewingColorOption.collectAsStateWithLifecycle(
-                initialValue = null
-            )
-        val previewingIsDarkMode: Boolean by
-            darkModeViewModel.previewingIsDarkMode.collectAsStateWithLifecycle(initialValue = false)
-        val previewingStyle: Int? by
-            colorPickerViewModel.previewingStyle.collectAsStateWithLifecycle(initialValue = null)
-
-        PlatformTheme {
-            val scheme =
-                remember(previewingColorOption, previewingIsDarkMode, previewingStyle) {
-                    previewingColorOption?.let {
-                        ColorScheme(it.seedColor, previewingIsDarkMode, previewingStyle ?: it.style)
-                            .materialScheme
-                    }
+    PlatformTheme {
+        val scheme =
+            remember(previewingColorOption, previewingIsDarkMode, previewingStyle) {
+                previewingColorOption?.let {
+                    ColorScheme(it.seedColor, previewingIsDarkMode, previewingStyle ?: it.style)
+                        .materialScheme
                 }
+            }
 
-            ColorPreviewTheme(scheme) {
-                var size by remember { mutableStateOf(IntSize.Zero) }
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .onSizeChanged { newSize -> size = newSize }
-                            .wrapContentSize(unbounded = true)
-                ) {
-                    val configuration = LocalConfiguration.current
-                    val windowWidthDp = configuration.screenWidthDp.dp
-                    val windowHeightDp = configuration.screenHeightDp.dp
-                    val contentScale =
-                        size.width / with(LocalDensity.current) { windowWidthDp.toPx() }
+        ColorPreviewTheme(scheme) {
+            var size by remember { mutableStateOf(IntSize.Zero) }
+            Box(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .onSizeChanged { newSize -> size = newSize }
+                        .wrapContentSize(unbounded = true)
+            ) {
+                val configuration = LocalConfiguration.current
+                val windowWidthDp = configuration.screenWidthDp.dp
+                val windowHeightDp = configuration.screenHeightDp.dp
+                val contentScale = size.width / with(LocalDensity.current) { windowWidthDp.toPx() }
 
-                    AnimatedContent(
-                        targetState = previewScreen,
-                        transitionSpec = { fadeIn() togetherWith fadeOut() },
-                    ) { value ->
-                        // Render content in full screen, then scale down to fit preview
-                        Box(
+                AnimatedContent(
+                    targetState = previewScreen,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                ) { value ->
+                    // Render content in full screen, then scale down to fit preview
+                    Box(
+                        modifier =
+                            Modifier.size(width = windowWidthDp, height = windowHeightDp)
+                                .align(Alignment.Center)
+                                .scale(contentScale)
+                    ) {
+                        SkeletonShade(
+                            modifier = Modifier.visible(value == WorkspacePreviewScreen.SHADE)
+                        )
+                        SkeletonWidgetPicker(
                             modifier =
-                                Modifier.size(width = windowWidthDp, height = windowHeightDp)
-                                    .align(Alignment.Center)
-                                    .scale(contentScale)
-                        ) {
-                            if (value == WorkspacePreviewScreen.SHADE) {
-                                SkeletonShade()
-                            } else if (value == WorkspacePreviewScreen.WIDGET_PICKER) {
-                                SkeletonWidgetPicker()
-                            }
-                        }
+                                Modifier.visible(value == WorkspacePreviewScreen.WIDGET_PICKER)
+                        )
                     }
                 }
             }
