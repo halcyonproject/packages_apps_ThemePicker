@@ -144,6 +144,9 @@
     <string name="preset_color_subheader" msgid="8230588536141279371">"તમારા આઇકન, ઘડિયાળ, વગેરે માટે કોઈપણ રંગ પસંદ કરો"</string>
     <string name="color_changed" msgid="7029571720331641235">"રંગ બદલ્યો છે"</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"ડાઇનૅમિક"</string>
+    <string name="freeform_color_title" msgid="7237399756373189892">"તમારા રંગો"</string>
+    <string name="wallpaper_color_title_2" msgid="5292059876778066808">"તમારા વૉલપેપરના રંગો"</string>
+    <string name="cmf_color_title" msgid="3224736567184119951">"હાર્ડવેરના રંગો"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"સિસ્ટમના રંગો"</string>
     <string name="system_colors_title" msgid="8011422955674152731">"રંગો"</string>
     <string name="screen_saver_title" msgid="4178511806237734356">"સ્ક્રીન સેવર"</string>

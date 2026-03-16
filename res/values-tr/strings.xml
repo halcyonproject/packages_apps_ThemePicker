@@ -144,6 +144,9 @@
     <string name="preset_color_subheader" msgid="8230588536141279371">"Simgeler ve saat gibi öğeler için istediğiniz rengi seçin"</string>
     <string name="color_changed" msgid="7029571720331641235">"Renk değişti"</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"Dinamik"</string>
+    <string name="freeform_color_title" msgid="7237399756373189892">"Renkleriniz"</string>
+    <string name="wallpaper_color_title_2" msgid="5292059876778066808">"Duvar kağıdınızın renkleri"</string>
+    <string name="cmf_color_title" msgid="3224736567184119951">"Donanım renkleri"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"Sistem renkleri"</string>
     <string name="system_colors_title" msgid="8011422955674152731">"Renkler"</string>
     <string name="screen_saver_title" msgid="4178511806237734356">"Ekran koruyucu"</string>
