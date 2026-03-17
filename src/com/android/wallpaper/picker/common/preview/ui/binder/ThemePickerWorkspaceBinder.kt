@@ -19,6 +19,7 @@ package com.android.wallpaper.picker.common.preview.ui.binder
 import android.view.SurfaceView
 import android.view.View
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.LifecycleOwner
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
 import com.android.wallpaper.config.BaseFlags
@@ -64,14 +65,20 @@ constructor(
         if (baseFlags.isColorPickerUpdateEnabled() && screen == Screen.HOME_SCREEN) {
             val optionsViewModel =
                 viewModel.customizationOptionsViewModel as ThemePickerCustomizationOptionsViewModel
-            alternativeWorkspaceView.setContent {
-                ColorPreviewScreens(
-                    optionsViewModel = optionsViewModel,
-                    colorPickerViewModel = optionsViewModel.colorPickerViewModel2,
-                    darkModeViewModel = optionsViewModel.darkModeViewModel,
+            alternativeWorkspaceView.apply {
+                // Make sure Composable lifecycle aligns with fragment lifecycle
+                setViewCompositionStrategy(
+                    ViewCompositionStrategy.DisposeOnLifecycleDestroyed(lifecycleOwner)
                 )
+                setContent {
+                    ColorPreviewScreens(
+                        optionsViewModel = optionsViewModel,
+                        colorPickerViewModel = optionsViewModel.colorPickerViewModel2,
+                        darkModeViewModel = optionsViewModel.darkModeViewModel,
+                    )
+                }
+                visibility = View.VISIBLE
             }
-            alternativeWorkspaceView.visibility = View.VISIBLE
         }
     }
 }
