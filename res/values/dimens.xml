@@ -214,4 +214,12 @@
     <!-- Shared dimensions for Material 3 sliders -->
     <dimen name="slider_track_height">24dp</dimen>
     <dimen name="slider_thumb_height">36dp</dimen>
+
+    <!-- Quick settings dimensions -->
+    <dimen name="qs_tile_margin_horizontal">8dp</dimen>
+    <dimen name="qs_tile_margin_vertical">@dimen/qs_tile_margin_horizontal</dimen>
+    <dimen name="common_tile_default_icon_size">32dp</dimen>
+    <dimen name="common_tile_default_start_padding">8dp</dimen>
+    <dimen name="common_tile_default_tile_height">72dp</dimen>
+    <dimen name="common_tile_default_toggle_target_size">56dp</dimen>
 </resources>

@@ -38,6 +38,7 @@ import com.google.ux.material.libmonet.dynamiccolor.MaterialDynamicColors
 @Immutable
 interface CustomColorScheme {
     val primary: Color
+    val primaryContainer: Color
     val onPrimary: Color
     val onPrimaryFixedVariant: Color
     val secondaryFixedDim: Color
@@ -54,6 +55,7 @@ interface CustomColorScheme {
 val defaultCustomColorScheme =
     object : CustomColorScheme {
         override val primary: Color = Color.Transparent
+        override val primaryContainer: Color = Color.Transparent
         override val onPrimary: Color = Color.Transparent
         override val onPrimaryFixedVariant: Color = Color.Transparent
         override val secondaryFixedDim: Color = Color.Transparent
@@ -90,6 +92,7 @@ fun ColorPreviewTheme(scheme: DynamicScheme?, content: @Composable () -> Unit) {
 fun updateTransitionData(colorScheme: ColorScheme): CustomColorScheme {
     val transition = updateTransition(colorScheme)
     val primary = transition.animateThemeColor { state -> state.primary }
+    val primaryContainer = transition.animateThemeColor { state -> state.primaryContainer }
     val onPrimary = transition.animateThemeColor { state -> state.onPrimary }
     val onPrimaryFixedVariant =
         transition.animateThemeColor { state -> state.onPrimaryFixedVariant }
@@ -105,6 +108,7 @@ fun updateTransitionData(colorScheme: ColorScheme): CustomColorScheme {
     return remember(transition) {
         object : CustomColorScheme {
             override val primary: Color by primary
+            override val primaryContainer: Color by primaryContainer
             override val onPrimary: Color by onPrimary
             override val onPrimaryFixedVariant: Color by onPrimaryFixedVariant
             override val secondaryFixedDim: Color by secondaryFixedDim
