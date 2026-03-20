@@ -17,10 +17,10 @@
 package com.android.customization.picker.color.ui.compose
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -34,14 +34,23 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ColorOption(
-    modifier: Modifier,
     isSelected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onDrawWithCache: CacheDrawScope.() -> DrawResult,
 ) {
     val colorScheme = LocalAnimatedColorScheme.current
     val roundedCornerShape = RoundedCornerShape(18.dp)
-    Box(modifier = modifier) {
+    Box(
+        modifier =
+            modifier.selectable(
+                selected = isSelected,
+                onClick = onClick,
+                interactionSource = null,
+                // Remove default ripple animation
+                indication = null,
+            )
+    ) {
         // selection ring
         if (isSelected) {
             Box(
@@ -69,7 +78,6 @@ fun ColorOption(
                             CircleShape
                         }
                     )
-                    .clickable(onClick = onClick)
                     .drawWithCache(onBuildDrawCache = onDrawWithCache)
         )
     }
