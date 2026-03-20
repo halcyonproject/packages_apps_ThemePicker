@@ -29,6 +29,7 @@ import com.android.wallpaper.model.wallpaper.DeviceDisplayType
 import com.android.wallpaper.picker.common.preview.ui.compose.ColorPreviewScreens
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
 import com.android.wallpaper.picker.customization.ui.viewmodel.CustomizationPickerViewModel2
+import com.android.wallpaper.util.DisplayUtils
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,6 +38,7 @@ class ThemePickerWorkspaceBinder
 @Inject
 constructor(
     private val defaultWorkspaceBinder: DefaultWorkspaceBinder,
+    private val displayUtils: DisplayUtils,
     private val baseFlags: BaseFlags,
 ) : WorkspaceBinder {
 
@@ -75,6 +77,7 @@ constructor(
                         optionsViewModel = optionsViewModel,
                         colorPickerViewModel = optionsViewModel.colorPickerViewModel2,
                         darkModeViewModel = optionsViewModel.darkModeViewModel,
+                        displayUtils = displayUtils,
                     )
                 }
                 visibility = View.VISIBLE
