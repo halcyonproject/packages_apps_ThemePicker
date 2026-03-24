@@ -23,6 +23,7 @@ import com.android.customization.picker.icon.shared.model.IconStyle
 import com.android.customization.picker.icon.shared.model.IconStyleModel
 import com.android.customization.picker.icon.shared.model.ThemePickerIconStyle
 import com.android.wallpaper.config.BaseFlags
+import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.testing.FakePreviewUtils
 import com.android.wallpaper.util.BasePreviewUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -62,7 +63,7 @@ constructor(@ApplicationContext private val context: Context) : IconStyleReposit
         }
 
     private fun IconStyle.toIconStyleModel(): IconStyleModel {
-        return IconStyleModel(iconStyle = this, isExternalLink = false)
+        return IconStyleModel(iconStyle = this, name = Text.Resource(nameResId))
     }
 
     override suspend fun setIconStyle(iconStyle: IconStyle): Boolean {
