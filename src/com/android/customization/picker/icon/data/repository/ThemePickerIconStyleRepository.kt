@@ -32,6 +32,7 @@ import com.android.themepicker.R
 import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.module.InjectorProvider
+import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.di.modules.BackgroundDispatcher
 import com.android.wallpaper.util.PreviewUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -128,7 +129,7 @@ constructor(
         }
 
     private fun IconStyle.toIconStyleModel(): IconStyleModel {
-        return IconStyleModel(iconStyle = this, isExternalLink = false)
+        return IconStyleModel(iconStyle = this, name = Text.Resource(nameResId))
     }
 
     override val selectedIconStyle =

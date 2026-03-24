@@ -17,7 +17,6 @@
 package com.android.customization.picker.icon.ui.viewmodel
 
 import android.content.Context
-import android.stats.style.StyleEnums.APP_ICON_STYLE_UNSPECIFIED
 import android.util.Log
 import com.android.customization.model.grid.ShapeOptionModel
 import com.android.customization.module.logging.ThemesUserEventLogger
@@ -446,9 +445,7 @@ constructor(
                                 val success =
                                     overridingIconStyle?.let { interactor.applyIconStyle(it) }
                                 if (success == true) {
-                                    logger.logIconStyleApplied(
-                                        overridingIconStyle.loggingId ?: APP_ICON_STYLE_UNSPECIFIED
-                                    )
+                                    logger.logIconStyleApplied(overridingIconStyle.loggingId)
                                 } else {
                                     Log.w(TAG, "Apply unsuccessful, no data was updated")
                                     waitForUpdate.cancel()
@@ -523,7 +520,7 @@ constructor(
                     started = SharingStarted.Lazily,
                     initialValue = false,
                 )
-        val text = Text.Resource(iconStyleModel.iconStyle.nameResId)
+        val text = iconStyleModel.name
         return OptionItemViewModel2(
             key = MutableStateFlow(text.asString(applicationContext)),
             payload = iconStyleModel,
