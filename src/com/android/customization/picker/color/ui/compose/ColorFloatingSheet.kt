@@ -60,9 +60,13 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.compose.animation.bounceable
@@ -269,6 +273,9 @@ fun ColorFloatingSheetLanding(
                 verticalAlignment = Alignment.CenterVertically,
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
+                modifier =
+                    Modifier.semantics { testTagsAsResourceId = true }
+                        .testTag("com.google.android.apps.wallpaper:id/colors_horizontal_list"),
             ) {
                 colorSeedOptions.forEachIndexed { colorTypeIdx, colorTypeToOptions ->
                     val colorList = colorTypeToOptions.second
@@ -342,12 +349,17 @@ fun OptionListGroupDivider(modifier: Modifier = Modifier) {
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
     Box(
         modifier =
-            modifier.width(12.dp).height(28.dp).padding(horizontal = 5.dp).drawBehind {
-                drawRoundRect(
-                    color = colorScheme.onSurfaceVariant,
-                    cornerRadius = CornerRadius(x = 1.dp.toPx(), y = 1.dp.toPx()),
-                )
-            }
+            modifier
+                .width(12.dp)
+                .height(28.dp)
+                .padding(horizontal = 5.dp)
+                .drawBehind {
+                    drawRoundRect(
+                        color = colorScheme.onSurfaceVariant,
+                        cornerRadius = CornerRadius(x = 1.dp.toPx(), y = 1.dp.toPx()),
+                    )
+                }
+                .semantics { hideFromAccessibility() }
     )
 }
 
@@ -365,7 +377,6 @@ fun ColorSeedOption(
 
     Box(modifier = modifier) {
         ColorOption(
-            modifier = modifier,
             isSelected = isSelected,
             onClick = {
                 if (isSelected) {
