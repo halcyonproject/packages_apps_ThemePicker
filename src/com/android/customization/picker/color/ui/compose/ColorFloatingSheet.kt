@@ -362,15 +362,16 @@ fun ColorSeedOption(
     val colorScheme: CustomColorScheme = LocalAnimatedColorScheme.current
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val colorIcon: ColorOptionIconViewModel = optionItem.icon
+    val enableVariantPicker: Boolean = isSelected && optionItem.enableDrillDown
 
     Box(modifier = modifier) {
         ColorOption(
             modifier = modifier,
             isSelected = isSelected,
             onClick = {
-                if (isSelected) {
+                if (enableVariantPicker) {
                     navigateToVariantPicker()
-                } else {
+                } else if (!isSelected) {
                     optionItem.onClick?.invoke()
                     coroutineScope.launch { optionItem.clickBounceAnimate() }
                 }
@@ -424,7 +425,7 @@ fun ColorSeedOption(
             }
         }
 
-        if (isSelected) {
+        if (enableVariantPicker) {
             // Edit icon
             Box(
                 modifier =
