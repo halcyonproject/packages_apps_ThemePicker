@@ -222,6 +222,7 @@ constructor(
                             },
                             text =
                                 Text.Loaded(colorOption.getContentDescription(context).toString()),
+                            enableDrillDown = styleOptions.contains(colorOption.style),
                         )
                     }
             }
