@@ -24,4 +24,5 @@ data class ColorOptionViewModel(
     val key: String,
     val onClick: (() -> Unit)?,
     val text: Text,
+    val enableDrillDown: Boolean,
 ) : OptionBounceable()
