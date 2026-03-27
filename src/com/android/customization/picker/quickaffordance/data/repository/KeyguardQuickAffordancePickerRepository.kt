@@ -26,12 +26,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.launch
 
 /**
  * Abstracts access to application state related to functionality for selecting, picking, or setting
@@ -49,8 +46,8 @@ constructor(
         client.observeSlots().map { slots -> slots.map { slot -> slot.toModel() } }
 
     /** List of all available quick affordances. */
-    private val _affordances = MutableStateFlow<List<AffordanceModel>>(emptyList())
-    val affordances = _affordances.asStateFlow()
+    val affordances: Flow<List<AffordanceModel>> =
+        client.observeAffordances().map { affordances -> affordances.map { it.toModel() } }
 
     /** List of slot-affordance pairs, modeling what the user has currently chosen for each slot. */
     val selections: Flow<List<SelectionModel>> =
@@ -59,18 +56,9 @@ constructor(
             .map { selections -> selections.map { selection -> selection.toModel() } }
             .shareIn(mainScope, replay = 1, started = SharingStarted.Lazily)
 
-    init {
-        mainScope.launch {
-            _affordances.value =
-                client.queryAffordances().map { affordance -> affordance.toModel() }
-        }
-    }
-
+    // Required to reflect locale changes when picker is already open
     fun refreshAffordancesDueToLocaleChange() {
-        mainScope.launch {
-            _affordances.value =
-                client.queryAffordances().map { affordance -> affordance.toModel() }
-        }
+        client.refreshAffordances()
     }
 
     private fun CustomizationProviderClient.Slot.toModel(): SlotModel {
