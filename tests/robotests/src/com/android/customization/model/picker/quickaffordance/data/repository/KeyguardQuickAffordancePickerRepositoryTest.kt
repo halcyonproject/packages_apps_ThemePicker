@@ -24,10 +24,12 @@ import com.android.systemui.shared.customization.data.content.FakeCustomizationP
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -65,20 +67,28 @@ class KeyguardQuickAffordancePickerRepositoryTest {
     }
 
     @Test
-    fun localeChange_updateAffordances() {
-        assertThat(repository.affordances.value.size).isEqualTo(3)
-
-        client.addAffordance(
-            CustomizationProviderClient.Affordance(
-                id = "affordance_4",
-                name = "affordance_4",
-                iconResourceId = 4,
-            )
-        )
+    fun refreshAffordancesDueToLocaleChange_callsClient() {
+        val initialVersion = client.refreshVersion
 
         repository.refreshAffordancesDueToLocaleChange()
-        testScope.advanceUntilIdle()
 
-        assertThat(repository.affordances.value.size).isEqualTo(4)
+        assertThat(client.refreshVersion).isEqualTo(initialVersion + 1)
     }
+
+    @Test
+    fun affordances_updatesReactively() =
+        testScope.runTest {
+            assertThat(repository.affordances.first().size).isEqualTo(3)
+
+            client.addAffordance(
+                CustomizationProviderClient.Affordance(
+                    id = "affordance_4",
+                    name = "affordance_4",
+                    iconResourceId = 4,
+                )
+            )
+            testScope.advanceUntilIdle()
+
+            assertThat(repository.affordances.first().size).isEqualTo(4)
+        }
 }
